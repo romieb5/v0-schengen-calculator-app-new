@@ -23,7 +23,7 @@ interface ThreeMonthCalendarProps {
   onEntryDateChange: (date: Date) => void
   onExitDateChange: (date: Date) => void
   onClear: () => void
-  initialMonth?: Date // Added initialMonth prop
+  initialMonth?: Date
 }
 
 export function ThreeMonthCalendar({
@@ -32,15 +32,28 @@ export function ThreeMonthCalendar({
   onEntryDateChange,
   onExitDateChange,
   onClear,
-  initialMonth, // Added initialMonth prop
+  initialMonth,
 }: ThreeMonthCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (initialMonth) {
-      // Start one month before the initial month to center the date range
       return startOfMonth(subMonths(initialMonth, 1))
     }
     return startOfMonth(new Date())
   })
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    // Check if screen is mobile size
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   useEffect(() => {
     if (initialMonth) {
@@ -53,30 +66,25 @@ export function ThreeMonthCalendar({
   const month3 = addMonths(currentMonth, 2)
 
   const handlePrevious = () => {
-    setCurrentMonth(subMonths(currentMonth, 3))
+    setCurrentMonth(subMonths(currentMonth, isMobile ? 1 : 3))
   }
 
   const handleNext = () => {
-    setCurrentMonth(addMonths(currentMonth, 3))
+    setCurrentMonth(addMonths(currentMonth, isMobile ? 1 : 3))
   }
 
   const handleDateClick = (date: Date) => {
     if (!entryDate) {
-      // First click - set entry date
       onEntryDateChange(date)
       onExitDateChange(date)
     } else if (!exitDate || isSameDay(entryDate, exitDate)) {
-      // Second click - set exit date
       if (isBefore(date, entryDate)) {
-        // If clicked date is before entry, make it the new entry and old entry becomes exit
         onExitDateChange(entryDate)
         onEntryDateChange(date)
       } else {
-        // Normal case - set as exit date
         onExitDateChange(date)
       }
     } else {
-      // Reset and start over with new entry date
       onEntryDateChange(date)
       onExitDateChange(date)
     }
@@ -147,7 +155,7 @@ export function ThreeMonthCalendar({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-6 p-6 bg-muted/30 rounded-xl border-2 relative">
+      <div className="flex gap-6 p-4 lg:p-6 bg-muted/30 rounded-xl border-2 relative">
         <Button
           variant="outline"
           size="icon"
@@ -157,10 +165,16 @@ export function ThreeMonthCalendar({
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
-        <div className="flex-1 flex gap-6 px-8">
-          {renderMonth(month1)}
-          {renderMonth(month2)}
-          {renderMonth(month3)}
+        <div className="flex-1 flex gap-6 px-8 lg:px-8">
+          {isMobile ? (
+            renderMonth(month1)
+          ) : (
+            <>
+              {renderMonth(month1)}
+              {renderMonth(month2)}
+              {renderMonth(month3)}
+            </>
+          )}
         </div>
 
         <Button

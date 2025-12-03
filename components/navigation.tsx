@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Calculator, HelpCircle, Info } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Calculator, HelpCircle, Info, ChevronDown } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 
 export function Navigation() {
   const pathname = usePathname()
@@ -14,6 +15,10 @@ export function Navigation() {
     { href: "/faq", label: "FAQ", icon: HelpCircle },
   ]
 
+  const currentPage = links.find((link) => link.href === pathname) || links[0]
+  const otherPages = links.filter((link) => link.href !== pathname)
+  const CurrentIcon = currentPage.icon
+
   return (
     <nav className="border-b bg-background sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -23,25 +28,50 @@ export function Navigation() {
             <span>Schengen Calculator</span>
           </Link>
 
-          <div className="flex items-center gap-1">
+          {/* Desktop tabs - hidden on mobile */}
+          <div className="hidden md:flex items-center gap-1">
             {links.map((link) => {
               const Icon = link.icon
+              const isActive = pathname === link.href
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                    pathname === link.href
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
-                  )}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                    isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   {link.label}
                 </Link>
               )
             })}
+          </div>
+
+          {/* Mobile dropdown - hidden on desktop */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+                  <CurrentIcon className="h-4 w-4" />
+                  {currentPage.label}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {otherPages.map((link) => {
+                  const Icon = link.icon
+                  return (
+                    <DropdownMenuItem key={link.href} asChild>
+                      <Link href={link.href} className="flex items-center gap-2 cursor-pointer">
+                        <Icon className="h-4 w-4" />
+                        {link.label}
+                      </Link>
+                    </DropdownMenuItem>
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

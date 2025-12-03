@@ -234,9 +234,9 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h3 className="text-lg font-semibold">Schengen Rolling 180-Day Window</h3>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {proposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
               <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
@@ -256,7 +256,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
       </div>
 
       {/* Timeline visualization */}
-      <div className="relative bg-card border rounded-lg p-6 overflow-x-auto">
+      <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">
         {/* Timeline container */}
         <div className="relative min-w-[800px]" style={{ height: "240px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />

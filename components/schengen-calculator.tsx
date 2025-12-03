@@ -621,7 +621,7 @@ export function SchengenCalculator() {
                 />
 
                 {entryDate && exitDate && (
-                  <div className="flex items-center justify-end gap-6 text-sm bg-muted/50 rounded-lg px-4 py-3">
+                  <div className="flex flex-wrap items-center justify-end gap-4 lg:gap-6 text-sm bg-muted/50 rounded-lg px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">Entry:</span>
                       <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
