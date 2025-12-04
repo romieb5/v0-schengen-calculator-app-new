@@ -144,26 +144,6 @@ export default function FAQPage() {
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="item-8">
-                  <AccordionTrigger>What are the different stay types?</AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="list-disc list-inside space-y-2 text-sm">
-                      <li>
-                        <strong>Short Stay:</strong> Regular tourist or business visits under the 90/180 rule. This is
-                        what most people use.
-                      </li>
-                      <li>
-                        <strong>Long Stay:</strong> Extended stays with national long-stay visas or residence permits.
-                        These typically don't count toward the 90-day limit but track them separately.
-                      </li>
-                      <li>
-                        <strong>Transit:</strong> Passing through Schengen airports. Only counts if you go through
-                        passport control.
-                      </li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-
                 <AccordionItem value="item-9">
                   <AccordionTrigger>Why change the reference date?</AccordionTrigger>
                   <AccordionContent>

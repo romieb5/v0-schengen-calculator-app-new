@@ -109,20 +109,6 @@ export default function HowItWorksPage() {
               <p>
                 Track all your past and current stays in the Schengen Area. Each stay records your entry and exit dates.
               </p>
-              <div className="bg-muted p-4 rounded-lg space-y-2">
-                <p className="font-medium">Stay Types:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>
-                    <strong>Short Stay:</strong> Tourist visits, business trips (most common)
-                  </li>
-                  <li>
-                    <strong>Long Stay:</strong> Extended stays with national visas or permits
-                  </li>
-                  <li>
-                    <strong>Transit:</strong> Passing through Schengen airports
-                  </li>
-                </ul>
-              </div>
               <p className="text-sm text-muted-foreground">
                 <strong>Note:</strong> Both entry and exit days count as days used. If you enter on January 1 and exit
                 on January 3, that's 3 days used.
