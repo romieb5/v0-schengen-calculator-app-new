@@ -116,8 +116,27 @@ export function ThreeMonthCalendar({
 
     return (
       <div className="flex-1 min-w-0">
-        <div className="text-center font-bold text-lg mb-4 text-primary">{format(monthDate, "MMMM yyyy")}</div>
-        <div className="grid grid-cols-7 gap-1">
+        {isMobile ? (
+          <div className="flex items-center justify-between mb-4 gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handlePrevious}
+              className="h-8 w-8 hover:bg-muted flex-shrink-0"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="text-center font-bold text-base text-primary flex-1 min-w-0 truncate px-1">
+              {format(monthDate, "MMMM yyyy")}
+            </div>
+            <Button variant="ghost" size="icon" onClick={handleNext} className="h-8 w-8 hover:bg-muted flex-shrink-0">
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+        ) : (
+          <div className="text-center font-bold text-lg mb-4 text-primary">{format(monthDate, "MMMM yyyy")}</div>
+        )}
+        <div className={cn("grid grid-cols-7", isMobile ? "gap-2" : "gap-1")}>
           {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
             <div key={i} className="text-center text-xs font-bold text-muted-foreground py-2">
               {day}
@@ -137,7 +156,8 @@ export function ThreeMonthCalendar({
                 key={day.toISOString()}
                 onClick={() => handleDateClick(day)}
                 className={cn(
-                  "aspect-square flex items-center justify-center text-sm rounded-lg transition-all font-medium p-2",
+                  "aspect-square flex items-center justify-center rounded-lg transition-all font-medium",
+                  isMobile ? "text-base p-1" : "text-sm p-2",
                   "hover:bg-primary/20 hover:scale-105 hover:shadow-sm",
                   isSelected && "bg-primary text-primary-foreground hover:bg-primary/90 font-bold shadow-md scale-105",
                   isInRange && !isSelected && "bg-primary/15 font-semibold",
@@ -160,12 +180,12 @@ export function ThreeMonthCalendar({
           variant="outline"
           size="icon"
           onClick={handlePrevious}
-          className="h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute left-2 top-1/2 -translate-y-1/2 z-10"
+          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute left-2 top-1/2 -translate-y-1/2 z-10"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
-        <div className="flex-1 flex gap-6 px-8 lg:px-8">
+        <div className={cn("flex-1 flex gap-6", isMobile ? "px-2" : "px-8 lg:px-8")}>
           {isMobile ? (
             renderMonth(month1)
           ) : (
@@ -181,7 +201,7 @@ export function ThreeMonthCalendar({
           variant="outline"
           size="icon"
           onClick={handleNext}
-          className="h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute right-2 top-1/2 -translate-y-1/2 z-10"
+          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute right-2 top-1/2 -translate-y-1/2 z-10"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format, startOfDay, endOfDay, differenceInDays, addDays, subDays, min, max, isAfter, isBefore } from "date-fns"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -27,10 +27,19 @@ interface TimelineVisualizationProps {
 
 export function TimelineVisualization({ stays, proposedTrips, referenceDate }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   const visibleProposedTrips = showProposedTrips ? proposedTrips : []
 
-  // Calculate the timeline range
   const allDates = [
     ...stays.flatMap((s) => [s.entryDate, s.exitDate]),
     ...visibleProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
@@ -48,7 +57,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
   const totalDays = differenceInDays(timelineEnd, timelineStart) + 1
 
-  // Calculate 180-day window (ending at the most recent proposed trip date or reference date)
   const windowStartForEndDate = subDays(latestProposedDate, 179)
   let daysUsedOnWindowEnd = 0
 
@@ -56,16 +64,13 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   let firstNoncompliantTripMaxDays = 0
   let hasNoncompliantTrip = false
 
-  // Check each proposed trip for noncompliance and find the first one
   for (const trip of visibleProposedTrips) {
     let tripMaxDays = 0
 
-    // Check each day of this trip to find maximum days used
     for (let currentDate = trip.entryDate; currentDate <= trip.exitDate; currentDate = addDays(currentDate, 1)) {
       const windowStartForDay = subDays(currentDate, 179)
       let daysUsedOnDay = 0
 
-      // Count existing short stays within this day's 180-day window
       stays.forEach((stay) => {
         if (stay.stayType !== "short") return
         const effectiveEntry = isAfter(stay.entryDate, windowStartForDay) ? stay.entryDate : windowStartForDay
@@ -76,7 +81,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         }
       })
 
-      // Count days from ALL proposed trips within this day's 180-day window
       visibleProposedTrips.forEach((otherTrip) => {
         const tripEffectiveEntry = isAfter(otherTrip.entryDate, windowStartForDay)
           ? otherTrip.entryDate
@@ -94,19 +98,16 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
       tripMaxDays = Math.max(tripMaxDays, daysUsedOnDay)
     }
 
-    // If this trip is noncompliant and it's the first one we've found
     if (tripMaxDays > 90 && !hasNoncompliantTrip) {
       firstNoncompliantTripMaxDays = tripMaxDays
       hasNoncompliantTrip = true
-      break // Stop at first noncompliant trip
+      break
     }
   }
 
-  // If there's a noncompliant trip, use its max days; otherwise calculate for the end date
   if (hasNoncompliantTrip) {
     maxDaysUsed = firstNoncompliantTripMaxDays
   } else {
-    // Count existing short stays within the 180-day window ending on windowEnd
     stays.forEach((stay) => {
       if (stay.stayType !== "short") return
       const effectiveEntry = isAfter(stay.entryDate, windowStartForEndDate) ? stay.entryDate : windowStartForEndDate
@@ -117,7 +118,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
       }
     })
 
-    // Count days from ALL proposed trips within the 180-day window ending on windowEnd
     visibleProposedTrips.forEach((trip) => {
       const tripEffectiveEntry = isAfter(trip.entryDate, windowStartForEndDate) ? trip.entryDate : windowStartForEndDate
       const tripEffectiveExit = isBefore(trip.exitDate, latestProposedDate) ? trip.exitDate : latestProposedDate
@@ -136,12 +136,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const findLastLegalDate = () => {
     if (visibleProposedTrips.length === 0) return latestProposedDate
 
-    // Check each day from the earliest trip to the latest
     const earliestProposedDate = min(visibleProposedTrips.map((p) => p.entryDate))
     let lastLegalDate = latestProposedDate
     let foundExcess = false
 
-    // Iterate through each day from earliest to latest proposed trip date
     for (
       let currentDate = earliestProposedDate;
       currentDate <= latestProposedDate;
@@ -150,7 +148,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
       const windowStartForDay = subDays(currentDate, 179)
       let daysUsedOnDay = 0
 
-      // Count existing short stays within this day's 180-day window
       stays.forEach((stay) => {
         if (stay.stayType !== "short") return
 
@@ -163,7 +160,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         }
       })
 
-      // Count days from ALL proposed trips within this day's 180-day window
       visibleProposedTrips.forEach((trip) => {
         const tripEffectiveEntry = isAfter(trip.entryDate, windowStartForDay) ? trip.entryDate : windowStartForDay
         const tripEffectiveExit = isBefore(trip.exitDate, currentDate) ? trip.exitDate : currentDate
@@ -177,7 +173,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         }
       })
 
-      // If this day exceeds the limit, record the previous day as the last legal date
       if (daysUsedOnDay > 90 && !foundExcess) {
         lastLegalDate = subDays(currentDate, 1)
         foundExcess = true
@@ -196,7 +191,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
   const daysLeft = 90 - maxDaysUsed
 
-  // Helper to convert date to position percentage
   const dateToPosition = (date: Date) => {
     const daysSinceStart = differenceInDays(date, timelineStart)
     return (daysSinceStart / totalDays) * 100
@@ -218,24 +212,191 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
   const monthMarkers = generateMonthMarkers()
 
-  // Colors for stays and trips
   const stayColors = [
-    "bg-green-500",
-    "bg-blue-500",
-    "bg-yellow-500",
-    "bg-purple-500",
-    "bg-orange-500",
-    "bg-cyan-500",
-    "bg-pink-500",
-    "bg-emerald-500",
+    "bg-green-500", // 1
+    "bg-blue-500", // 2
+    "bg-yellow-500", // 3
+    "bg-purple-500", // 4
+    "bg-orange-500", // 5
+    "bg-cyan-500", // 6
+    "bg-pink-500", // 7
+    "bg-emerald-500", // 8
+    "bg-indigo-500", // 9
+    "bg-red-500", // 10
+    "bg-teal-500", // 11
+    "bg-violet-500", // 12
+    "bg-lime-500", // 13
+    "bg-fuchsia-500", // 14
+    "bg-amber-500", // 15
+    "bg-sky-500", // 16
+    "bg-rose-500", // 17
+    "bg-green-600", // 18
+    "bg-blue-600", // 19
+    "bg-purple-600", // 20
+    "bg-orange-600", // 21
+    "bg-cyan-600", // 22
+    "bg-pink-600", // 23
+    "bg-emerald-600", // 24
+    "bg-indigo-600", // 25
   ]
 
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
 
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col items-start gap-3">
+          {proposedTrips.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
+              <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
+                Show Proposed Trips
+              </Label>
+            </div>
+          )}
+          <div
+            className={`text-sm font-semibold px-3 py-1 rounded ${
+              maxDaysUsed > 90 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
+            }`}
+          >
+            {maxDaysUsed} days used, {daysLeft} days left
+          </div>
+        </div>
+
+        <div className="relative bg-card border rounded-lg p-4 overflow-y-auto max-h-[600px]">
+          <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
+            <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
+
+            {monthMarkers.map((marker) => {
+              const daysSinceStart = differenceInDays(marker, timelineStart)
+              const top = (daysSinceStart / totalDays) * 100
+              return (
+                <div key={marker.toISOString()} className="absolute left-0" style={{ top: `${top}%`, width: "80px" }}>
+                  <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
+                    {format(marker, "MMM yyyy")}
+                  </div>
+                  <div className="absolute right-0 top-1/2 w-3 h-px bg-border" />
+                </div>
+              )
+            })}
+
+            <div
+              className="absolute left-0 bg-primary/5 pointer-events-none"
+              style={{
+                top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
+                height: `${(180 / totalDays) * 100}%`,
+                width: "calc(100% - 80px)",
+                marginLeft: "80px",
+              }}
+            />
+
+            {stays.map((stay, index) => {
+              const top = (differenceInDays(stay.entryDate, timelineStart) / totalDays) * 100
+              const height = ((differenceInDays(stay.exitDate, stay.entryDate) + 1) / totalDays) * 100
+              const color = stayColors[index % stayColors.length]
+              const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
+
+              return (
+                <div
+                  key={stay.id}
+                  className="absolute"
+                  style={{
+                    top: `${top}%`,
+                    height: `${height}%`,
+                    left: "90px",
+                    right: "10px",
+                  }}
+                >
+                  <div
+                    className={`h-full ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                    title={`Stay ${index + 1}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
+                  />
+                </div>
+              )
+            })}
+
+            {visibleProposedTrips.map((trip, index) => {
+              const top = (differenceInDays(trip.entryDate, timelineStart) / totalDays) * 100
+              const height = ((differenceInDays(trip.exitDate, trip.entryDate) + 1) / totalDays) * 100
+              const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
+
+              return (
+                <div
+                  key={trip.id}
+                  className="absolute"
+                  style={{
+                    top: `${top}%`,
+                    height: `${height}%`,
+                    left: "90px",
+                    right: "10px",
+                  }}
+                >
+                  <div
+                    className={`h-full ${proposedTripColor} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                    title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
+                  />
+                </div>
+              )
+            })}
+
+            <div
+              className="absolute left-0 pointer-events-none z-10"
+              style={{
+                top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
+                marginLeft: "80px",
+              }}
+            >
+              <div className="text-xs font-medium text-primary bg-background/80 px-1 rounded">180-day window</div>
+            </div>
+
+            <div
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none"
+              style={{
+                top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
+                width: "calc(100% - 80px)",
+                marginLeft: "80px",
+              }}
+            >
+              <div className="absolute left-2 -top-3 text-xs font-medium whitespace-nowrap bg-background px-1">
+                {format(windowStart, "MMM d, yyyy")}
+              </div>
+            </div>
+            <div
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none"
+              style={{
+                top: `${(differenceInDays(windowEnd, timelineStart) / totalDays) * 100}%`,
+                width: "calc(100% - 80px)",
+                marginLeft: "80px",
+              }}
+            >
+              <div className="absolute left-2 -bottom-3 text-xs font-medium whitespace-nowrap bg-background px-1">
+                {format(windowEnd, "MMM d, yyyy")}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 justify-center text-xs mt-4 pt-4 border-t">
+            {stays.map((stay, index) => (
+              <div key={stay.id} className="flex items-center gap-1">
+                <div className={`w-3 h-3 ${stayColors[index % stayColors.length]} rounded`} />
+                <span>Stay {index + 1}</span>
+              </div>
+            ))}
+            {visibleProposedTrips.map((trip, index) => (
+              <div key={trip.id} className="flex items-center gap-1">
+                <div className={`w-3 h-3 ${proposedTripColor} rounded`} />
+                <span className="text-red-600">Proposed {index + 1}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h3 className="text-lg font-semibold">Schengen Rolling 180-Day Window</h3>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {proposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
@@ -255,9 +416,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         </div>
       </div>
 
-      {/* Timeline visualization */}
       <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">
-        {/* Timeline container */}
         <div className="relative min-w-[800px]" style={{ height: "240px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {monthMarkers.map((marker) => {
@@ -272,7 +431,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             )
           })}
 
-          {/* 180-day window overlay */}
           <div
             className="absolute bottom-8 bg-primary/5 pointer-events-none"
             style={{
@@ -284,7 +442,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             <div className="absolute -top-6 left-2 text-xs font-medium text-primary">180-day window</div>
           </div>
 
-          {/* Recorded stays */}
           {stays.map((stay, index) => {
             const left = dateToPosition(stay.entryDate)
             const width = dateToPosition(stay.exitDate) - left
@@ -293,7 +450,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
             return (
               <div key={stay.id} className="absolute" style={{ left: `${left}%`, width: `${width}%`, bottom: "3rem" }}>
-                {/* Bar */}
                 <div
                   className={`h-20 ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
                   title={`Stay ${index + 1}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
@@ -309,7 +465,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
             return (
               <div key={trip.id} className="absolute" style={{ left: `${left}%`, width: `${width}%`, bottom: "3rem" }}>
-                {/* Bar */}
                 <div
                   className={`h-20 ${proposedTripColor} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
@@ -318,7 +473,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             )
           })}
 
-          {/* Window markers with dates */}
           <div
             className="absolute bottom-8 w-0.5 bg-primary pointer-events-none"
             style={{ left: `${dateToPosition(windowStart)}%`, height: "calc(100% - 3rem)" }}
@@ -337,7 +491,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           </div>
         </div>
 
-        {/* Legend */}
         <div className="flex flex-wrap gap-4 justify-center text-sm mt-8 pt-4 border-t">
           {stays.map((stay, index) => (
             <div key={stay.id} className="flex items-center gap-2">
