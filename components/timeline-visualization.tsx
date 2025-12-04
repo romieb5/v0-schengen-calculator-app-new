@@ -263,7 +263,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           </div>
         </div>
 
-        <div className="relative bg-card border rounded-lg p-4 overflow-y-auto max-h-[600px]">
+        <div className="relative bg-card border rounded-lg p-4 py-8 overflow-y-auto max-h-[600px]">
           <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
             <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
 
@@ -357,7 +357,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 marginLeft: "80px",
               }}
             >
-              <div className="absolute left-2 -top-3 text-xs font-medium whitespace-nowrap bg-background px-1">
+              <div className="absolute left-4 -top-5 text-xs font-semibold whitespace-nowrap bg-background px-2 py-1 rounded border border-primary/20">
                 {format(windowStart, "MMM d, yyyy")}
               </div>
             </div>
@@ -369,25 +369,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 marginLeft: "80px",
               }}
             >
-              <div className="absolute left-2 -bottom-3 text-xs font-medium whitespace-nowrap bg-background px-1">
+              <div className="absolute left-4 -bottom-5 text-xs font-semibold whitespace-nowrap bg-background px-2 py-1 rounded border border-primary/20">
                 {format(windowEnd, "MMM d, yyyy")}
               </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 justify-center text-xs mt-4 pt-4 border-t">
-            {stays.map((stay, index) => (
-              <div key={stay.id} className="flex items-center gap-1">
-                <div className={`w-3 h-3 ${stayColors[index % stayColors.length]} rounded`} />
-                <span>Stay {index + 1}</span>
-              </div>
-            ))}
-            {visibleProposedTrips.map((trip, index) => (
-              <div key={trip.id} className="flex items-center gap-1">
-                <div className={`w-3 h-3 ${proposedTripColor} rounded`} />
-                <span className="text-red-600">Proposed {index + 1}</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>
@@ -414,10 +399,13 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             {maxDaysUsed} days used, {daysLeft} days left
           </div>
         </div>
+        {proposedTrips.length > 0 && showProposedTrips && (
+          <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips</div>
+        )}
       </div>
 
       <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">
-        <div className="relative min-w-[800px]" style={{ height: "240px" }}>
+        <div className="relative min-w-[800px]" style={{ height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {monthMarkers.map((marker) => {
             const pos = dateToPosition(marker)
@@ -432,26 +420,36 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           })}
 
           <div
-            className="absolute bottom-8 bg-primary/5 pointer-events-none"
+            className="absolute bottom-4 bg-primary/5 pointer-events-none z-0"
             style={{
               left: `${dateToPosition(windowStart)}%`,
               width: `${dateToPosition(windowEnd) - dateToPosition(windowStart)}%`,
-              height: "calc(100% - 3rem)",
+              height: "calc(100% - 2rem)",
             }}
           >
-            <div className="absolute -top-6 left-2 text-xs font-medium text-primary">180-day window</div>
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-primary">
+              180-day window
+            </div>
           </div>
 
           {stays.map((stay, index) => {
-            const left = dateToPosition(stay.entryDate)
-            const width = dateToPosition(stay.exitDate) - left
-            const color = stayColors[index % stayColors.length]
             const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
+            const startPos = dateToPosition(stay.entryDate)
+            const endPos = dateToPosition(stay.exitDate)
+            const stayColor = stayColors[index % stayColors.length]
 
             return (
-              <div key={stay.id} className="absolute" style={{ left: `${left}%`, width: `${width}%`, bottom: "3rem" }}>
+              <div
+                key={index}
+                className="absolute"
+                style={{
+                  left: `${startPos}%`,
+                  width: `${endPos - startPos}%`,
+                  bottom: "1rem",
+                }}
+              >
                 <div
-                  className={`h-20 ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                  className={`h-20 ${stayColor} rounded shadow-md relative group cursor-pointer`}
                   title={`Stay ${index + 1}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 />
               </div>
@@ -459,12 +457,21 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           })}
 
           {visibleProposedTrips.map((trip, index) => {
-            const left = dateToPosition(trip.entryDate)
-            const width = dateToPosition(trip.exitDate) - left
             const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
+            const startPos = dateToPosition(trip.entryDate)
+            const endPos = dateToPosition(trip.exitDate)
+            const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
 
             return (
-              <div key={trip.id} className="absolute" style={{ left: `${left}%`, width: `${width}%`, bottom: "3rem" }}>
+              <div
+                key={index}
+                className="absolute"
+                style={{
+                  left: `${startPos}%`,
+                  width: `${endPos - startPos}%`,
+                  bottom: "1rem",
+                }}
+              >
                 <div
                   className={`h-20 ${proposedTripColor} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
@@ -474,36 +481,21 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           })}
 
           <div
-            className="absolute bottom-8 w-0.5 bg-primary pointer-events-none"
-            style={{ left: `${dateToPosition(windowStart)}%`, height: "calc(100% - 3rem)" }}
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none"
+            style={{ left: `${dateToPosition(windowStart)}%`, height: "calc(100% - 2rem)" }}
           >
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap bg-background px-1">
+            <div className="absolute -top-6 left-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
               {format(windowStart, "MMM d, yyyy")}
             </div>
           </div>
           <div
-            className="absolute bottom-8 w-0.5 bg-primary pointer-events-none"
-            style={{ left: `${dateToPosition(windowEnd)}%`, height: "calc(100% - 3rem)" }}
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none"
+            style={{ left: `${dateToPosition(windowEnd)}%`, height: "calc(100% - 2rem)" }}
           >
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap bg-background px-1">
+            <div className="absolute -top-6 right-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
               {format(windowEnd, "MMM d, yyyy")}
             </div>
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-4 justify-center text-sm mt-8 pt-4 border-t">
-          {stays.map((stay, index) => (
-            <div key={stay.id} className="flex items-center gap-2">
-              <div className={`w-4 h-4 ${stayColors[index % stayColors.length]} rounded`} />
-              <span>Stay {index + 1}</span>
-            </div>
-          ))}
-          {visibleProposedTrips.map((trip, index) => (
-            <div key={trip.id} className="flex items-center gap-2">
-              <div className={`w-4 h-4 ${proposedTripColor} rounded`} />
-              <span className="text-red-600">Proposed {index + 1}</span>
-            </div>
-          ))}
         </div>
       </div>
     </div>
