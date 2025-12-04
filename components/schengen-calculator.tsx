@@ -163,26 +163,16 @@ export function SchengenCalculator() {
     setStays(stays.filter((s) => s.id !== id))
   }
 
-  const calculateDaysUsed = (checkDate: Date): number => {
-    const windowStart = subDays(checkDate, 179)
-    let daysUsed = 0
+  // REMOVED LOCAL calculateDaysUsed function
 
-    stays.forEach((stay) => {
-      if (stay.stayType !== "short") return
+  const daysUsedForCalculations = calculateDaysUsedForDate(
+    referenceDate,
+    stays,
+    proposedTrips, // Always include proposed trips in the calculation for status
+  )
 
-      const effectiveEntry = isAfter(stay.entryDate, windowStart) ? stay.entryDate : windowStart
-      const effectiveExit = isBefore(stay.exitDate, checkDate) ? stay.exitDate : checkDate
-
-      if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-        daysUsed += differenceInDays(effectiveExit, effectiveEntry) + 1
-      }
-    })
-
-    return Math.min(daysUsed, 90)
-  }
-
-  const daysUsed = calculateDaysUsed(referenceDate)
-  const daysRemaining = Math.max(90 - daysUsed, 0)
+  const daysUsed = daysUsedForCalculations.daysUsed
+  const daysRemaining = daysUsedForCalculations.daysLeft
   const windowStart = subDays(referenceDate, 179)
   const isOverstay = daysUsed > 90
 
@@ -588,9 +578,7 @@ export function SchengenCalculator() {
           <Card className="border-2 shadow-lg">
             <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
               <CardTitle className="text-lg sm:text-xl lg:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Record your previous Schengen area visits
-              </CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Record your Schengen area visits</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               <div className="space-y-4">
@@ -696,10 +684,10 @@ export function SchengenCalculator() {
                 </div>
 
                 {isOverstay ? (
-                  <Alert variant="destructive" className="border-2">
-                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                    <AlertTitle className="font-bold text-sm sm:text-base">Overstay Warning</AlertTitle>
-                    <AlertDescription className="font-medium text-xs sm:text-sm break-words">
+                  <Alert className="border-2 border-destructive bg-destructive/10">
+                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive flex-shrink-0" />
+                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">Overstay Warning</AlertTitle>
+                    <AlertDescription className="text-foreground font-medium text-xs sm:text-sm break-words">
                       You have exceeded the 90-day limit by {daysUsed - 90} day(s)
                     </AlertDescription>
                   </Alert>

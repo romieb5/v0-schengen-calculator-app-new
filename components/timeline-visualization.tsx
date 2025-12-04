@@ -71,7 +71,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const windowStart = subDays(windowEnd, 179) // 180 days including end date
 
   const earliestDate = min(allDates)
-  const calculatedTimelineStart = subMonths(startOfDay(earliestDate), 2)
+  const calculatedTimelineStart = startOfDay(earliestDate)
   const minTimelineStart = subMonths(windowEnd, 7)
   const timelineStart = calculatedTimelineStart < minTimelineStart ? calculatedTimelineStart : minTimelineStart
 
