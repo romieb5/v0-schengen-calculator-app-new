@@ -29,6 +29,10 @@ export default function HowItWorksPage() {
                 <p className="font-medium mb-2">How the rolling window works:</p>
                 <ul className="list-disc list-inside space-y-2 text-sm">
                   <li>For any given day, look back 180 days from that date</li>
+                  <li>
+                    The 180-day window is inclusive of both start and end dates (e.g., from today, the window starts 179
+                    days ago, giving you 180 total days including today)
+                  </li>
                   <li>Count all days spent in the Schengen Area during those 180 days</li>
                   <li>If the total is 90 days or less, you are compliant</li>
                   <li>The window "rolls" forward each day, dropping old days and adding new ones</li>
