@@ -142,6 +142,8 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const daysUsed = calculationResult.daysUsed
   const daysLeft = calculationResult.daysLeft
 
+  const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
+
   if (isMobile) {
     return (
       <div className="space-y-4">
@@ -159,7 +161,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {daysUsed} days used, {daysLeft} days left
+            {daysUsed} days used, {daysRemainingText}
           </div>
           {proposedTrips.length > 0 && showProposedTrips && (
             <>
@@ -305,7 +307,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {daysUsed} days used, {daysLeft} days left
+            {daysUsed} days used, {daysRemainingText}
           </div>
         </div>
         {proposedTrips.length > 0 && showProposedTrips && (
