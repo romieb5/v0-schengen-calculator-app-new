@@ -129,6 +129,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     "bg-indigo-600",
   ]
 
+  const sortedStays = [...stays].sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
+  const stayColorMap = new Map<string, string>()
+  sortedStays.forEach((stay, index) => {
+    stayColorMap.set(stay.id, stayColors[index % stayColors.length])
+  })
+
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
 
   const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
@@ -156,7 +162,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             {daysUsed} days used, {daysLeft} days left
           </div>
           {proposedTrips.length > 0 && showProposedTrips && (
-            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+            <>
+              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+              <div className="text-xs text-muted-foreground italic">
+                Reference date based on most recent proposed trip.
+              </div>
+            </>
           )}
         </div>
 
@@ -187,11 +198,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               }}
             />
 
-            {stays.map((stay, index) => {
+            {stays.map((stay) => {
               const top = (differenceInDays(stay.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(stay.exitDate, stay.entryDate) + 1) / totalDays) * 100
-              const color = stayColors[index % stayColors.length]
+              const color = stayColorMap.get(stay.id) || stayColors[0]
               const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
+              const stayIndex = sortedStays.findIndex((s) => s.id === stay.id) + 1
 
               return (
                 <div
@@ -206,7 +218,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 >
                   <div
                     className={`h-full ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
-                    title={`Stay ${index + 1}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
+                    title={`Stay ${stayIndex}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   />
                 </div>
               )
@@ -299,6 +311,9 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         {proposedTrips.length > 0 && showProposedTrips && (
           <div className="flex flex-col items-end gap-1">
             <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+            <div className="text-xs text-muted-foreground italic">
+              Reference date based on most recent proposed trip.
+            </div>
           </div>
         )}
       </div>
@@ -331,15 +346,16 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             </div>
           </div>
 
-          {stays.map((stay, index) => {
+          {stays.map((stay) => {
             const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
             const startPos = dateToPosition(stay.entryDate)
             const endPos = dateToPosition(stay.exitDate)
-            const stayColor = stayColors[index % stayColors.length]
+            const color = stayColorMap.get(stay.id) || stayColors[0]
+            const stayIndex = sortedStays.findIndex((s) => s.id === stay.id) + 1
 
             return (
               <div
-                key={index}
+                key={stay.id}
                 className="absolute"
                 style={{
                   left: `${startPos}%`,
@@ -348,8 +364,8 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 }}
               >
                 <div
-                  className={`h-20 ${stayColor} rounded shadow-md relative group cursor-pointer`}
-                  title={`Stay ${index + 1}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
+                  className={`h-20 ${color} rounded shadow-md relative group cursor-pointer`}
+                  title={`Stay ${stayIndex}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 />
               </div>
             )
