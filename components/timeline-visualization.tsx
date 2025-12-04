@@ -1,9 +1,24 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { format, startOfDay, endOfDay, differenceInDays, addDays, subDays, min, max, isAfter, isBefore } from "date-fns"
+import {
+  format,
+  startOfDay,
+  endOfDay,
+  differenceInDays,
+  differenceInMonths,
+  addDays,
+  subDays,
+  subMonths,
+  addMonths,
+  min,
+  max,
+  isAfter,
+  isBefore,
+} from "date-fns"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
 
 interface Stay {
   id: string
@@ -50,99 +65,33 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     return <div className="text-center py-12 text-muted-foreground">No stays or proposed trips to visualize</div>
   }
 
-  const timelineStart = startOfDay(min(allDates))
-  const latestProposedDate =
+  const latestProposedDate2 =
     visibleProposedTrips.length > 0 ? max(visibleProposedTrips.map((p) => p.exitDate)) : referenceDate
-  const timelineEnd = endOfDay(max([...allDates, latestProposedDate]))
+  const windowEnd = latestProposedDate2
+  const windowStart = subDays(windowEnd, 179) // 180 days including end date
 
-  const totalDays = differenceInDays(timelineEnd, timelineStart) + 1
+  const earliestDate = min(allDates)
+  const calculatedTimelineStart = subMonths(startOfDay(earliestDate), 2)
+  const minTimelineStart = subMonths(windowEnd, 7)
+  const timelineStart = calculatedTimelineStart < minTimelineStart ? calculatedTimelineStart : minTimelineStart
 
-  const windowStartForEndDate = subDays(latestProposedDate, 179)
-  let daysUsedOnWindowEnd = 0
+  const timelineEnd = endOfDay(max([...allDates, latestProposedDate2]))
 
-  let maxDaysUsed = 0
-  let firstNoncompliantTripMaxDays = 0
-  let hasNoncompliantTrip = false
+  const monthsInTimeline = differenceInMonths(timelineEnd, timelineStart) + 1
+  const adjustedTimelineEnd = monthsInTimeline < 7 ? addMonths(timelineStart, 7) : timelineEnd
 
-  for (const trip of visibleProposedTrips) {
-    let tripMaxDays = 0
-
-    for (let currentDate = trip.entryDate; currentDate <= trip.exitDate; currentDate = addDays(currentDate, 1)) {
-      const windowStartForDay = subDays(currentDate, 179)
-      let daysUsedOnDay = 0
-
-      stays.forEach((stay) => {
-        if (stay.stayType !== "short") return
-        const effectiveEntry = isAfter(stay.entryDate, windowStartForDay) ? stay.entryDate : windowStartForDay
-        const effectiveExit = isBefore(stay.exitDate, currentDate) ? stay.exitDate : currentDate
-        if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-          const stayDays = differenceInDays(effectiveExit, effectiveEntry) + 1
-          daysUsedOnDay += stayDays
-        }
-      })
-
-      visibleProposedTrips.forEach((otherTrip) => {
-        const tripEffectiveEntry = isAfter(otherTrip.entryDate, windowStartForDay)
-          ? otherTrip.entryDate
-          : windowStartForDay
-        const tripEffectiveExit = isBefore(otherTrip.exitDate, currentDate) ? otherTrip.exitDate : currentDate
-        if (
-          isBefore(tripEffectiveEntry, tripEffectiveExit) ||
-          tripEffectiveEntry.getTime() === tripEffectiveExit.getTime()
-        ) {
-          const tripDays = differenceInDays(tripEffectiveExit, tripEffectiveEntry) + 1
-          daysUsedOnDay += tripDays
-        }
-      })
-
-      tripMaxDays = Math.max(tripMaxDays, daysUsedOnDay)
-    }
-
-    if (tripMaxDays > 90 && !hasNoncompliantTrip) {
-      firstNoncompliantTripMaxDays = tripMaxDays
-      hasNoncompliantTrip = true
-      break
-    }
-  }
-
-  if (hasNoncompliantTrip) {
-    maxDaysUsed = firstNoncompliantTripMaxDays
-  } else {
-    stays.forEach((stay) => {
-      if (stay.stayType !== "short") return
-      const effectiveEntry = isAfter(stay.entryDate, windowStartForEndDate) ? stay.entryDate : windowStartForEndDate
-      const effectiveExit = isBefore(stay.exitDate, latestProposedDate) ? stay.exitDate : latestProposedDate
-      if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-        const stayDays = differenceInDays(effectiveExit, effectiveEntry) + 1
-        daysUsedOnWindowEnd += stayDays
-      }
-    })
-
-    visibleProposedTrips.forEach((trip) => {
-      const tripEffectiveEntry = isAfter(trip.entryDate, windowStartForEndDate) ? trip.entryDate : windowStartForEndDate
-      const tripEffectiveExit = isBefore(trip.exitDate, latestProposedDate) ? trip.exitDate : latestProposedDate
-      if (
-        isBefore(tripEffectiveEntry, tripEffectiveExit) ||
-        tripEffectiveEntry.getTime() === tripEffectiveExit.getTime()
-      ) {
-        const tripDays = differenceInDays(tripEffectiveExit, tripEffectiveEntry) + 1
-        daysUsedOnWindowEnd += tripDays
-      }
-    })
-
-    maxDaysUsed = daysUsedOnWindowEnd
-  }
+  const totalDays = differenceInDays(adjustedTimelineEnd, timelineStart) + 1
 
   const findLastLegalDate = () => {
-    if (visibleProposedTrips.length === 0) return latestProposedDate
+    if (visibleProposedTrips.length === 0) return latestProposedDate2
 
     const earliestProposedDate = min(visibleProposedTrips.map((p) => p.entryDate))
-    let lastLegalDate = latestProposedDate
+    let lastLegalDate = latestProposedDate2
     let foundExcess = false
 
     for (
       let currentDate = earliestProposedDate;
-      currentDate <= latestProposedDate;
+      currentDate <= latestProposedDate2;
       currentDate = addDays(currentDate, 1)
     ) {
       const windowStartForDay = subDays(currentDate, 179)
@@ -184,12 +133,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   }
 
   const lastLegalDate = findLastLegalDate()
-  const hasExcess = lastLegalDate < latestProposedDate
+  const hasExcess = lastLegalDate < latestProposedDate2
 
-  const windowEnd = hasExcess ? lastLegalDate : latestProposedDate
-  const windowStart = subDays(windowEnd, 179) // 180 days including end date
-
-  const daysLeft = 90 - maxDaysUsed
+  const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
+  const { daysUsed, daysLeft } = calculateDaysUsedForDate(windowEnd, stays, visibleProposedForCalculation)
 
   const dateToPosition = (date: Date) => {
     const daysSinceStart = differenceInDays(date, timelineStart)
@@ -200,7 +147,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     const markers = []
     let currentMarker = new Date(timelineStart.getFullYear(), timelineStart.getMonth(), 1)
 
-    while (currentMarker <= timelineEnd) {
+    while (currentMarker <= adjustedTimelineEnd) {
       if (currentMarker >= timelineStart) {
         markers.push(currentMarker)
       }
@@ -256,11 +203,19 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           )}
           <div
             className={`text-sm font-semibold px-3 py-1 rounded ${
-              maxDaysUsed > 90 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
+              daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {maxDaysUsed} days used, {daysLeft} days left
+            {daysUsed} days used, {daysLeft} days left
           </div>
+          {proposedTrips.length > 0 && showProposedTrips && (
+            <div className="flex flex-col gap-1">
+              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+              <div className="text-xs text-muted-foreground italic">
+                Note: Reference date changes to the last date of proposed trip(s).
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="relative bg-card border rounded-lg p-4 py-8 overflow-y-auto max-h-[600px]">
@@ -393,19 +348,26 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           )}
           <div
             className={`text-sm font-semibold px-3 py-1 rounded ${
-              maxDaysUsed > 90 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
+              daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {maxDaysUsed} days used, {daysLeft} days left
+            {daysUsed} days used, {daysLeft} days left
           </div>
         </div>
-        {proposedTrips.length > 0 && showProposedTrips && (
-          <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips</div>
-        )}
+        <div className="flex flex-col items-end gap-1">
+          {proposedTrips.length > 0 && showProposedTrips && (
+            <>
+              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+              <div className="text-xs text-muted-foreground italic">
+                Note: Reference date changes to the last date of proposed trip(s).
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">
-        <div className="relative min-w-[800px]" style={{ height: "160px" }}>
+        <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {monthMarkers.map((marker) => {
             const pos = dateToPosition(marker)

@@ -15,6 +15,7 @@ import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCi
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
+import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
 
 interface Stay {
   id: string
@@ -189,7 +190,7 @@ export function SchengenCalculator() {
     tripEntry: Date,
     tripExit: Date,
     currentTripId?: string, // Optional ID to exclude current trip from calculations
-  ): { isLegal: boolean; message: string; daysRemaining?: Date; lastEligibleDate?: Date } => {
+  ): { isLegal: boolean; message: string; daysRemaining?: number; lastEligibleDate?: Date } => {
     if (!tripEntry || !tripExit) {
       return { isLegal: false, message: "Please enter valid trip details" }
     }
@@ -230,62 +231,59 @@ export function SchengenCalculator() {
     let maxDaysUsedDate: Date | null = null
     let lastEligibleDate: Date | null = null
 
+    const tripsToInclude = proposedTrips.filter((t) => !currentTripId || t.id !== currentTripId)
+    tripsToInclude.push({ id: "temp", entryDate: tripEntry, exitDate: tripExit })
+
+    const { daysUsed: calculatedDaysUsedOnLastDay, daysLeft: daysRemainingAfterTrip } = calculateDaysUsedForDate(
+      tripExit,
+      stays,
+      tripsToInclude,
+    )
+
+    daysUsedOnLastDay = calculatedDaysUsedOnLastDay
+    maxDaysUsed = daysUsedOnLastDay // In this simplified approach, we only check the end date for the 'maxDaysUsed' within the proposed trip itself
+
+    // We need to re-evaluate the loop to find the actual maxDaysUsed across the entire trip duration
+    // and the last eligible date. The calculateDaysUsedForDate function needs to be adapted or used iteratively.
+
+    // Re-iterating to find max days used and last eligible date:
     for (let i = 0; i < duration; i++) {
       const currentDayOfTrip = addDays(tripEntry, i)
       const windowStartForDay = subDays(currentDayOfTrip, 179)
       let daysUsedForThisDay = 0
 
+      // Calculate days from existing stays
       stays.forEach((stay) => {
         if (stay.stayType !== "short") return
-
         const effectiveEntry = isAfter(stay.entryDate, windowStartForDay) ? stay.entryDate : windowStartForDay
         const effectiveExit = isBefore(stay.exitDate, currentDayOfTrip) ? stay.exitDate : currentDayOfTrip
-
         if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-          const stayDays = differenceInDays(effectiveExit, effectiveEntry) + 1
-          daysUsedForThisDay += stayDays
+          daysUsedForThisDay += differenceInDays(effectiveExit, effectiveEntry) + 1
         }
       })
 
-      const daysFromExistingStays = daysUsedForThisDay
-
+      // Calculate days from other proposed trips
       proposedTrips.forEach((otherTrip) => {
         if (currentTripId && otherTrip.id === currentTripId) return
-
         const otherTripStart = otherTrip.entryDate
         const otherTripEnd = otherTrip.exitDate
-
         const effectiveEntry = isAfter(otherTripStart, windowStartForDay) ? otherTripStart : windowStartForDay
         const effectiveExit = isBefore(otherTripEnd, currentDayOfTrip) ? otherTripEnd : currentDayOfTrip
-
         if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-          const otherTripDays = differenceInDays(effectiveExit, otherTripEnd) + 1
-          daysUsedForThisDay += otherTripDays
+          daysUsedForThisDay += differenceInDays(effectiveExit, otherTripEnd) + 1
         }
       })
 
-      const daysFromOtherProposedTrips = daysUsedForThisDay - daysFromExistingStays
-
+      // Calculate days from the current proposed trip up to this day
       const proposedTripStart = isAfter(tripEntry, windowStartForDay) ? tripEntry : windowStartForDay
       const proposedTripEnd = currentDayOfTrip
-
       if (isBefore(proposedTripStart, proposedTripEnd) || proposedTripStart.getTime() === proposedTripEnd.getTime()) {
-        const proposedDays = differenceInDays(proposedTripEnd, proposedTripStart) + 1
-        daysUsedForThisDay += proposedDays
+        daysUsedForThisDay += differenceInDays(proposedTripEnd, proposedTripStart) + 1
       }
 
-      const daysFromCurrentTrip = daysUsedForThisDay - daysFromOtherProposedTrips - daysFromExistingStays
-
-      if (daysUsedForThisDay > 85 || i === 0 || i === duration - 1) {
-        console.log(`[v0] Day ${i + 1} (${format(currentDayOfTrip, "MMM dd, yyyy")}):`)
-        console.log(
-          `  Window: ${format(windowStartForDay, "MMM dd, yyyy")} to ${format(currentDayOfTrip, "MMM dd, yyyy")}`,
-        )
-        console.log(`  Days from existing stays: ${daysFromExistingStays}`)
-        console.log(`  Days from other proposed trips: ${daysFromOtherProposedTrips}`)
-        console.log(`  Days from current trip: ${daysFromCurrentTrip}`)
-        console.log(`  Total days used: ${daysUsedForThisDay}/90`)
-      }
+      console.log(
+        `[v0] Day ${i + 1} (${format(currentDayOfTrip, "MMM dd, yyyy")}): Total days used: ${daysUsedForThisDay}/90`,
+      )
 
       if (daysUsedForThisDay > maxDaysUsed) {
         maxDaysUsed = daysUsedForThisDay
@@ -294,10 +292,6 @@ export function SchengenCalculator() {
 
       if (daysUsedForThisDay <= 90 && (lastEligibleDate === null || isAfter(currentDayOfTrip, lastEligibleDate))) {
         lastEligibleDate = currentDayOfTrip
-      }
-
-      if (i === duration - 1) {
-        daysUsedOnLastDay = daysUsedForThisDay
       }
     }
 
@@ -316,8 +310,6 @@ export function SchengenCalculator() {
         lastEligibleDate: lastEligibleDate || undefined,
       }
     }
-
-    const daysRemainingAfterTrip = 90 - daysUsedOnLastDay
 
     return {
       isLegal: true,
@@ -596,7 +588,9 @@ export function SchengenCalculator() {
           <Card className="border-2 shadow-lg">
             <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
               <CardTitle className="text-lg sm:text-xl lg:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Record your Schengen area visits</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
+                Record your previous Schengen area visits
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               <div className="space-y-4">
