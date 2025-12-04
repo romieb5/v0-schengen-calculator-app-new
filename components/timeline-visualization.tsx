@@ -7,14 +7,11 @@ import {
   endOfDay,
   differenceInDays,
   differenceInMonths,
-  addDays,
   subDays,
   subMonths,
   addMonths,
   min,
   max,
-  isAfter,
-  isBefore,
 } from "date-fns"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -65,9 +62,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     return <div className="text-center py-12 text-muted-foreground">No stays or proposed trips to visualize</div>
   }
 
-  const latestProposedDate2 =
+  const latestProposedDate =
     visibleProposedTrips.length > 0 ? max(visibleProposedTrips.map((p) => p.exitDate)) : referenceDate
-  const windowEnd = latestProposedDate2
+
+  const windowEnd = latestProposedDate
   const windowStart = subDays(windowEnd, 179) // 180 days including end date
 
   const earliestDate = min(allDates)
@@ -75,68 +73,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const minTimelineStart = subMonths(windowEnd, 7)
   const timelineStart = calculatedTimelineStart < minTimelineStart ? calculatedTimelineStart : minTimelineStart
 
-  const timelineEnd = endOfDay(max([...allDates, latestProposedDate2]))
+  const timelineEnd = endOfDay(max([...allDates, latestProposedDate]))
 
   const monthsInTimeline = differenceInMonths(timelineEnd, timelineStart) + 1
   const adjustedTimelineEnd = monthsInTimeline < 7 ? addMonths(timelineStart, 7) : timelineEnd
 
   const totalDays = differenceInDays(adjustedTimelineEnd, timelineStart) + 1
-
-  const findLastLegalDate = () => {
-    if (visibleProposedTrips.length === 0) return latestProposedDate2
-
-    const earliestProposedDate = min(visibleProposedTrips.map((p) => p.entryDate))
-    let lastLegalDate = latestProposedDate2
-    let foundExcess = false
-
-    for (
-      let currentDate = earliestProposedDate;
-      currentDate <= latestProposedDate2;
-      currentDate = addDays(currentDate, 1)
-    ) {
-      const windowStartForDay = subDays(currentDate, 179)
-      let daysUsedOnDay = 0
-
-      stays.forEach((stay) => {
-        if (stay.stayType !== "short") return
-
-        const effectiveEntry = isAfter(stay.entryDate, windowStartForDay) ? stay.entryDate : windowStartForDay
-        const effectiveExit = isBefore(stay.exitDate, currentDate) ? stay.exitDate : currentDate
-
-        if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
-          const stayDays = differenceInDays(effectiveExit, effectiveEntry) + 1
-          daysUsedOnDay += stayDays
-        }
-      })
-
-      visibleProposedTrips.forEach((trip) => {
-        const tripEffectiveEntry = isAfter(trip.entryDate, windowStartForDay) ? trip.entryDate : windowStartForDay
-        const tripEffectiveExit = isBefore(trip.exitDate, currentDate) ? trip.exitDate : currentDate
-
-        if (
-          isBefore(tripEffectiveEntry, tripEffectiveExit) ||
-          tripEffectiveEntry.getTime() === tripEffectiveExit.getTime()
-        ) {
-          const tripDays = differenceInDays(tripEffectiveExit, tripEffectiveEntry) + 1
-          daysUsedOnDay += tripDays
-        }
-      })
-
-      if (daysUsedOnDay > 90 && !foundExcess) {
-        lastLegalDate = subDays(currentDate, 1)
-        foundExcess = true
-        break
-      }
-    }
-
-    return lastLegalDate
-  }
-
-  const lastLegalDate = findLastLegalDate()
-  const hasExcess = lastLegalDate < latestProposedDate2
-
-  const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
-  const { daysUsed, daysLeft } = calculateDaysUsedForDate(windowEnd, stays, visibleProposedForCalculation)
 
   const dateToPosition = (date: Date) => {
     const daysSinceStart = differenceInDays(date, timelineStart)
@@ -160,34 +102,39 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const monthMarkers = generateMonthMarkers()
 
   const stayColors = [
-    "bg-green-500", // 1
-    "bg-blue-500", // 2
-    "bg-yellow-500", // 3
-    "bg-purple-500", // 4
-    "bg-orange-500", // 5
-    "bg-cyan-500", // 6
-    "bg-pink-500", // 7
-    "bg-emerald-500", // 8
-    "bg-indigo-500", // 9
-    "bg-red-500", // 10
-    "bg-teal-500", // 11
-    "bg-violet-500", // 12
-    "bg-lime-500", // 13
-    "bg-fuchsia-500", // 14
-    "bg-amber-500", // 15
-    "bg-sky-500", // 16
-    "bg-rose-500", // 17
-    "bg-green-600", // 18
-    "bg-blue-600", // 19
-    "bg-purple-600", // 20
-    "bg-orange-600", // 21
-    "bg-cyan-600", // 22
-    "bg-pink-600", // 23
-    "bg-emerald-600", // 24
-    "bg-indigo-600", // 25
+    "bg-green-500",
+    "bg-blue-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-orange-500",
+    "bg-cyan-500",
+    "bg-pink-500",
+    "bg-emerald-500",
+    "bg-indigo-500",
+    "bg-red-500",
+    "bg-teal-500",
+    "bg-violet-500",
+    "bg-lime-500",
+    "bg-fuchsia-500",
+    "bg-amber-500",
+    "bg-sky-500",
+    "bg-rose-500",
+    "bg-green-600",
+    "bg-blue-600",
+    "bg-purple-600",
+    "bg-orange-600",
+    "bg-cyan-600",
+    "bg-pink-600",
+    "bg-emerald-600",
+    "bg-indigo-600",
   ]
 
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
+
+  const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
+  const calculationResult = calculateDaysUsedForDate(windowEnd, stays, visibleProposedForCalculation)
+  const daysUsed = calculationResult.daysUsed
+  const daysLeft = calculationResult.daysLeft
 
   if (isMobile) {
     return (
@@ -209,12 +156,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             {daysUsed} days used, {daysLeft} days left
           </div>
           {proposedTrips.length > 0 && showProposedTrips && (
-            <div className="flex flex-col gap-1">
-              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
-              <div className="text-xs text-muted-foreground italic">
-                Note: Reference date changes to the last date of proposed trip(s).
-              </div>
-            </div>
+            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
           )}
         </div>
 
@@ -354,16 +296,11 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             {daysUsed} days used, {daysLeft} days left
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          {proposedTrips.length > 0 && showProposedTrips && (
-            <>
-              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
-              <div className="text-xs text-muted-foreground italic">
-                Note: Reference date changes to the last date of proposed trip(s).
-              </div>
-            </>
-          )}
-        </div>
+        {proposedTrips.length > 0 && showProposedTrips && (
+          <div className="flex flex-col items-end gap-1">
+            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+          </div>
+        )}
       </div>
 
       <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">

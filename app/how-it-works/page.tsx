@@ -134,10 +134,6 @@ export default function HowItWorksPage() {
                   <li>Whether any day during the trip would exceed 90 days</li>
                 </ul>
               </div>
-              <p className="text-sm">
-                If a trip would exceed the limit, the calculator shows the <strong>last eligible exit date</strong>- the
-                latest date you could leave while remaining compliant.
-              </p>
             </CardContent>
           </Card>
 
@@ -153,10 +149,6 @@ export default function HowItWorksPage() {
                 <li>The rolling 180-day window as a blue border</li>
                 <li>Current compliance status (days used / days remaining)</li>
               </ul>
-              <p className="text-sm text-muted-foreground">
-                When a trip would be non-compliant, the window adjusts to show the last legal date, with excess days
-                appearing outside the window on the right.
-              </p>
             </CardContent>
           </Card>
         </div>

@@ -193,7 +193,7 @@ export function ThreeMonthCalendar({
           variant="outline"
           size="icon"
           onClick={handlePrevious}
-          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute left-2 top-1/2 -translate-y-1/2 z-10"
+          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute left-2 top-8 z-10"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
@@ -214,7 +214,7 @@ export function ThreeMonthCalendar({
           variant="outline"
           size="icon"
           onClick={handleNext}
-          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute right-2 top-1/2 -translate-y-1/2 z-10"
+          className="hidden lg:flex h-10 w-10 shadow-sm hover:shadow-md transition-shadow bg-card absolute right-2 top-8 z-10"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>

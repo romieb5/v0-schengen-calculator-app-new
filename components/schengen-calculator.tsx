@@ -386,10 +386,12 @@ export function SchengenCalculator() {
     setProposedTrips(proposedTrips.filter((trip) => trip.id !== id))
   }
 
-  const proposedTripResults = proposedTrips.map((trip) => ({
-    trip,
-    result: checkProposedTrip(trip.entryDate, trip.exitDate, trip.id),
-  }))
+  const proposedTripResults = proposedTrips
+    .sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
+    .map((trip) => ({
+      trip,
+      result: checkProposedTrip(trip.entryDate, trip.exitDate, trip.id),
+    }))
 
   const currentProposedResult =
     proposedEntry && proposedExit
@@ -577,7 +579,7 @@ export function SchengenCalculator() {
           </DialogContent>
         </Dialog>
 
-        <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-y-3 px-4">
+        <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-3 px-4">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Schengen Visit Calculator
           </h1>
@@ -684,7 +686,7 @@ export function SchengenCalculator() {
                   </div>
                   <div className="relative">
                     <Progress
-                      value={(daysUsed / 90) * 100}
+                      value={isOverstay ? 100 : (daysUsed / 90) * 100}
                       className={cn(
                         "h-3 sm:h-4 shadow-inner",
                         isOverstay
@@ -847,7 +849,7 @@ export function SchengenCalculator() {
                   disabled={!proposedEntry || !proposedExit}
                   className="w-full h-10 sm:h-11 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
                 >
-                  <PlusCircle className="mr-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <PlusCircle className="mr-2 h-3 w-3 sm:h-4 w-4 flex-shrink-0" />
                   {editingProposedId ? "Update Proposed Trip" : "Add Proposed Trip"}
                 </Button>
 
@@ -985,85 +987,87 @@ export function SchengenCalculator() {
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
                 <div className="space-y-3">
-                  {stays.map((stay, index) => (
-                    <div
-                      key={stay.id}
-                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 border-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 bg-background"
-                    >
-                      <div className="flex items-start gap-2 sm:gap-3 w-full sm:flex-1">
-                        <div
-                          className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${stayColors[index % stayColors.length]} text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm`}
-                        >
-                          {index + 1}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          {/* Mobile: Date range and buttons on same row */}
-                          <div className="flex items-start justify-between gap-2 sm:hidden">
-                            <div className="text-xs leading-tight">
-                              <div className="font-semibold text-foreground">
-                                {format(stay.entryDate, "MMM d, yyyy")} →
+                  {[...stays]
+                    .sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
+                    .map((stay, index) => (
+                      <div
+                        key={stay.id}
+                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 border-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 bg-background"
+                      >
+                        <div className="flex items-start gap-2 sm:gap-3 w-full sm:flex-1">
+                          <div
+                            className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${stayColors[index % stayColors.length]} text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm`}
+                          >
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            {/* Mobile: Date range and buttons on same row */}
+                            <div className="flex items-start justify-between gap-2 sm:hidden">
+                              <div className="text-xs leading-tight">
+                                <div className="font-semibold text-foreground">
+                                  {format(stay.entryDate, "MMM d, yyyy")} →
+                                </div>
+                                <div className="font-semibold text-foreground">
+                                  {format(stay.exitDate, "MMM d, yyyy")}
+                                </div>
                               </div>
-                              <div className="font-semibold text-foreground">
-                                {format(stay.exitDate, "MMM d, yyyy")}
+                              <div className="flex gap-1 flex-shrink-0">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => editStay(stay)}
+                                  className="shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
+                                >
+                                  <Pencil className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => deleteStay(stay.id)}
+                                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
                               </div>
                             </div>
-                            <div className="flex gap-1 flex-shrink-0">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => editStay(stay)}
-                                className="shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
-                              >
-                                <Pencil className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => deleteStay(stay.id)}
-                                className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                          {/* Mobile: Day count below date range */}
-                          <div className="text-xs text-muted-foreground mt-1 sm:hidden">
-                            {differenceInDays(stay.exitDate, stay.entryDate) + 1} day(s)
-                          </div>
-                          {/* Desktop: Date range and day count on same row */}
-                          <div className="hidden sm:flex items-center justify-between gap-2">
-                            <span className="font-semibold text-foreground text-base break-words">
-                              {format(stay.entryDate, "MMM d, yyyy")} → {format(stay.exitDate, "MMM d, yyyy")}
-                            </span>
-                            <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            {/* Mobile: Day count below date range */}
+                            <div className="text-xs text-muted-foreground mt-1 sm:hidden">
                               {differenceInDays(stay.exitDate, stay.entryDate) + 1} day(s)
-                            </span>
+                            </div>
+                            {/* Desktop: Date range and day count on same row */}
+                            <div className="hidden sm:flex items-center justify-between gap-2">
+                              <span className="font-semibold text-foreground text-base break-words">
+                                {format(stay.entryDate, "MMM d, yyyy")} → {format(stay.exitDate, "MMM d, yyyy")}
+                              </span>
+                              <span className="text-sm text-muted-foreground whitespace-nowrap">
+                                {differenceInDays(stay.exitDate, stay.entryDate) + 1} day(s)
+                              </span>
+                            </div>
                           </div>
                         </div>
+                        {/* Desktop: Edit and Delete buttons */}
+                        <div className="hidden sm:flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => editStay(stay)}
+                            className="shadow-sm hover:shadow-md transition-shadow text-sm h-9"
+                          >
+                            <Pencil className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span>Edit</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => deleteStay(stay.id)}
+                            className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow text-sm h-9"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span>Delete</span>
+                          </Button>
+                        </div>
                       </div>
-                      {/* Desktop: Edit and Delete buttons */}
-                      <div className="hidden sm:flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => editStay(stay)}
-                          className="shadow-sm hover:shadow-md transition-shadow text-sm h-9"
-                        >
-                          <Pencil className="h-4 w-4 mr-1 flex-shrink-0" />
-                          <span>Edit</span>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteStay(stay.id)}
-                          className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow text-sm h-9"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1 flex-shrink-0" />
-                          <span>Delete</span>
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>
