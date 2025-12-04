@@ -1,7 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from "date-fns"
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameDay,
+  addMonths,
+  subMonths,
+  isWithinInterval,
+} from "date-fns"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -10,9 +19,16 @@ interface SingleMonthCalendarProps {
   exitDate: Date | null
   onDateSelect: (date: Date) => void
   initialMonth?: Date
+  disabledRanges?: { start: Date; end: Date }[]
 }
 
-export function SingleMonthCalendar({ entryDate, exitDate, onDateSelect, initialMonth }: SingleMonthCalendarProps) {
+export function SingleMonthCalendar({
+  entryDate,
+  exitDate,
+  onDateSelect,
+  initialMonth,
+  disabledRanges = [],
+}: SingleMonthCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(initialMonth || new Date())
 
   useEffect(() => {
@@ -35,6 +51,16 @@ export function SingleMonthCalendar({ entryDate, exitDate, onDateSelect, initial
 
   const isStartDate = (day: Date) => entryDate && isSameDay(day, entryDate)
   const isEndDate = (day: Date) => exitDate && isSameDay(day, exitDate)
+
+  const isDateDisabled = (day: Date) => {
+    return disabledRanges.some((range) => {
+      try {
+        return isWithinInterval(day, { start: range.start, end: range.end })
+      } catch {
+        return false
+      }
+    })
+  }
 
   const handlePreviousMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
   const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
@@ -75,16 +101,19 @@ export function SingleMonthCalendar({ entryDate, exitDate, onDateSelect, initial
           const isStart = isStartDate(day)
           const isEnd = isEndDate(day)
           const isSelected = isStart || isEnd
+          const disabled = isDateDisabled(day)
 
           return (
             <button
               key={day.toISOString()}
-              onClick={() => onDateSelect(day)}
+              onClick={() => !disabled && onDateSelect(day)}
+              disabled={disabled}
               className={`
                 h-12 w-full rounded-md text-sm font-medium transition-all
-                ${isSelected ? "bg-primary text-primary-foreground ring-2 ring-primary" : ""}
-                ${inRange && !isSelected ? "bg-primary/20" : ""}
-                ${!inRange && !isSelected ? "hover:bg-accent" : ""}
+                ${disabled ? "opacity-40 cursor-not-allowed bg-muted/50 text-muted-foreground line-through" : ""}
+                ${!disabled && isSelected ? "bg-primary text-primary-foreground ring-2 ring-primary" : ""}
+                ${!disabled && inRange && !isSelected ? "bg-primary/20" : ""}
+                ${!disabled && !inRange && !isSelected ? "hover:bg-accent" : ""}
               `}
             >
               {format(day, "d")}

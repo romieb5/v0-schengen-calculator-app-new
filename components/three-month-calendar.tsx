@@ -24,6 +24,7 @@ interface ThreeMonthCalendarProps {
   onExitDateChange: (date: Date) => void
   onClear: () => void
   initialMonth?: Date
+  disabledRanges?: { start: Date; end: Date }[]
 }
 
 export function ThreeMonthCalendar({
@@ -33,6 +34,7 @@ export function ThreeMonthCalendar({
   onExitDateChange,
   onClear,
   initialMonth,
+  disabledRanges = [],
 }: ThreeMonthCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (initialMonth) {
@@ -55,12 +57,6 @@ export function ThreeMonthCalendar({
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  useEffect(() => {
-    if (initialMonth) {
-      setCurrentMonth(startOfMonth(subMonths(initialMonth, 1)))
-    }
-  }, [initialMonth])
-
   const month1 = currentMonth
   const month2 = addMonths(currentMonth, 1)
   const month3 = addMonths(currentMonth, 2)
@@ -73,7 +69,19 @@ export function ThreeMonthCalendar({
     setCurrentMonth(addMonths(currentMonth, isMobile ? 1 : 3))
   }
 
+  const isDateDisabled = (date: Date) => {
+    return disabledRanges.some((range) => {
+      try {
+        return isWithinInterval(date, { start: range.start, end: range.end })
+      } catch {
+        return false
+      }
+    })
+  }
+
   const handleDateClick = (date: Date) => {
+    if (isDateDisabled(date)) return
+
     if (!entryDate) {
       onEntryDateChange(date)
       onExitDateChange(date)
@@ -150,17 +158,22 @@ export function ThreeMonthCalendar({
           {daysInMonth.map((day) => {
             const isSelected = isDaySelected(day)
             const isInRange = isDayInRange(day)
+            const disabled = isDateDisabled(day)
 
             return (
               <button
                 key={day.toISOString()}
                 onClick={() => handleDateClick(day)}
+                disabled={disabled}
                 className={cn(
                   "aspect-square flex items-center justify-center rounded-lg transition-all font-medium",
                   isMobile ? "text-base p-1" : "text-sm p-2",
-                  "hover:bg-primary/20 hover:scale-105 hover:shadow-sm",
-                  isSelected && "bg-primary text-primary-foreground hover:bg-primary/90 font-bold shadow-md scale-105",
-                  isInRange && !isSelected && "bg-primary/15 font-semibold",
+                  disabled && "opacity-40 cursor-not-allowed bg-muted/50 line-through",
+                  !disabled && "hover:bg-primary/20 hover:scale-105 hover:shadow-sm",
+                  !disabled &&
+                    isSelected &&
+                    "bg-primary text-primary-foreground hover:bg-primary/90 font-bold shadow-md scale-105",
+                  !disabled && isInRange && !isSelected && "bg-primary/15 font-semibold",
                   !isSameMonth(day, monthDate) && "text-muted-foreground/30",
                 )}
               >

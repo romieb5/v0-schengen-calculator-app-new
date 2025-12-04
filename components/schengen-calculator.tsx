@@ -25,6 +25,16 @@ interface Stay {
   countryCode?: string
 }
 
+const getDisabledDateRanges = (stays: Stay[], proposedTrips: Stay[], excludeId?: string | null) => {
+  const allTrips = [...stays, ...proposedTrips]
+  return allTrips
+    .filter((trip) => trip.id !== excludeId)
+    .map((trip) => ({
+      start: trip.entryDate,
+      end: trip.exitDate,
+    }))
+}
+
 export function SchengenCalculator() {
   const [stays, setStays] = useState<Stay[]>([])
   const [entryDate, setEntryDate] = useState<Date>()
@@ -443,6 +453,7 @@ export function SchengenCalculator() {
                     }
                   }}
                   initialMonth={editDialogEntry}
+                  disabledRanges={getDisabledDateRanges(stays, proposedTrips, editDialogId)}
                 />
 
                 {editDialogEntry && editDialogExit && (
@@ -519,6 +530,7 @@ export function SchengenCalculator() {
                     }
                   }}
                   initialMonth={editProposedDialogEntry}
+                  disabledRanges={getDisabledDateRanges(stays, proposedTrips, editProposedDialogId)}
                 />
 
                 {editProposedDialogEntry && editProposedDialogExit && (
@@ -591,6 +603,8 @@ export function SchengenCalculator() {
                     setEntryDate(undefined)
                     setExitDate(undefined)
                   }}
+                  initialMonth={entryDate || new Date()}
+                  disabledRanges={getDisabledDateRanges(stays, proposedTrips)}
                 />
 
                 {entryDate && exitDate && (
@@ -754,7 +768,7 @@ export function SchengenCalculator() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-4 sm:px-6">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="proposed-entry" className="text-sm sm:text-base">
                       Proposed Entry Date
@@ -780,7 +794,12 @@ export function SchengenCalculator() {
                             setProposedEntry(date)
                             setProposedEntryPopoverOpen(false)
                           }}
-                          defaultMonth={proposedEntry}
+                          disabled={(date) => {
+                            const disabledRanges = getDisabledDateRanges(stays, proposedTrips)
+                            return disabledRanges.some((range) => {
+                              return date >= range.start && date <= range.end
+                            })
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -810,7 +829,12 @@ export function SchengenCalculator() {
                             setProposedExit(date)
                             setProposedExitPopoverOpen(false)
                           }}
-                          defaultMonth={proposedExit}
+                          disabled={(date) => {
+                            const disabledRanges = getDisabledDateRanges(stays, proposedTrips)
+                            return disabledRanges.some((range) => {
+                              return date >= range.start && date <= range.end
+                            })
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
