@@ -66,14 +66,14 @@ export function SingleMonthCalendar({
   const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-md mx-auto">
       {/* Month header with navigation */}
-      <div className="flex items-center justify-between mb-4">
-        <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 mb-4">
+        <Button variant="ghost" size="sm" onClick={handlePreviousMonth} className="h-8 w-8 p-0">
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <h3 className="text-xl font-semibold text-primary">{format(currentMonth, "MMMM yyyy")}</h3>
-        <Button variant="outline" size="icon" onClick={handleNextMonth}>
+        <h3 className="text-xl font-semibold text-primary text-center">{format(currentMonth, "MMMM yyyy")}</h3>
+        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-8 w-8 p-0">
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

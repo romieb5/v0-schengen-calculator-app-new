@@ -135,7 +135,7 @@ export function ThreeMonthCalendar({
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <div className="text-center font-bold text-base text-primary flex-1 min-w-0 truncate px-1">
-              {format(monthDate, "MMMM yyyy")}
+              {format(monthDate, "MMM yyyy")}
             </div>
             <Button variant="ghost" size="icon" onClick={handleNext} className="h-8 w-8 hover:bg-muted flex-shrink-0">
               <ChevronRight className="h-5 w-5" />

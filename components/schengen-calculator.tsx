@@ -916,18 +916,18 @@ export function SchengenCalculator() {
                               </div>
                               <div className="flex gap-1 flex-shrink-0">
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => editProposedTrip(trip.id)}
-                                  className="h-8 w-8 p-0"
+                                  className="h-8 w-8 p-0 shadow-sm hover:shadow-md transition-shadow"
                                 >
                                   <Pencil className="h-3.5 w-3.5" />
                                 </Button>
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => deleteProposedTrip(trip.id)}
-                                  className="text-destructive hover:text-destructive"
+                                  className="h-8 w-8 p-0 text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
