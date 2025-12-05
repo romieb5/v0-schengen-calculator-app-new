@@ -7,7 +7,11 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+})
 
 export const metadata: Metadata = {
   title: "Schengen 90/180 Calculator | EU Visa Day Counter",
@@ -98,6 +102,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          rel="preload"
+          href="/_next/static/media/inter-latin-400.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={`${inter.className} font-sans antialiased`}>

@@ -589,7 +589,7 @@ export function SchengenCalculator() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
             Schengen Visit Calculator
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto min-h-[1.5rem]">
             Track your stays and ensure compliance with Schengen visa rules
           </p>
         </div>
