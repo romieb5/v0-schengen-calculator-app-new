@@ -22,20 +22,8 @@ export const metadata: Metadata = {
   authors: [{ name: "Romie Bajwa" }],
   generator: "v0.app",
   icons: {
-    icon: [
-      {
-        url: "/browser-icon.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/browser-icon.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
+    icon: "/browser-icon.png",
+    shortcut: "/browser-icon.png",
     apple: "/browser-icon.png",
   },
   openGraph: {
