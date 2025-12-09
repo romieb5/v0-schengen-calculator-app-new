@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useTranslations } from "next-intl"
 import {
   format,
   startOfDay,
@@ -39,7 +38,6 @@ interface TimelineVisualizationProps {
 }
 
 export function TimelineVisualization({ stays, proposedTrips, referenceDate }: TimelineVisualizationProps) {
-  const t = useTranslations("timeline")
   const [showProposedTrips, setShowProposedTrips] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -61,7 +59,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   ]
 
   if (allDates.length === 0) {
-    return <div className="text-center py-12 text-muted-foreground">{t("noStays")}</div>
+    return <div className="text-center py-12 text-muted-foreground">No stays or proposed trips to visualize</div>
   }
 
   const latestProposedDate =
@@ -144,8 +142,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const daysUsed = calculationResult.daysUsed
   const daysLeft = calculationResult.daysLeft
 
-  const daysRemainingText =
-    daysLeft < 0 ? `${Math.abs(daysLeft)} ${t("daysOverLimit")}` : `${daysLeft} ${t("daysLeft")}`
+  const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
 
   if (isMobile) {
     return (
@@ -155,7 +152,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             <div className="flex items-center gap-2">
               <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
-                {t("showProposedTrips")}
+                Show Proposed Trips
               </Label>
             </div>
           )}
@@ -164,12 +161,14 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {daysUsed} {t("daysUsed")}, {daysRemainingText}
+            {daysUsed} days used, {daysRemainingText}
           </div>
           {proposedTrips.length > 0 && showProposedTrips && (
             <>
-              <div className="text-xs text-muted-foreground italic">{t("proposedTripsNote")}</div>
-              <div className="text-xs text-muted-foreground italic">{t("referenceDateNote")}</div>
+              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+              <div className="text-xs text-muted-foreground italic">
+                Reference date based on most recent proposed trip.
+              </div>
             </>
           )}
         </div>
@@ -258,7 +257,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 marginLeft: "80px",
               }}
             >
-              <div className="text-xs font-medium text-primary bg-background/80 px-1 rounded">{t("dayWindow")}</div>
+              <div className="text-xs font-medium text-primary bg-background/80 px-1 rounded">180-day window</div>
             </div>
 
             <div
@@ -299,7 +298,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             <div className="flex items-center gap-2">
               <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
-                {t("showProposedTrips")}
+                Show Proposed Trips
               </Label>
             </div>
           )}
@@ -308,13 +307,15 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
             }`}
           >
-            {daysUsed} {t("daysUsed")}, {daysRemainingText}
+            {daysUsed} days used, {daysRemainingText}
           </div>
         </div>
         {proposedTrips.length > 0 && showProposedTrips && (
           <div className="flex flex-col items-end gap-1">
-            <div className="text-xs text-muted-foreground italic">{t("proposedTripsNote")}</div>
-            <div className="text-xs text-muted-foreground italic">{t("referenceDateNote")}</div>
+            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+            <div className="text-xs text-muted-foreground italic">
+              Reference date based on most recent proposed trip.
+            </div>
           </div>
         )}
       </div>
@@ -343,7 +344,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             }}
           >
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-primary">
-              {t("dayWindow")}
+              180-day window
             </div>
           </div>
 

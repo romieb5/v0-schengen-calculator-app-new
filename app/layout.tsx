@@ -3,8 +3,6 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { NextIntlClientProvider } from "next-intl"
-import { getMessages, getLocale } from "next-intl/server"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import "./globals.css"
@@ -59,14 +57,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const locale = await getLocale()
-  const messages = await getMessages()
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -93,7 +88,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={locale}>
+    <html lang="en">
       <head>
         <link
           rel="preload"
@@ -105,11 +100,9 @@ export default async function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={`${inter.className} font-sans antialiased`}>
-        <NextIntlClientProvider messages={messages}>
-          <Navigation />
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
+        <Navigation />
+        {children}
+        <Footer />
         <Analytics />
         <SpeedInsights />
       </body>

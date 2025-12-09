@@ -2,20 +2,17 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
 import { HelpCircle, Info, ChevronDown } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function Navigation() {
   const pathname = usePathname()
-  const t = useTranslations("nav")
 
   const links = [
-    { href: "/", label: t("home"), icon: null },
-    { href: "/how-it-works", label: t("howItWorks"), icon: Info },
-    { href: "/faq", label: t("faq"), icon: HelpCircle },
+    { href: "/", label: "Calculator", icon: null },
+    { href: "/how-it-works", label: "How It Works", icon: Info },
+    { href: "/faq", label: "FAQ", icon: HelpCircle },
   ]
 
   const currentPage = links.find((link) => link.href === pathname) || links[0]
@@ -48,12 +45,10 @@ export function Navigation() {
                 </Link>
               )
             })}
-            <LanguageSwitcher />
           </div>
 
           {/* Mobile dropdown - hidden on desktop */}
-          <div className="md:hidden flex items-center gap-2">
-            <LanguageSwitcher />
+          <div className="md:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2 bg-transparent">
