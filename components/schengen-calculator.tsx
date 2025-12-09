@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -36,6 +37,7 @@ const getDisabledDateRanges = (stays: Stay[], proposedTrips: Stay[], excludeId?:
 }
 
 export function SchengenCalculator() {
+  const t = useTranslations()
   const [stays, setStays] = useState<Stay[]>([])
   const [entryDate, setEntryDate] = useState<Date>()
   const [exitDate, setExitDate] = useState<Date>()
@@ -83,7 +85,7 @@ export function SchengenCalculator() {
 
     const savedProposed = localStorage.getItem("schengen-proposed-trips")
     if (savedProposed) {
-      const parsed = JSON.parse(savedProposed)
+      const parsed = JSON.Parse(savedProposed)
       setProposedTrips(
         parsed.map((s: any) => ({
           ...s,
@@ -433,14 +435,14 @@ export function SchengenCalculator() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-6xl">
         {/* Edit Stay Dialog */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle className="text-lg sm:text-2xl">Edit Stay</DialogTitle>
-              <DialogDescription className="text-sm">Update the details of your recorded stay</DialogDescription>
+              <DialogTitle className="text-lg sm:text-2xl">{t("editDialog.editStayTitle")}</DialogTitle>
+              <DialogDescription className="text-sm">{t("editDialog.editStayDescription")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
               <div className="space-y-4">
@@ -467,24 +469,22 @@ export function SchengenCalculator() {
                 {editDialogEntry && editDialogExit && (
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">Entry:</span>
+                      <span className="font-medium text-foreground">{t("addStay.entry")}:</span>
                       <span className="text-muted-foreground">{format(editDialogEntry, "MMM d, yyyy")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">Exit:</span>
+                      <span className="font-medium text-foreground">{t("addStay.exit")}:</span>
                       <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">Duration:</span>
+                      <span className="font-semibold text-foreground">{t("addStay.duration")}:</span>
                       <span className="font-semibold text-primary">
-                        {differenceInDays(editDialogExit, editDialogEntry) + 1} day(s)
+                        {differenceInDays(editDialogExit, editDialogEntry) + 1} {t("addStay.days")}
                       </span>
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Stay Type and Country Code fields are removed as per update */}
 
               <div className="flex gap-3 justify-end pt-2 sm:pt-4">
                 <Button
@@ -498,26 +498,26 @@ export function SchengenCalculator() {
                     setEditDialogId(null)
                   }}
                 >
-                  Cancel
+                  {t("addStay.cancel")}
                 </Button>
                 <Button
                   onClick={saveEditedStay}
                   disabled={!editDialogEntry || !editDialogExit}
                   className="font-semibold shadow-md hover:shadow-lg transition-shadow"
                 >
-                  Update Stay
+                  {t("editDialog.updateStayButton")}
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
 
-        {/* Add Edit Proposed Trip Dialog */}
+        {/* Edit Proposed Trip Dialog */}
         <Dialog open={editProposedDialogOpen} onOpenChange={setEditProposedDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle className="text-lg sm:text-2xl">Edit Proposed Trip</DialogTitle>
-              <DialogDescription className="text-sm">Update the dates of your proposed trip</DialogDescription>
+              <DialogTitle className="text-lg sm:text-2xl">{t("editDialog.editTripTitle")}</DialogTitle>
+              <DialogDescription className="text-sm">{t("editDialog.editTripDescription")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
               <div className="space-y-4">
@@ -544,17 +544,17 @@ export function SchengenCalculator() {
                 {editProposedDialogEntry && editProposedDialogExit && (
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">Entry:</span>
+                      <span className="font-medium text-foreground">{t("addStay.entry")}:</span>
                       <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">Exit:</span>
+                      <span className="font-medium text-foreground">{t("addStay.exit")}:</span>
                       <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">Duration:</span>
+                      <span className="font-semibold text-foreground">{t("addStay.duration")}:</span>
                       <span className="font-semibold text-primary">
-                        {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1} day(s)
+                        {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1} {t("addStay.days")}
                       </span>
                     </div>
                   </div>
@@ -571,34 +571,38 @@ export function SchengenCalculator() {
                     setEditProposedDialogId(null)
                   }}
                 >
-                  Cancel
+                  {t("addStay.cancel")}
                 </Button>
                 <Button
                   onClick={saveEditedProposedTrip}
                   disabled={!editProposedDialogEntry || !editProposedDialogExit}
                   className="font-semibold shadow-md hover:shadow-lg transition-shadow"
                 >
-                  Update Proposed Trip
+                  {t("editDialog.updateTripButton")}
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
 
+        {/* Hero Section */}
         <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-3 px-4">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
-            Schengen Visit Calculator
+            {t("hero.title")}
           </h1>
           <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto min-h-[1.5rem]">
-            Track your stays and ensure compliance with Schengen visa rules
+            {t("hero.subtitle")}
           </p>
         </div>
 
         <div className="space-y-6 sm:space-y-8">
+          {/* Add Stay Card */}
           <Card className="border-2 shadow-lg">
             <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
-              <CardTitle className="text-lg sm:text-xl lg:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Record your Schengen area visits</CardDescription>
+              <CardTitle className="text-lg sm:text-xl lg:text-2xl">
+                {editingId ? t("addStay.titleEdit") : t("addStay.title")}
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">{t("addStay.description")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               <div className="space-y-4">
@@ -619,17 +623,17 @@ export function SchengenCalculator() {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-muted/50 rounded-lg px-3 sm:px-4 py-2 sm:py-3">
                     <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6 text-xs sm:text-sm">
                       <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="font-medium text-foreground">Entry:</span>
+                        <span className="font-medium text-foreground">{t("addStay.entry")}:</span>
                         <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
                       </div>
                       <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="font-medium text-foreground">Exit:</span>
+                        <span className="font-medium text-foreground">{t("addStay.exit")}:</span>
                         <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
                       </div>
                       <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="font-semibold text-foreground">Duration:</span>
+                        <span className="font-semibold text-foreground">{t("addStay.duration")}:</span>
                         <span className="font-semibold text-primary">
-                          {differenceInDays(exitDate, entryDate) + 1} day(s)
+                          {differenceInDays(exitDate, entryDate) + 1} {t("addStay.days")}
                         </span>
                       </div>
                     </div>
@@ -639,7 +643,7 @@ export function SchengenCalculator() {
                       disabled={!entryDate || !exitDate}
                     >
                       <PlusCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                      {editingId ? "Update Stay" : "Add Stay"}
+                      {editingId ? t("addStay.updateButton") : t("addStay.addButton")}
                     </Button>
                   </div>
                 )}
@@ -657,30 +661,33 @@ export function SchengenCalculator() {
                   variant="outline"
                   className="w-full sm:w-auto"
                 >
-                  Cancel Edit
+                  {t("addStay.cancelEdit")}
                 </Button>
               )}
             </CardContent>
           </Card>
 
-          <div className="space-y-6 sm:space-y-8 lg:grid lg:grid-cols-2 lg:gap-8 lg:space-y-0">
+          {/* Current Status Card */}
+          {stays.length > 0 && (
             <Card className="border-2 shadow-lg">
               <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
                 <CardTitle className="text-lg sm:text-xl lg:text-2xl flex items-center gap-2">
                   <Info className="h-5 w-5 flex-shrink-0" />
-                  Current Status
+                  {t("currentStatus.title")}
                 </CardTitle>
                 <CardDescription className="text-xs sm:text-sm break-words">
-                  <span className="block sm:inline">180-day window:</span>{" "}
+                  <span className="block sm:inline">{t("currentStatus.window")}:</span>{" "}
                   <span className="block sm:inline">
-                    {format(windowStart, "PP")} to {format(referenceDate, "PP")}
+                    {format(windowStart, "PP")} {t("currentStatus.to")} {format(referenceDate, "PP")}
                   </span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex justify-between items-baseline gap-2">
-                    <span className="text-xs sm:text-sm font-semibold text-foreground">Days Used</span>
+                    <span className="text-xs sm:text-sm font-semibold text-foreground">
+                      {t("currentStatus.daysUsed")}
+                    </span>
                     <span
                       className={cn(
                         "text-xl sm:text-2xl font-bold tabular-nums",
@@ -708,33 +715,39 @@ export function SchengenCalculator() {
                 {isOverstay ? (
                   <Alert className="border-2 border-destructive bg-destructive/10">
                     <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive flex-shrink-0" />
-                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">Overstay Warning</AlertTitle>
+                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">
+                      {t("currentStatus.overstayWarning")}
+                    </AlertTitle>
                     <AlertDescription className="text-foreground font-medium text-xs sm:text-sm break-words">
-                      You have exceeded the 90-day limit by {daysUsed - 90} day(s)
+                      {t("currentStatus.overstayMessage", { days: daysUsed - 90 })}
                     </AlertDescription>
                   </Alert>
                 ) : daysRemaining <= 10 ? (
                   <Alert className="border-2 border-warning bg-warning/10">
                     <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-warning flex-shrink-0" />
-                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">Caution</AlertTitle>
+                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">
+                      {t("currentStatus.caution")}
+                    </AlertTitle>
                     <AlertDescription className="text-foreground font-medium text-xs sm:text-sm break-words">
-                      Only {daysRemaining} day(s) remaining in your 180-day window
+                      {t("currentStatus.cautionMessage", { days: daysRemaining })}
                     </AlertDescription>
                   </Alert>
                 ) : (
                   <Alert className="border-2 border-success bg-success/10">
                     <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-success flex-shrink-0" />
-                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">Compliant</AlertTitle>
+                    <AlertTitle className="font-bold text-foreground text-sm sm:text-base">
+                      {t("currentStatus.compliant")}
+                    </AlertTitle>
                     <AlertDescription className="text-foreground font-medium text-xs sm:text-sm break-words">
-                      You have {daysRemaining} day(s) remaining
+                      {t("currentStatus.compliantMessage", { days: daysRemaining })}
                     </AlertDescription>
                   </Alert>
                 )}
 
                 <div className="pt-4 sm:pt-6 border-t space-y-2 sm:space-y-3">
-                  <Label className="text-sm sm:text-base font-semibold">Reference Date</Label>
+                  <Label className="text-sm sm:text-base font-semibold">{t("currentStatus.referenceDate")}</Label>
                   <p className="text-xs sm:text-sm text-muted-foreground break-words">
-                    Change this date to adjust the 180-day window and see your status at different points in time.
+                    {t("currentStatus.referenceDateDescription")}
                   </p>
                   <Popover open={referencePopoverOpen} onOpenChange={setReferencePopoverOpen}>
                     <PopoverTrigger asChild>
@@ -764,22 +777,25 @@ export function SchengenCalculator() {
                 </div>
               </CardContent>
             </Card>
+          )}
 
+          {/* Check Proposed Trip Card */}
+          {stays.length > 0 && (
             <Card className="border-2 shadow-lg">
               <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
                 <CardTitle className="text-lg sm:text-xl lg:text-2xl flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                  Check Proposed Trip
+                  {t("proposedTrip.title")}
                 </CardTitle>
                 <CardDescription className="text-sm sm:text-base break-words">
-                  Verify if a future trip would be legal
+                  {t("proposedTrip.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-4 sm:px-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="proposed-entry" className="text-sm sm:text-base">
-                      Proposed Entry Date
+                      {t("proposedTrip.proposedEntry")}
                     </Label>
                     <Popover open={proposedEntryPopoverOpen} onOpenChange={setProposedEntryPopoverOpen}>
                       <PopoverTrigger asChild>
@@ -816,7 +832,7 @@ export function SchengenCalculator() {
 
                   <div className="space-y-2">
                     <Label htmlFor="proposed-exit" className="text-sm sm:text-base">
-                      Proposed Exit Date
+                      {t("proposedTrip.proposedExit")}
                     </Label>
                     <Popover open={proposedExitPopoverOpen} onOpenChange={setProposedExitPopoverOpen}>
                       <PopoverTrigger asChild>
@@ -856,7 +872,7 @@ export function SchengenCalculator() {
                   className="w-full h-10 sm:h-11 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
                 >
                   <PlusCircle className="mr-2 h-3 w-3 sm:h-4 w-4 flex-shrink-0" />
-                  {editingProposedId ? "Update Proposed Trip" : "Add Proposed Trip"}
+                  {editingProposedId ? t("proposedTrip.updateButton") : t("proposedTrip.addButton")}
                 </Button>
 
                 {currentProposedResult && (
@@ -874,7 +890,9 @@ export function SchengenCalculator() {
                       <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
                     )}
                     {!currentProposedResult.isLegal && (
-                      <AlertTitle className={cn("font-bold text-foreground")}>Trip Exceeds Limit</AlertTitle>
+                      <AlertTitle className={cn("font-bold text-foreground")}>
+                        {t("proposedTrip.tripExceedsLimit")}
+                      </AlertTitle>
                     )}
                     <AlertDescription className={cn("font-medium text-foreground")}>
                       {currentProposedResult.message.split(". ").map((sentence, idx) => (
@@ -889,7 +907,7 @@ export function SchengenCalculator() {
 
                 {proposedTripResults.length > 0 && (
                   <div className="space-y-3 pt-4 border-t">
-                    <h3 className="font-semibold text-base">Saved Proposed Trips</h3>
+                    <h3 className="font-semibold text-base">{t("proposedTrip.savedTrips")}</h3>
                     <div className="space-y-2">
                       {proposedTripResults.map(({ trip, result }) => (
                         <div
@@ -959,15 +977,14 @@ export function SchengenCalculator() {
                 )}
               </CardContent>
             </Card>
-          </div>
+          )}
 
+          {/* Timeline Visualization */}
           {(stays.length > 0 || proposedTrips.length > 0) && (
             <Card className="border-2 shadow-lg">
-              <CardHeader className="pb-6 px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl lg:text-2xl">Timeline Visualization</CardTitle>
-                <CardDescription className="text-sm sm:text-base">
-                  Visual representation of your stays within the rolling 180-day window
-                </CardDescription>
+              <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl">{t("timeline.title")}</CardTitle>
+                <CardDescription className="text-sm sm:text-base">{t("timeline.description")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <TimelineVisualization
@@ -983,12 +1000,15 @@ export function SchengenCalculator() {
             </Card>
           )}
 
+          {/* Recorded Stays */}
           {stays.length > 0 && (
             <Card className="border-2 shadow-lg">
               <CardHeader className="pb-4 sm:pb-6 px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl lg:text-2xl">Recorded Stays</CardTitle>
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl">{t("recordedStays.title")}</CardTitle>
                 <CardDescription className="text-sm sm:text-base">
-                  {stays.length} stay{stays.length !== 1 ? "s" : ""} recorded
+                  {stays.length === 1
+                    ? t("recordedStays.description", { count: stays.length })
+                    : t("recordedStays.description_plural", { count: stays.length })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
@@ -998,77 +1018,78 @@ export function SchengenCalculator() {
                     const stayColor = stayColorMap.get(stay.id) || stayColors[0]
 
                     return (
-                      <div
-                        key={stay.id}
-                        className="bg-card p-3 sm:p-4 rounded-lg border-2 hover:border-primary/50 transition-colors relative group shadow-sm"
-                      >
-                        <div className="flex items-start gap-3 sm:gap-4">
-                          <div
-                            className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${stayColor} text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm`}
-                          >
-                            {index + 1}
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            {/* Mobile: Date range and buttons on same row */}
-                            <div className="flex items-start justify-between gap-2 sm:hidden">
-                              <div className="text-xs leading-tight">
-                                <div className="font-semibold text-foreground">
-                                  {format(stay.entryDate, "MMM d, yyyy")} →
-                                </div>
-                                <div className="font-semibold text-foreground">
-                                  {format(stay.exitDate, "MMM d, yyyy")}
-                                </div>
-                              </div>
-                              <div className="flex gap-1 flex-shrink-0">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => editStay(stay)}
-                                  className="shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
-                                >
-                                  <Pencil className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => deleteStay(stay.id)}
-                                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </Button>
-                              </div>
+                      <div key={stay.id} className="rounded-lg border-2 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="p-3 sm:p-4">
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${stayColor} text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm`}
+                            >
+                              {index + 1}
                             </div>
-                            {/* Mobile: Day count below date range */}
-                            <div className="text-xs text-muted-foreground mt-1 sm:hidden">{duration} day(s)</div>
-                            <div className="hidden sm:flex items-center justify-between gap-4">
-                              <div className="flex items-center gap-4 flex-1">
-                                <span className="font-semibold text-foreground text-base break-words">
-                                  {format(stay.entryDate, "MMM d, yyyy")} → {format(stay.exitDate, "MMM d, yyyy")}
-                                </span>
-                                <span className="text-sm text-muted-foreground whitespace-nowrap">
-                                  {duration} day(s)
-                                </span>
+
+                            <div className="flex-1 min-w-0">
+                              {/* Mobile: Date range and buttons on same row */}
+                              <div className="flex items-start justify-between gap-2 sm:hidden">
+                                <div className="text-xs leading-tight">
+                                  <div className="font-semibold text-foreground">
+                                    {format(stay.entryDate, "MMM d, yyyy")} →
+                                  </div>
+                                  <div className="font-semibold text-foreground">
+                                    {format(stay.exitDate, "MMM d, yyyy")}
+                                  </div>
+                                </div>
+                                <div className="flex gap-1 flex-shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => editStay(stay)}
+                                    className="shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
+                                  >
+                                    <Pencil className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => deleteStay(stay.id)}
+                                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               </div>
-                              <div className="flex gap-2 flex-shrink-0">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => editStay(stay)}
-                                  className="shadow-sm hover:shadow-md transition-shadow text-sm h-9"
-                                >
-                                  <Pencil className="h-4 w-4 mr-1 flex-shrink-0" />
-                                  <span>Edit</span>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => deleteStay(stay.id)}
-                                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow text-sm h-9"
-                                >
-                                  <Trash2 className="h-4 w-4 mr-1 flex-shrink-0" />
-                                  <span>Delete</span>
-                                </Button>
+                              {/* Mobile: Day count below date range */}
+                              <div className="text-xs text-muted-foreground mt-1 sm:hidden">
+                                {duration} {t("addStay.days")}
+                              </div>
+                              <div className="hidden sm:flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-4 flex-1">
+                                  <span className="font-semibold text-foreground text-base break-words">
+                                    {format(stay.entryDate, "MMM d, yyyy")} → {format(stay.exitDate, "MMM d, yyyy")}
+                                  </span>
+                                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                                    {duration} {t("addStay.days")}
+                                  </span>
+                                </div>
+                                <div className="flex gap-2 flex-shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => editStay(stay)}
+                                    className="shadow-sm hover:shadow-md transition-shadow text-sm h-9"
+                                  >
+                                    <Pencil className="h-4 w-4 mr-1 flex-shrink-0" />
+                                    <span>{t("recordedStays.edit")}</span>
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => deleteStay(stay.id)}
+                                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm hover:shadow-md transition-shadow text-sm h-9"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1 flex-shrink-0" />
+                                    <span>{t("recordedStays.delete")}</span>
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1081,13 +1102,12 @@ export function SchengenCalculator() {
             </Card>
           )}
 
+          {/* Legal Disclaimer */}
           <Alert className="border-2 bg-muted/30 sm:mx-0">
             <Info className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground flex-shrink-0" />
-            <AlertTitle className="font-semibold text-sm sm:text-base">Legal Disclaimer</AlertTitle>
+            <AlertTitle className="font-semibold text-sm sm:text-base">{t("legalDisclaimer.title")}</AlertTitle>
             <AlertDescription className="text-xs sm:text-sm leading-relaxed">
-              This calculator is provided for informational purposes only and should not be considered legal advice.
-              Always verify your status with official immigration authorities. The Schengen 90/180 rule states that
-              non-EU nationals can stay in the Schengen Area for up to 90 days within any 180-day period.
+              {t("legalDisclaimer.description")}
             </AlertDescription>
           </Alert>
         </div>

@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Home",
+    "faq": "Veelgestelde vragen",
+    "howItWorks": "Hoe het werkt",
+    "privacy": "Privacybeleid",
+    "terms": "Algemene voorwaarden"
+  },
+  "hero": {
+    "title": "Schengen Verblijfscalculator",
+    "subtitle": "Volg uw verblijven en zorg voor naleving van Schengen-visumregels"
+  },
+  "addStay": {
+    "title": "Verblijf toevoegen",
+    "titleEdit": "Verblijf bewerken",
+    "description": "Registreer uw bezoeken aan het Schengengebied",
+    "entry": "Inreis",
+    "exit": "Uitreis",
+    "duration": "Duur",
+    "days": "dag(en)",
+    "addButton": "Verblijf toevoegen",
+    "updateButton": "Verblijf bijwerken",
+    "cancel": "Annuleren",
+    "cancelEdit": "Bewerking annuleren",
+    "clearCalendar": "Kalender wissen"
+  },
+  "editDialog": {
+    "editStayTitle": "Verblijf bewerken",
+    "editStayDescription": "Werk de details van uw geregistreerde verblijf bij",
+    "editTripTitle": "Voorgestelde reis bewerken",
+    "editTripDescription": "Werk de data van uw voorgestelde reis bij",
+    "updateStayButton": "Verblijf bijwerken",
+    "updateTripButton": "Reis bijwerken"
+  },
+  "currentStatus": {
+    "title": "Huidige status",
+    "window": "180-dagen periode",
+    "to": "tot",
+    "daysUsed": "Gebruikte dagen",
+    "daysOf": "van",
+    "overstayWarning": "Waarschuwing overschrijding",
+    "overstayMessage": "U heeft de 90-dagen limiet met {days} dag(en) overschreden",
+    "caution": "Let op",
+    "cautionMessage": "Slechts {days} dag(en) resterend in uw 180-dagen periode",
+    "compliant": "Conform",
+    "compliantMessage": "U heeft nog {days} dag(en) over",
+    "referenceDate": "Referentiedatum",
+    "referenceDateDescription": "Wijzig deze datum om de 180-dagen periode aan te passen en uw status op verschillende momenten te bekijken."
+  },
+  "proposedTrip": {
+    "title": "Voorgestelde reis controleren",
+    "description": "Controleer of een toekomstige reis legaal zou zijn",
+    "proposedEntry": "Voorgestelde inreisdatum",
+    "proposedExit": "Voorgestelde uitreisdatum",
+    "pickDate": "Kies een datum",
+    "addButton": "Voorgestelde reis toevoegen",
+    "updateButton": "Reis bijwerken",
+    "savedTrips": "Opgeslagen voorgestelde reizen",
+    "maxDays": "Max",
+    "daysRemaining": "Resterende dagen na reis",
+    "tripExceeds": "Reis overschrijdt limiet"
+  },
+  "timeline": {
+    "title": "Tijdlijn visualisatie",
+    "description": "Visuele weergave van uw verblijven binnen de rollende 180-dagen periode",
+    "showProposedTrips": "Voorgestelde reizen tonen",
+    "daysUsed": "gebruikte dagen",
+    "daysLeft": "resterende dagen",
+    "daysOverLimit": "dagen boven limiet",
+    "proposedTripsNote": "Gestippelde rode balken vertegenwoordigen voorgestelde reizen.",
+    "referenceDateNote": "Referentiedatum gebaseerd op meest recente voorgestelde reis.",
+    "noStays": "Geen verblijven of voorgestelde reizen om te visualiseren",
+    "dayWindow": "180-dagen periode"
+  },
+  "recordedStays": {
+    "title": "Geregistreerde verblijven",
+    "description": "{count} verblijf geregistreerd",
+    "description_plural": "{count} verblijven geregistreerd",
+    "edit": "Bewerken",
+    "delete": "Verwijderen"
+  },
+  "legalDisclaimer": {
+    "title": "Juridische disclaimer",
+    "description": "Deze calculator wordt alleen voor informatieve doeleinden verstrekt en mag niet worden beschouwd als juridisch advies. Controleer altijd uw status bij de officiële immigratieautoriteiten. De Schengen 90/180-regel stelt dat niet-EU-burgers tot 90 dagen binnen een periode van 180 dagen in het Schengengebied mogen verblijven."
+  },
+  "footer": {
+    "copyright": "© {year} Schengen Monitor. Alle rechten voorbehouden.",
+    "privacyPolicy": "Privacybeleid",
+    "termsConditions": "Algemene voorwaarden"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fout",
+    "close": "Sluiten",
+    "save": "Opslaan",
+    "cancel": "Annuleren"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "faq": "FAQ",
+    "howItWorks": "Comment ça marche",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales"
+  },
+  "hero": {
+    "title": "Calculateur de séjour Schengen",
+    "subtitle": "Suivez vos séjours et assurez la conformité avec les règles de visa Schengen"
+  },
+  "addStay": {
+    "title": "Ajouter un séjour",
+    "titleEdit": "Modifier le séjour",
+    "description": "Enregistrez vos visites dans l'espace Schengen",
+    "entry": "Entrée",
+    "exit": "Sortie",
+    "duration": "Durée",
+    "days": "jour(s)",
+    "addButton": "Ajouter un séjour",
+    "updateButton": "Mettre à jour le séjour",
+    "cancel": "Annuler",
+    "cancelEdit": "Annuler la modification",
+    "clearCalendar": "Effacer le calendrier"
+  },
+  "editDialog": {
+    "editStayTitle": "Modifier le séjour",
+    "editStayDescription": "Mettre à jour les détails de votre séjour enregistré",
+    "editTripTitle": "Modifier le voyage proposé",
+    "editTripDescription": "Mettre à jour les dates de votre voyage proposé",
+    "updateStayButton": "Mettre à jour le séjour",
+    "updateTripButton": "Mettre à jour le voyage"
+  },
+  "currentStatus": {
+    "title": "Statut actuel",
+    "window": "Fenêtre de 180 jours",
+    "to": "au",
+    "daysUsed": "Jours utilisés",
+    "daysOf": "sur",
+    "overstayWarning": "Avertissement de dépassement",
+    "overstayMessage": "Vous avez dépassé la limite de 90 jours de {days} jour(s)",
+    "caution": "Attention",
+    "cautionMessage": "Seulement {days} jour(s) restant(s) dans votre fenêtre de 180 jours",
+    "compliant": "Conforme",
+    "compliantMessage": "Vous avez {days} jour(s) restant(s)",
+    "referenceDate": "Date de référence",
+    "referenceDateDescription": "Modifiez cette date pour ajuster la fenêtre de 180 jours et voir votre statut à différents moments."
+  },
+  "proposedTrip": {
+    "title": "Vérifier un voyage proposé",
+    "description": "Vérifiez si un futur voyage serait légal",
+    "proposedEntry": "Date d'entrée proposée",
+    "proposedExit": "Date de sortie proposée",
+    "pickDate": "Choisir une date",
+    "addButton": "Ajouter un voyage proposé",
+    "updateButton": "Mettre à jour le voyage",
+    "savedTrips": "Voyages proposés enregistrés",
+    "maxDays": "Max",
+    "daysRemaining": "Jours restants après le voyage",
+    "tripExceeds": "Le voyage dépasse la limite"
+  },
+  "timeline": {
+    "title": "Visualisation chronologique",
+    "description": "Représentation visuelle de vos séjours dans la fenêtre mobile de 180 jours",
+    "showProposedTrips": "Afficher les voyages proposés",
+    "daysUsed": "jours utilisés",
+    "daysLeft": "jours restants",
+    "daysOverLimit": "jours au-dessus de la limite",
+    "proposedTripsNote": "Les barres rouges en pointillés représentent les voyages proposés.",
+    "referenceDateNote": "Date de référence basée sur le voyage proposé le plus récent.",
+    "noStays": "Aucun séjour ou voyage proposé à visualiser",
+    "dayWindow": "Fenêtre de 180 jours"
+  },
+  "recordedStays": {
+    "title": "Séjours enregistrés",
+    "description": "{count} séjour enregistré",
+    "description_plural": "{count} séjours enregistrés",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "legalDisclaimer": {
+    "title": "Avertissement légal",
+    "description": "Ce calculateur est fourni à titre informatif uniquement et ne doit pas être considéré comme un conseil juridique. Vérifiez toujours votre statut auprès des autorités d'immigration officielles. La règle Schengen 90/180 stipule que les ressortissants non européens peuvent séjourner dans l'espace Schengen jusqu'à 90 jours sur une période de 180 jours."
+  },
+  "footer": {
+    "copyright": "© {year} Schengen Monitor. Tous droits réservés.",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsConditions": "Conditions générales"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  }
+}

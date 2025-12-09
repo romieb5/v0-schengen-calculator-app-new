@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import {
   format,
   addMonths,
@@ -44,6 +45,8 @@ export function ThreeMonthCalendar({
   })
 
   const [isMobile, setIsMobile] = useState(false)
+
+  const t = useTranslations("addStay")
 
   useEffect(() => {
     // Check if screen is mobile size
@@ -222,7 +225,7 @@ export function ThreeMonthCalendar({
 
       <div className="flex justify-end">
         <Button variant="link" onClick={onClear} className="text-primary font-semibold hover:text-primary/80">
-          Clear Calendar
+          {t("clearCalendar")}
         </Button>
       </div>
     </div>

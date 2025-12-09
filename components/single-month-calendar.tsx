@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import {
   format,
   startOfMonth,
@@ -30,6 +31,7 @@ export function SingleMonthCalendar({
   disabledRanges = [],
 }: SingleMonthCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(initialMonth || new Date())
+  const t = useTranslations("addStay")
 
   useEffect(() => {
     if (initialMonth) {
@@ -131,7 +133,7 @@ export function SingleMonthCalendar({
             onDateSelect(null as any)
           }}
         >
-          Clear Calendar
+          {t("clearCalendar")}
         </Button>
       </div>
     </div>

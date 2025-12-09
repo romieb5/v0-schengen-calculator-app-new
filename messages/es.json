@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "faq": "Preguntas frecuentes",
+    "howItWorks": "Cómo funciona",
+    "privacy": "Política de privacidad",
+    "terms": "Términos y condiciones"
+  },
+  "hero": {
+    "title": "Calculadora de visitas Schengen",
+    "subtitle": "Rastree sus estancias y asegure el cumplimiento de las normas de visa Schengen"
+  },
+  "addStay": {
+    "title": "Agregar estancia",
+    "titleEdit": "Editar estancia",
+    "description": "Registre sus visitas al área Schengen",
+    "entry": "Entrada",
+    "exit": "Salida",
+    "duration": "Duración",
+    "days": "día(s)",
+    "addButton": "Agregar estancia",
+    "updateButton": "Actualizar estancia",
+    "cancel": "Cancelar",
+    "cancelEdit": "Cancelar edición",
+    "clearCalendar": "Limpiar calendario"
+  },
+  "editDialog": {
+    "editStayTitle": "Editar estancia",
+    "editStayDescription": "Actualice los detalles de su estancia registrada",
+    "editTripTitle": "Editar viaje propuesto",
+    "editTripDescription": "Actualice las fechas de su viaje propuesto",
+    "updateStayButton": "Actualizar estancia",
+    "updateTripButton": "Actualizar viaje"
+  },
+  "currentStatus": {
+    "title": "Estado actual",
+    "window": "Ventana de 180 días",
+    "to": "a",
+    "daysUsed": "Días utilizados",
+    "daysOf": "de",
+    "overstayWarning": "Advertencia de exceso",
+    "overstayMessage": "Ha excedido el límite de 90 días en {days} día(s)",
+    "caution": "Precaución",
+    "cautionMessage": "Solo quedan {days} día(s) en su ventana de 180 días",
+    "compliant": "Conforme",
+    "compliantMessage": "Le quedan {days} día(s)",
+    "referenceDate": "Fecha de referencia",
+    "referenceDateDescription": "Cambie esta fecha para ajustar la ventana de 180 días y ver su estado en diferentes momentos."
+  },
+  "proposedTrip": {
+    "title": "Verificar viaje propuesto",
+    "description": "Verifique si un viaje futuro sería legal",
+    "proposedEntry": "Fecha de entrada propuesta",
+    "proposedExit": "Fecha de salida propuesta",
+    "pickDate": "Elegir una fecha",
+    "addButton": "Agregar viaje propuesto",
+    "updateButton": "Actualizar viaje",
+    "savedTrips": "Viajes propuestos guardados",
+    "maxDays": "Máx",
+    "daysRemaining": "Días restantes después del viaje",
+    "tripExceeds": "El viaje excede el límite"
+  },
+  "timeline": {
+    "title": "Visualización de línea de tiempo",
+    "description": "Representación visual de sus estancias dentro de la ventana móvil de 180 días",
+    "showProposedTrips": "Mostrar viajes propuestos",
+    "daysUsed": "días utilizados",
+    "daysLeft": "días restantes",
+    "daysOverLimit": "días sobre el límite",
+    "proposedTripsNote": "Las barras rojas discontinuas representan viajes propuestos.",
+    "referenceDateNote": "Fecha de referencia basada en el viaje propuesto más reciente.",
+    "noStays": "No hay estancias o viajes propuestos para visualizar",
+    "dayWindow": "Ventana de 180 días"
+  },
+  "recordedStays": {
+    "title": "Estancias registradas",
+    "description": "{count} estancia registrada",
+    "description_plural": "{count} estancias registradas",
+    "edit": "Editar",
+    "delete": "Eliminar"
+  },
+  "legalDisclaimer": {
+    "title": "Aviso legal",
+    "description": "Esta calculadora se proporciona solo con fines informativos y no debe considerarse asesoramiento legal. Siempre verifique su estado con las autoridades de inmigración oficiales. La regla Schengen 90/180 establece que los nacionales no pertenecientes a la UE pueden permanecer en el área Schengen hasta 90 días dentro de cualquier período de 180 días."
+  },
+  "footer": {
+    "copyright": "© {year} Schengen Monitor. Todos los derechos reservados.",
+    "privacyPolicy": "Política de privacidad",
+    "termsConditions": "Términos y condiciones"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  }
+}
