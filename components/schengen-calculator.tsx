@@ -301,12 +301,10 @@ export function SchengenCalculator() {
     console.log(`[v0] Days used on last day: ${daysUsedOnLastDay}/90`)
 
     if (maxDaysUsed > 90) {
-      const lastEligibleDateText = lastEligibleDate
-        ? ` Last eligible exit date: ${format(lastEligibleDate, "MMMM d, yyyy")}`
-        : ""
+      // REMOVED lastEligibleDateText from non-compliant trip message as it's confusing to show an "eligible" date when the trip already exceeds the limit
       return {
         isLegal: false,
-        message: `This trip would exceed the 90-day limit. Maximum days during trip: ${maxDaysUsed}/90.${lastEligibleDateText}`,
+        message: `This trip would exceed the 90-day limit. Maximum days during trip: ${maxDaysUsed}/90.`,
         lastEligibleDate: lastEligibleDate || undefined,
       }
     }
