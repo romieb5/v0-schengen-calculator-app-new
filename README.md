@@ -1,30 +1,73 @@
-# Schengen calculator app
+Schengen Monitor 🇪🇺
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+A simple, accurate Schengen 90/180-day calculator for real travel planning
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/romieb5s-projects/v0-schengen-calculator-app-f8)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/u96nYiOHEGF)
+Schengen Monitor is a lightweight web app that helps non-EU travellers understand and stay compliant with the Schengen 90/180-day rule — without spreadsheets, guesswork, or confusing legal language.
 
-## Overview
+This project was built to solve a real problem I personally faced while planning extended travel and relocations across Europe. It focuses on clarity, correctness, and usability, rather than feature bloat.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+✨ What it does
 
-## Deployment
+- Calculates remaining Schengen days based on past and future trips
+- Correctly applies the rolling 180-day look-back window
+- Helps users answer practical questions like:
+- “Can I enter the EU on this date?”
+- “When do I need to leave to stay compliant?”
+- “How many days do I have left?”
+- Works without accounts, sign-ups, or data storage
 
-Your project is live at:
+🧠 Why this exists
 
-**[https://vercel.com/romieb5s-projects/v0-schengen-calculator-app-f8](https://vercel.com/romieb5s-projects/v0-schengen-calculator-app-f8)**
+Most Schengen calculators:
+- are inaccurate at edge cases
+- don’t explain why a date is invalid
+- or require unnecessary personal data
 
-## Build your app
+Schengen Monitor was designed with a product mindset:
 
-Continue building your app on:
+- start from real user questions
+- prioritise trust and transparency
+- handle tricky edge cases explicitly
+- keep the UX simple enough for anxious travellers
 
-**[https://v0.app/chat/u96nYiOHEGF](https://v0.app/chat/u96nYiOHEGF)**
+🛠️ Tech stack
 
-## How It Works
+- Next.js (App Router)
+- TypeScript
+- Vercel (hosting & analytics)
+- Date-fns for deterministic date handling
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+Fully client-side logic (no backend dependency)
+
+🧩 Key implementation details
+
+- Deterministic rolling-window calculations (no server time ambiguity)
+- Explicit handling of inclusive/exclusive date boundaries
+- Defensive logic for overlapping and back-to-back trips
+- Clear separation between calculation logic and UI components
+
+The core date logic is intentionally readable and testable — correctness matters more than cleverness here.
+
+🚀 Live version
+
+You can try the live version here:
+👉 https://schengenmonitor.com
+
+📈 What I’d build next (if this were a larger product)
+
+- Scenario simulation (“What if I delay this trip by 3 days?”)
+- Exportable compliance summaries (PDF / shareable link)
+- Automated test coverage for edge-case date scenarios
+
+👋 About me
+
+I’m a product-focused builder with experience across consumer-facing products, regulated environments, and data-driven decision making. I enjoy working close to users, validating assumptions quickly, and building tools that are genuinely useful.
+
+This project reflects how I approach product work:
+
+- start with a real user problem
+- keep the solution simple and explainable
+
+📄 License
+
+MIT — use freely, fork responsibly.
