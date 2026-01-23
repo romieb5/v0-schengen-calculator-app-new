@@ -959,27 +959,25 @@ export function SchengenCalculator() {
             </Card>
           </div>
 
-          {(stays.length > 0 || proposedTrips.length > 0) && (
-            <Card className="border-2 shadow-lg">
-              <CardHeader className="pb-6 px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl lg:text-2xl">Timeline Visualization</CardTitle>
-                <CardDescription className="text-sm sm:text-base">
-                  Visual representation of your stays within the rolling 180-day window
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <TimelineVisualization
-                  stays={stays}
-                  proposedTrips={proposedTrips.map((trip) => ({
-                    id: trip.id,
-                    entryDate: trip.entryDate,
-                    exitDate: trip.exitDate,
-                  }))}
-                  referenceDate={referenceDate}
-                />
-              </CardContent>
-            </Card>
-          )}
+          <Card className="border-2 shadow-lg">
+            <CardHeader className="pb-6 px-4 sm:px-6">
+              <CardTitle className="text-lg sm:text-xl lg:text-2xl">Timeline Visualization</CardTitle>
+              <CardDescription className="text-sm sm:text-base">
+                Visual representation of your stays within the rolling 180-day window
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TimelineVisualization
+                stays={stays}
+                proposedTrips={proposedTrips.map((trip) => ({
+                  id: trip.id,
+                  entryDate: trip.entryDate,
+                  exitDate: trip.exitDate,
+                }))}
+                referenceDate={referenceDate}
+              />
+            </CardContent>
+          </Card>
 
           {stays.length > 0 && (
             <Card className="border-2 shadow-lg">

@@ -37,9 +37,48 @@ interface TimelineVisualizationProps {
   referenceDate: Date
 }
 
+// Example data for empty state
+const EXAMPLE_STAYS: Stay[] = [
+  {
+    id: "example-1",
+    entryDate: new Date(2025, 7, 15), // Aug 15
+    exitDate: new Date(2025, 8, 5), // Sep 5
+    stayType: "short",
+  },
+  {
+    id: "example-2",
+    entryDate: new Date(2025, 8, 10), // Sep 10
+    exitDate: new Date(2025, 8, 30), // Sep 30
+    stayType: "short",
+  },
+  {
+    id: "example-3",
+    entryDate: new Date(2025, 9, 8), // Oct 8
+    exitDate: new Date(2025, 10, 2), // Nov 2
+    stayType: "short",
+  },
+  {
+    id: "example-4",
+    entryDate: new Date(2025, 10, 15), // Nov 15
+    exitDate: new Date(2025, 11, 5), // Dec 5
+    stayType: "short",
+  },
+  {
+    id: "example-5",
+    entryDate: new Date(2025, 6, 1), // Jul 1 (partially off-screen on left)
+    exitDate: new Date(2025, 7, 10), // Aug 10
+    stayType: "short",
+  },
+]
+
 export function TimelineVisualization({ stays, proposedTrips, referenceDate }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Use example data only if absolutely no data exists (no stays AND no proposed trips)
+  const isEmptyState = stays.length === 0 && proposedTrips.length === 0
+  const displayStays = isEmptyState ? EXAMPLE_STAYS : stays
+  const displayProposedTrips = isEmptyState ? [] : proposedTrips
 
   useEffect(() => {
     const checkMobile = () => {
@@ -50,10 +89,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  const visibleProposedTrips = showProposedTrips ? proposedTrips : []
+  const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
   const allDates = [
-    ...stays.flatMap((s) => [s.entryDate, s.exitDate]),
+    ...displayStays.flatMap((s) => [s.entryDate, s.exitDate]),
     ...visibleProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
     referenceDate,
   ]
@@ -129,7 +168,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
     "bg-indigo-600",
   ]
 
-  const sortedStays = [...stays].sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
+  const sortedStays = [...displayStays].sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
   const stayColorMap = new Map<string, string>()
   sortedStays.forEach((stay, index) => {
     stayColorMap.set(stay.id, stayColors[index % stayColors.length])
@@ -138,7 +177,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
 
   const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
-  const calculationResult = calculateDaysUsedForDate(windowEnd, stays, visibleProposedForCalculation)
+  const calculationResult = calculateDaysUsedForDate(windowEnd, displayStays, visibleProposedForCalculation)
   const daysUsed = calculationResult.daysUsed
   const daysLeft = calculationResult.daysLeft
 
@@ -147,8 +186,14 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   if (isMobile) {
     return (
       <div className="space-y-4">
+        {isEmptyState && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <p className="text-sm text-blue-900 font-medium">📊 Example Timeline</p>
+            <p className="text-xs text-blue-800 mt-1">Here's what your timeline will look like once you add your stays</p>
+          </div>
+        )}
         <div className="flex flex-col items-start gap-3">
-          {proposedTrips.length > 0 && (
+          {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
               <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
@@ -163,7 +208,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
           >
             {daysUsed} days used, {daysRemainingText}
           </div>
-          {proposedTrips.length > 0 && showProposedTrips && (
+          {displayProposedTrips.length > 0 && showProposedTrips && (
             <>
               <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
               <div className="text-xs text-muted-foreground italic">
@@ -200,7 +245,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
               }}
             />
 
-            {stays.map((stay) => {
+            {displayStays.map((stay) => {
               const top = (differenceInDays(stay.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(stay.exitDate, stay.entryDate) + 1) / totalDays) * 100
               const color = stayColorMap.get(stay.id) || stayColors[0]
@@ -219,7 +264,9 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                   }}
                 >
                   <div
-                    className={`h-full ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                    className={`h-full ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm ${
+                      isEmptyState ? "opacity-75" : ""
+                    }`}
                     title={`Stay ${stayIndex}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   />
                 </div>
@@ -292,9 +339,15 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
 
   return (
     <div className="space-y-4">
+      {isEmptyState && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p className="text-sm text-blue-900 font-medium">📊 Example Timeline</p>
+          <p className="text-sm text-blue-800 mt-1">Here's what your timeline will look like once you add your stays. Start by recording your Schengen area visits above.</p>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          {proposedTrips.length > 0 && (
+          {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
               <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
@@ -310,7 +363,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             {daysUsed} days used, {daysRemainingText}
           </div>
         </div>
-        {proposedTrips.length > 0 && showProposedTrips && (
+        {displayProposedTrips.length > 0 && showProposedTrips && (
           <div className="flex flex-col items-end gap-1">
             <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
             <div className="text-xs text-muted-foreground italic">
@@ -320,7 +373,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
         )}
       </div>
 
-      <div className="relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto">
+      <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto ${isEmptyState ? "opacity-85" : ""}`}>
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {monthMarkers.map((marker) => {
@@ -348,7 +401,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
             </div>
           </div>
 
-          {stays.map((stay) => {
+          {displayStays.map((stay) => {
             const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
             const startPos = dateToPosition(stay.entryDate)
             const endPos = dateToPosition(stay.exitDate)
@@ -366,7 +419,9 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
                 }}
               >
                 <div
-                  className={`h-20 ${color} rounded shadow-md relative group cursor-pointer`}
+                  className={`h-20 ${color} rounded shadow-md relative group cursor-pointer ${
+                    isEmptyState ? "opacity-75" : ""
+                  }`}
                   title={`Stay ${stayIndex}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 />
               </div>
