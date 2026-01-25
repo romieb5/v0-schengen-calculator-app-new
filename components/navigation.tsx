@@ -101,11 +101,11 @@ export function Navigation() {
         className="fixed bottom-6 right-6 md:hidden z-50"
         title="Support me on Buy Me a Coffee"
       >
-        <button className="hover:scale-110 transition-transform flex items-center justify-center">
+        <button className="bg-white rounded-full p-2 hover:scale-110 transition-transform flex items-center justify-center shadow-lg">
           <img
             src="/buy-me-coffee-icon.webp"
             alt="Buy me a coffee"
-            className="h-12 w-12 drop-shadow-lg"
+            className="h-8 w-8"
           />
         </button>
       </Link>
