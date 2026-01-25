@@ -103,7 +103,7 @@ export function Navigation() {
       >
         <button className="hover:scale-110 transition-transform flex items-center justify-center">
           <img
-            src="/images/buy-me-coffee-icon.webp"
+            src="/buy-me-coffee-icon.webp"
             alt="Buy me a coffee"
             className="h-12 w-12 drop-shadow-lg"
           />
