@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HelpCircle, Info, ChevronDown } from "lucide-react"
+import { HelpCircle, Info, ChevronDown, Heart } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 
@@ -47,30 +47,56 @@ export function Navigation() {
             })}
           </div>
 
-          {/* Mobile dropdown - hidden on desktop */}
-          <div className="md:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                  {CurrentIcon && <CurrentIcon className="h-4 w-4" />}
-                  {currentPage.label}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {otherPages.map((link) => {
-                  const Icon = link.icon
-                  return (
-                    <DropdownMenuItem key={link.href} asChild>
-                      <Link href={link.href} className="flex items-center gap-2 cursor-pointer">
-                        {Icon && <Icon className="h-4 w-4" />}
-                        {link.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  )
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex items-center gap-2">
+            {/* Desktop Buy Me a Coffee button */}
+            <Link
+              href="https://buymeacoffee.com/romieb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex"
+            >
+              <Button variant="outline" className="flex items-center gap-2 bg-transparent" size="sm">
+                <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                Support
+              </Button>
+            </Link>
+
+            {/* Mobile dropdown - hidden on desktop */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+                    {CurrentIcon && <CurrentIcon className="h-4 w-4" />}
+                    {currentPage.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {otherPages.map((link) => {
+                    const Icon = link.icon
+                    return (
+                      <DropdownMenuItem key={link.href} asChild>
+                        <Link href={link.href} className="flex items-center gap-2 cursor-pointer">
+                          {Icon && <Icon className="h-4 w-4" />}
+                          {link.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  })}
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="https://buymeacoffee.com/romieb"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                      Support
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>
