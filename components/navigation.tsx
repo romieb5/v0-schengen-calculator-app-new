@@ -101,21 +101,12 @@ export function Navigation() {
         className="fixed bottom-6 right-6 md:hidden z-50"
         title="Support me on Buy Me a Coffee"
       >
-        <button className="bg-white hover:bg-gray-100 rounded-lg p-3 shadow-lg transition-all hover:scale-110 flex items-center justify-center border border-gray-900">
-          <svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Cup body */}
-            <path d="M6 10H26V28C26 30.2091 24.2091 32 22 32H10C7.79086 32 6 30.2091 6 28V10Z" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-black" />
-            
-            {/* Cup lid */}
-            <ellipse cx="16" cy="10" rx="10" ry="2.5" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-black" />
-            <path d="M8 9.5C8 7 10.69 5 16 5C21.31 5 24 7 24 9.5" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-black" />
-            
-            {/* Handle */}
-            <path d="M26 16C29 16 31 18 31 20.5C31 23 29 25 26 25" stroke="currentColor" strokeWidth="1.5" fill="none" className="text-black" strokeLinecap="round" />
-            
-            {/* Coffee inside */}
-            <path d="M8 16H24V28C24 29.1046 23.1046 30 22 30H10C8.89543 30 8 29.1046 8 28V16Z" fill="currentColor" className="text-yellow-400" />
-          </svg>
+        <button className="hover:scale-110 transition-transform flex items-center justify-center">
+          <img
+            src="/images/buy-me-coffee-icon.webp"
+            alt="Buy me a coffee"
+            className="h-12 w-12 drop-shadow-lg"
+          />
         </button>
       </Link>
     </>
