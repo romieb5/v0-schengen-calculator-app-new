@@ -72,7 +72,7 @@ const EXAMPLE_STAYS: Stay[] = [
 ]
 
 export function TimelineVisualization({ stays, proposedTrips, referenceDate }: TimelineVisualizationProps) {
-  const [showProposedTrips, setShowProposedTrips] = useState(true)
+  const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   // Use example data only if absolutely no data exists (no stays AND no proposed trips)
