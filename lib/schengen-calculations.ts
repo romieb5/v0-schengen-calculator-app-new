@@ -1,4 +1,4 @@
-import { differenceInDays, subDays, isAfter, isBefore } from "date-fns"
+import { differenceInDays, subDays, isAfter, isBefore, startOfDay } from "date-fns"
 
 interface Stay {
   id: string
@@ -23,7 +23,8 @@ export function calculateDaysUsedForDate(
   stays: Stay[],
   proposedTrips: ProposedTrip[] = [],
 ): { daysUsed: number; daysLeft: number } {
-  const windowEnd = referenceDate
+  // Normalize all dates to start of day to avoid time-based inconsistencies
+  const windowEnd = startOfDay(referenceDate)
   const windowStart = subDays(windowEnd, 179) // 180 days including end date
 
   let daysUsed = 0
@@ -32,9 +33,13 @@ export function calculateDaysUsedForDate(
   stays.forEach((stay) => {
     if (stay.stayType !== "short") return
 
+    // Normalize entry and exit dates
+    const stayEntry = startOfDay(stay.entryDate)
+    const stayExit = startOfDay(stay.exitDate)
+
     // Only count days that fall within the 180-day window
-    const effectiveEntry = isAfter(stay.entryDate, windowStart) ? stay.entryDate : windowStart
-    const effectiveExit = isBefore(stay.exitDate, windowEnd) ? stay.exitDate : windowEnd
+    const effectiveEntry = isAfter(stayEntry, windowStart) ? stayEntry : windowStart
+    const effectiveExit = isBefore(stayExit, windowEnd) ? stayExit : windowEnd
 
     if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
       const stayDays = differenceInDays(effectiveExit, effectiveEntry) + 1
@@ -44,8 +49,12 @@ export function calculateDaysUsedForDate(
 
   // Count days from proposed trips
   proposedTrips.forEach((trip) => {
-    const effectiveEntry = isAfter(trip.entryDate, windowStart) ? trip.entryDate : windowStart
-    const effectiveExit = isBefore(trip.exitDate, windowEnd) ? trip.exitDate : windowEnd
+    // Normalize entry and exit dates
+    const tripEntry = startOfDay(trip.entryDate)
+    const tripExit = startOfDay(trip.exitDate)
+
+    const effectiveEntry = isAfter(tripEntry, windowStart) ? tripEntry : windowStart
+    const effectiveExit = isBefore(tripExit, windowEnd) ? tripExit : windowEnd
 
     if (isBefore(effectiveEntry, effectiveExit) || effectiveEntry.getTime() === effectiveExit.getTime()) {
       const tripDays = differenceInDays(effectiveExit, effectiveEntry) + 1
