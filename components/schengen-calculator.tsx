@@ -174,13 +174,18 @@ export function SchengenCalculator() {
     setStays(stays.filter((s) => s.id !== id))
   }
 
+  const toggleStayVisibility = (id: string) => {
+    setStays(stays.map((s) => (s.id === id ? { ...s, hidden: !s.hidden } : s)))
+  }
+
   // REMOVED LOCAL calculateDaysUsed function
 
+  const visibleStays = stays.filter((s) => !s.hidden)
   const visibleProposedTrips = proposedTrips.filter((trip) => !trip.hidden)
 
   const daysUsedForCalculations = calculateDaysUsedForDate(
     referenceDate,
-    stays,
+    visibleStays,
     visibleProposedTrips, // Always include visible proposed trips in the calculation for status
   )
 
@@ -239,7 +244,7 @@ export function SchengenCalculator() {
 
     const { daysUsed: calculatedDaysUsedOnLastDay, daysLeft: daysRemainingAfterTrip } = calculateDaysUsedForDate(
       tripExit,
-      stays,
+      visibleStays,
       tripsToInclude,
     )
 
@@ -255,8 +260,8 @@ export function SchengenCalculator() {
       const windowStartForDay = subDays(currentDayOfTrip, 179)
       let daysUsedForThisDay = 0
 
-      // Calculate days from existing stays
-      stays.forEach((stay) => {
+      // Calculate days from existing visible stays
+      visibleStays.forEach((stay) => {
         if (stay.stayType !== "short") return
         const effectiveEntry = isAfter(stay.entryDate, windowStartForDay) ? stay.entryDate : windowStartForDay
         const effectiveExit = isBefore(stay.exitDate, currentDayOfTrip) ? stay.exitDate : currentDayOfTrip
@@ -989,7 +994,7 @@ export function SchengenCalculator() {
             </CardHeader>
             <CardContent>
               <TimelineVisualization
-                stays={stays}
+                stays={visibleStays}
                 proposedTrips={visibleProposedTrips.map((trip) => ({
                   id: trip.id,
                   entryDate: trip.entryDate,
@@ -1017,7 +1022,10 @@ export function SchengenCalculator() {
                     return (
                       <div
                         key={stay.id}
-                        className="bg-card p-3 sm:p-4 rounded-lg border-2 hover:border-primary/50 transition-colors relative group shadow-sm"
+                        className={cn(
+                          "bg-card p-3 sm:p-4 rounded-lg border-2 transition-colors relative group shadow-sm",
+                          stay.hidden ? "opacity-60 border-muted-foreground/20" : "hover:border-primary/50",
+                        )}
                       >
                         <div className="flex items-start gap-3 sm:gap-4">
                           <div
@@ -1038,6 +1046,15 @@ export function SchengenCalculator() {
                                 </div>
                               </div>
                               <div className="flex gap-1 flex-shrink-0">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleStayVisibility(stay.id)}
+                                  className={cn("shadow-sm hover:shadow-md transition-shadow h-7 w-7 p-0", stay.hidden && "opacity-50")}
+                                  title={stay.hidden ? "Include in calculations" : "Exclude from calculations"}
+                                >
+                                  {stay.hidden ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -1068,6 +1085,16 @@ export function SchengenCalculator() {
                                 </span>
                               </div>
                               <div className="flex gap-2 flex-shrink-0">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleStayVisibility(stay.id)}
+                                  className={cn("shadow-sm hover:shadow-md transition-shadow text-sm h-9", stay.hidden && "opacity-50")}
+                                  title={stay.hidden ? "Include in calculations" : "Exclude from calculations"}
+                                >
+                                  {stay.hidden ? <EyeOff className="h-4 w-4 mr-1 flex-shrink-0" /> : <Eye className="h-4 w-4 mr-1 flex-shrink-0" />}
+                                  <span>{stay.hidden ? "Show" : "Hide"}</span>
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
