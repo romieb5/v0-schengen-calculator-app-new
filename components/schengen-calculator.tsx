@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -16,6 +16,7 @@ import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "d
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
 import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
+import { useStays } from "@/hooks/use-stays"
 
 interface Stay {
   id: string
@@ -37,7 +38,14 @@ const getDisabledDateRanges = (stays: Stay[], proposedTrips: Stay[], excludeId?:
 }
 
 export function SchengenCalculator() {
-  const [stays, setStays] = useState<Stay[]>([])
+  const {
+    stays,
+    proposedTrips,
+    setStays,
+    setProposedTrips,
+    isLoading: dataLoading,
+  } = useStays()
+
   const [entryDate, setEntryDate] = useState<Date>()
   const [exitDate, setExitDate] = useState<Date>()
   const [stayType, setStayType] = useState<"short" | "residence">("short")
@@ -45,7 +53,6 @@ export function SchengenCalculator() {
   const [referenceDate, setReferenceDate] = useState<Date>(new Date())
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const [proposedTrips, setProposedTrips] = useState<Stay[]>([])
   const [proposedEntry, setProposedEntry] = useState<Date>()
   const [proposedExit, setProposedExit] = useState<Date>()
   const [editingProposedId, setEditingProposedId] = useState<string | null>(null)
@@ -67,42 +74,6 @@ export function SchengenCalculator() {
   const [editProposedDialogEntry, setEditProposedDialogEntry] = useState<Date>()
   const [editProposedDialogExit, setEditProposedDialogExit] = useState<Date>()
   const [editProposedDialogId, setEditProposedDialogId] = useState<string | null>(null)
-
-  // Load stays from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("schengen-stays")
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      setStays(
-        parsed.map((s: any) => ({
-          ...s,
-          entryDate: new Date(s.entryDate),
-          exitDate: new Date(s.exitDate),
-        })),
-      )
-    }
-
-    const savedProposed = localStorage.getItem("schengen-proposed-trips")
-    if (savedProposed) {
-      const parsed = JSON.parse(savedProposed)
-      setProposedTrips(
-        parsed.map((s: any) => ({
-          ...s,
-          entryDate: new Date(s.entryDate),
-          exitDate: new Date(s.exitDate),
-        })),
-      )
-    }
-  }, [])
-
-  // Save stays to localStorage
-  useEffect(() => {
-    localStorage.setItem("schengen-stays", JSON.stringify(stays))
-  }, [stays])
-
-  useEffect(() => {
-    localStorage.setItem("schengen-proposed-trips", JSON.stringify(proposedTrips))
-  }, [proposedTrips])
 
   const addOrUpdateStay = () => {
     if (!entryDate || !exitDate) return

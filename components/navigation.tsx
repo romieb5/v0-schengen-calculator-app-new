@@ -2,12 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HelpCircle, Info, ChevronDown, Coffee } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { HelpCircle, Info, ChevronDown, Coffee, LogIn, LogOut, User } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/components/auth-provider"
 
 export function Navigation() {
   const pathname = usePathname()
+  const { user, isAuthenticated, isLoading: authLoading, signOut } = useAuth()
 
   const links = [
     { href: "/", label: "Calculator", icon: null },
@@ -62,6 +64,36 @@ export function Navigation() {
                   </Link>
                 )
               })}
+              {!authLoading && (
+                isAuthenticated ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="ml-2 gap-2">
+                        <User className="h-4 w-4" />
+                        {user?.name || user?.email}
+                        <ChevronDown className="h-3 w-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="text-muted-foreground text-xs cursor-default">
+                        {user?.email}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/sign-in">
+                    <Button variant="outline" className="ml-2 gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Sign In
+                    </Button>
+                  </Link>
+                )
+              )}
             </div>
 
             {/* Mobile dropdown - hidden on desktop */}
@@ -86,6 +118,24 @@ export function Navigation() {
                       </DropdownMenuItem>
                     )
                   })}
+                  {!authLoading && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {isAuthenticated ? (
+                        <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Sign Out
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem asChild>
+                          <Link href="/sign-in" className="flex items-center gap-2 cursor-pointer">
+                            <LogIn className="h-4 w-4" />
+                            Sign In
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

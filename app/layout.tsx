@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { AuthProvider } from "@/components/auth-provider"
 import "./globals.css"
 
 const inter = Inter({
@@ -111,9 +112,11 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={`${inter.className} font-sans antialiased`}>
-        <Navigation />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Navigation />
+          {children}
+          <Footer />
+        </AuthProvider>
         <Analytics />
         <SpeedInsights />
       </body>
