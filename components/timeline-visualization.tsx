@@ -35,6 +35,7 @@ interface TimelineVisualizationProps {
   stays: Stay[]
   proposedTrips: ProposedTrip[]
   referenceDate: Date
+  stayColorMap?: Map<string, string>
 }
 
 // Example data for empty state
@@ -71,7 +72,7 @@ const EXAMPLE_STAYS: Stay[] = [
   },
 ]
 
-export function TimelineVisualization({ stays, proposedTrips, referenceDate }: TimelineVisualizationProps) {
+export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -169,10 +170,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate }: T
   ]
 
   const sortedStays = [...displayStays].sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
-  const stayColorMap = new Map<string, string>()
-  sortedStays.forEach((stay, index) => {
-    stayColorMap.set(stay.id, stayColors[index % stayColors.length])
-  })
+  const stayColorMap = externalColorMap ?? new Map<string, string>()
+  if (!externalColorMap) {
+    sortedStays.forEach((stay, index) => {
+      stayColorMap.set(stay.id, stayColors[index % stayColors.length])
+    })
+  }
 
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
 

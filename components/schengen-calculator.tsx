@@ -1001,6 +1001,7 @@ export function SchengenCalculator() {
                   exitDate: trip.exitDate,
                 }))}
                 referenceDate={referenceDate}
+                stayColorMap={stayColorMap}
               />
             </CardContent>
           </Card>
