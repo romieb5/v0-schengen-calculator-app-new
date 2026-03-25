@@ -42,7 +42,8 @@ export function SingleMonthCalendar({
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
   const firstDayOfWeek = monthStart.getDay()
-  const emptyDays = Array(firstDayOfWeek).fill(null)
+  const paddingDays = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1
+  const emptyDays = Array(paddingDays).fill(null)
 
   const isInRange = (day: Date) => {
     if (!entryDate || !exitDate) return false
