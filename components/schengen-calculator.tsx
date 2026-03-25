@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ThreeMonthCalendar } from "./three-month-calendar"
 import { TimelineVisualization } from "./timeline-visualization"
-import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle } from "lucide-react"
+import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff } from "lucide-react"
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
@@ -23,6 +23,7 @@ interface Stay {
   exitDate: Date
   stayType: "short" | "residence"
   countryCode?: string
+  hidden?: boolean
 }
 
 const getDisabledDateRanges = (stays: Stay[], proposedTrips: Stay[], excludeId?: string | null) => {
@@ -175,10 +176,12 @@ export function SchengenCalculator() {
 
   // REMOVED LOCAL calculateDaysUsed function
 
+  const visibleProposedTrips = proposedTrips.filter((trip) => !trip.hidden)
+
   const daysUsedForCalculations = calculateDaysUsedForDate(
     referenceDate,
     stays,
-    proposedTrips, // Always include proposed trips in the calculation for status
+    visibleProposedTrips, // Always include visible proposed trips in the calculation for status
   )
 
   const daysUsed = daysUsedForCalculations.daysUsed
@@ -231,7 +234,7 @@ export function SchengenCalculator() {
     let maxDaysUsedDate: Date | null = null
     let lastEligibleDate: Date | null = null
 
-    const tripsToInclude = proposedTrips.filter((t) => !currentTripId || t.id !== currentTripId)
+    const tripsToInclude = visibleProposedTrips.filter((t) => !currentTripId || t.id !== currentTripId)
     tripsToInclude.push({ id: "temp", entryDate: tripEntry, exitDate: tripExit })
 
     const { daysUsed: calculatedDaysUsedOnLastDay, daysLeft: daysRemainingAfterTrip } = calculateDaysUsedForDate(
@@ -262,8 +265,8 @@ export function SchengenCalculator() {
         }
       })
 
-      // Calculate days from other proposed trips
-      proposedTrips.forEach((otherTrip) => {
+      // Calculate days from other visible proposed trips
+      visibleProposedTrips.forEach((otherTrip) => {
         if (currentTripId && otherTrip.id === currentTripId) return
         const otherTripStart = otherTrip.entryDate
         const otherTripEnd = otherTrip.exitDate
@@ -382,6 +385,10 @@ export function SchengenCalculator() {
 
   const deleteProposedTrip = (id: string) => {
     setProposedTrips(proposedTrips.filter((trip) => trip.id !== id))
+  }
+
+  const toggleProposedTripVisibility = (id: string) => {
+    setProposedTrips(proposedTrips.map((trip) => (trip.id === id ? { ...trip, hidden: !trip.hidden } : trip)))
   }
 
   const proposedTripResults = proposedTrips
@@ -894,9 +901,11 @@ export function SchengenCalculator() {
                           key={trip.id}
                           className={cn(
                             "p-4 rounded-lg border-2 transition-colors",
-                            result.isLegal
-                              ? "bg-success/5 border-success/30"
-                              : "bg-destructive/5 border-destructive/30",
+                            trip.hidden
+                              ? "bg-muted/50 border-muted-foreground/20 opacity-60"
+                              : result.isLegal
+                                ? "bg-success/5 border-success/30"
+                                : "bg-destructive/5 border-destructive/30",
                           )}
                         >
                           <div className="space-y-2 sm:space-y-1">
@@ -913,6 +922,18 @@ export function SchengenCalculator() {
                                 </div>
                               </div>
                               <div className="flex gap-1 flex-shrink-0">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleProposedTripVisibility(trip.id)}
+                                  className={cn(
+                                    "h-8 w-8 p-0 shadow-sm hover:shadow-md transition-shadow",
+                                    trip.hidden && "opacity-50",
+                                  )}
+                                  title={trip.hidden ? "Include in calculations" : "Exclude from calculations"}
+                                >
+                                  {trip.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -969,7 +990,7 @@ export function SchengenCalculator() {
             <CardContent>
               <TimelineVisualization
                 stays={stays}
-                proposedTrips={proposedTrips.map((trip) => ({
+                proposedTrips={visibleProposedTrips.map((trip) => ({
                   id: trip.id,
                   entryDate: trip.entryDate,
                   exitDate: trip.exitDate,
