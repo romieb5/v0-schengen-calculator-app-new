@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useAuth } from "@/components/auth-provider"
 
 interface Stay {
@@ -81,10 +81,14 @@ export function useStays() {
   const [proposedTrips, setProposedTripsState] = useState<ProposedTrip[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isInitialized, setIsInitialized] = useState(false)
+  const prevAuthenticatedRef = useRef<boolean | null>(null)
 
   // Load data on mount — from localStorage or API depending on auth status
   useEffect(() => {
     if (authLoading) return
+
+    const wasAuthenticated = prevAuthenticatedRef.current
+    prevAuthenticatedRef.current = isAuthenticated
 
     if (isAuthenticated) {
       // Fetch from API
@@ -101,8 +105,21 @@ export function useStays() {
           setIsLoading(false)
           setIsInitialized(true)
         })
+    } else if (wasAuthenticated) {
+      // User just logged out — persist current in-memory state to localStorage
+      // so their latest view (including hidden flags) is preserved
+      setStaysState((current) => {
+        localStorage.setItem("schengen-stays", JSON.stringify(current))
+        return current
+      })
+      setProposedTripsState((current) => {
+        localStorage.setItem("schengen-proposed-trips", JSON.stringify(current))
+        return current
+      })
+      setIsLoading(false)
+      setIsInitialized(true)
     } else {
-      // Load from localStorage
+      // Initial load as anonymous — load from localStorage
       setStaysState(parseLocalStorageStays("schengen-stays") as Stay[])
       setProposedTripsState(parseLocalStorageStays("schengen-proposed-trips") as ProposedTrip[])
       setIsLoading(false)

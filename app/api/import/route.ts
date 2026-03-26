@@ -1,36 +1,54 @@
 import { NextResponse } from "next/server"
 import { getAuthenticatedUser } from "@/lib/api-auth"
 import { getSupabaseAdmin } from "@/lib/supabase"
+import { rateLimit } from "@/lib/rate-limit"
+import { logSecurityEvent, requestInfo } from "@/lib/security-logger"
+import { z } from "zod"
 
-interface LocalStay {
-  entryDate: string
-  exitDate: string
-  stayType: string
-  countryCode?: string
-  hidden?: boolean
-}
+const localStaySchema = z.object({
+  entryDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  exitDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  stayType: z.enum(["short", "residence"]),
+  countryCode: z.string().max(3).optional(),
+  hidden: z.boolean().optional(),
+}).refine((d) => new Date(d.exitDate) >= new Date(d.entryDate), {
+  message: "exitDate must be on or after entryDate",
+})
 
-interface LocalTrip {
-  entryDate: string
-  exitDate: string
-  hidden?: boolean
-}
+const localTripSchema = z.object({
+  entryDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  exitDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  hidden: z.boolean().optional(),
+}).refine((d) => new Date(d.exitDate) >= new Date(d.entryDate), {
+  message: "exitDate must be on or after entryDate",
+})
+
+const importSchema = z.object({
+  stays: z.array(localStaySchema).max(500).optional(),
+  proposedTrips: z.array(localTripSchema).max(500).optional(),
+})
 
 export async function POST(request: Request) {
-  const user = await getAuthenticatedUser()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const limited = rateLimit(request, { limit: 5, windowSeconds: 60 })
+  if (limited) return limited
 
-  const body = await request.json()
-  const { stays, proposedTrips } = body as {
-    stays?: LocalStay[]
-    proposedTrips?: LocalTrip[]
+  const user = await getAuthenticatedUser()
+  if (!user) {
+    logSecurityEvent({ ...requestInfo(request), type: "api.unauthorized" })
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
+  const body = await request.json().catch(() => null)
+  const parsed = importSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid import data" }, { status: 400 })
+  }
+
+  const { stays, proposedTrips } = parsed.data
   const supabase = getSupabaseAdmin()
   const results = { staysImported: 0, tripsImported: 0 }
 
   if (stays?.length) {
-    // Check for existing stays to avoid duplicates
     const { data: existing } = await supabase
       .from("stays")
       .select("entry_date, exit_date, stay_type")
@@ -57,7 +75,7 @@ export async function POST(request: Request) {
 
     if (newStays.length) {
       const { error } = await supabase.from("stays").insert(newStays)
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      if (error) return NextResponse.json({ error: "Failed to import stays" }, { status: 500 })
       results.staysImported = newStays.length
     }
   }
@@ -87,7 +105,7 @@ export async function POST(request: Request) {
 
     if (newTrips.length) {
       const { error } = await supabase.from("proposed_trips").insert(newTrips)
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      if (error) return NextResponse.json({ error: "Failed to import trips" }, { status: 500 })
       results.tripsImported = newTrips.length
     }
   }
