@@ -45,6 +45,12 @@ export default function SignInPage() {
         return
       }
 
+      // Prompt browser to save credentials (enables Touch ID / autofill on next visit)
+      if (window.PasswordCredential) {
+        const cred = new PasswordCredential({ id: email, password })
+        navigator.credentials.store(cred).catch(() => {})
+      }
+
       // Import localStorage data if pending from sign-up
       if (localStorage.getItem("schengen-pending-import")) {
         const localStays = localStorage.getItem("schengen-stays")
