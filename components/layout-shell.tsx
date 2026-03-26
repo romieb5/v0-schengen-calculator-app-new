@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
-const AUTH_ROUTES = ["/sign-in", "/sign-up", "/reset-password"]
+const AUTH_ROUTES = ["/log-in", "/sign-up", "/reset-password"]
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

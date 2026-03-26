@@ -125,7 +125,7 @@ function VerifiedPageContent() {
                 <Button onClick={() => router.push("/sign-up")}>
                   Sign Up Again
                 </Button>
-                <Button variant="ghost" onClick={() => router.push("/sign-in")}>
+                <Button variant="ghost" onClick={() => router.push("/log-in")}>
                   Go to Log In
                 </Button>
               </div>

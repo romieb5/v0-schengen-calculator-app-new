@@ -78,7 +78,7 @@ function ResetPasswordForm() {
         <p className="text-muted-foreground">
           Your password has been updated. You can now log in with your new password.
         </p>
-        <Button onClick={() => router.push("/sign-in")} className="mt-2">
+        <Button onClick={() => router.push("/log-in")} className="mt-2">
           Go to Log In
         </Button>
       </div>
@@ -158,7 +158,7 @@ function ResetPasswordForm() {
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          <Link href="/sign-in" className="text-primary font-medium hover:underline">
+          <Link href="/log-in" className="text-primary font-medium hover:underline">
             Back to Log In
           </Link>
         </p>

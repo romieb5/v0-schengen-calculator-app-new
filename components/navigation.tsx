@@ -78,7 +78,7 @@ export function Navigation() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <Link href="/sign-in">
+                  <Link href="/log-in">
                     <Button variant="outline" className="ml-2">
                       Log In
                     </Button>
@@ -127,7 +127,7 @@ export function Navigation() {
                         </>
                       ) : (
                         <DropdownMenuItem asChild>
-                          <Link href="/sign-in" className="flex items-center gap-2 cursor-pointer">
+                          <Link href="/log-in" className="flex items-center gap-2 cursor-pointer">
                             <LogIn className="h-4 w-4" />
                             Log In
                           </Link>

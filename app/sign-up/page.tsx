@@ -101,7 +101,7 @@ export default function SignUpPage() {
           </Link>
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/sign-in" className="font-medium text-foreground hover:underline">
+            <Link href="/log-in" className="font-medium text-foreground hover:underline">
               Log in
             </Link>
           </p>
@@ -117,7 +117,7 @@ export default function SignUpPage() {
                   We&apos;ve sent a verification link to <strong>{email}</strong>. Click the link to verify
                   your account and get started.
                 </p>
-                <Button variant="outline" onClick={() => router.push("/sign-in")} className="mt-2">
+                <Button variant="outline" onClick={() => router.push("/log-in")} className="mt-2">
                   Go to Log In
                 </Button>
               </div>

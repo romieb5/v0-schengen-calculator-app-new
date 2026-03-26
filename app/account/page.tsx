@@ -46,7 +46,7 @@ export default function AccountPage() {
   }
 
   if (!isAuthenticated) {
-    router.push("/sign-in")
+    router.push("/log-in")
     return null
   }
 
