@@ -191,6 +191,9 @@ export function useStays() {
           body: JSON.stringify(appStayToApi(stay)),
         })
         if (!res.ok) {
+          const errBody = await res.json().catch(() => null)
+          console.error("[updateStay] PUT failed:", res.status, errBody)
+          console.error("[updateStay] Request body was:", appStayToApi(stay))
           // Rollback on failure — refetch
           const refetch = await fetch("/api/stays").then((r) => r.json())
           if (Array.isArray(refetch)) setStaysState(refetch.map(dbStayToApp))
@@ -262,6 +265,9 @@ export function useStays() {
           body: JSON.stringify(appTripToApi(trip)),
         })
         if (!res.ok) {
+          const errBody = await res.json().catch(() => null)
+          console.error("[updateProposedTrip] PUT failed:", res.status, errBody)
+          console.error("[updateProposedTrip] Request body was:", appTripToApi(trip))
           const refetch = await fetch("/api/proposed-trips").then((r) => r.json())
           if (Array.isArray(refetch)) setProposedTripsState(refetch.map(dbTripToApp))
         }
