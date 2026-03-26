@@ -42,6 +42,12 @@ export const auth = betterAuth({
     window: 60, // 60 seconds
     max: 5, // max 5 requests per window
   },
+  trustedOrigins: [
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    // Allow Vercel preview deployments
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+    ...(process.env.VERCEL_BRANCH_URL ? [`https://${process.env.VERCEL_BRANCH_URL}`] : []),
+  ],
   advanced: {
     useSecureCookies: isProduction,
   },

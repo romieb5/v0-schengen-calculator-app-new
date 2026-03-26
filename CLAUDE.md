@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A free, client-side web calculator for tracking Schengen Area visa compliance under the **90/180-day rule**. Travelers enter their past stays and proposed future trips to check whether they comply with EU short-stay visa limits. All data is stored in the browser via localStorage — there is no backend or database.
+A web app for tracking Schengen Area visa compliance under the **90/180-day rule**. Travelers enter their past stays and proposed future trips to check whether they comply with EU short-stay visa limits. The core calculator is free; the timeline visualization requires a one-time payment.
 
 **Live site:** https://www.schengenmonitor.com
 **Author:** Romie Bajwa
@@ -15,6 +15,10 @@ A free, client-side web calculator for tracking Schengen Area visa compliance un
 - **Forms:** React Hook Form + Zod validation
 - **Dates:** date-fns, React Day Picker
 - **Charts:** Recharts (timeline visualization)
+- **Auth:** BetterAuth (email/password)
+- **Database:** Supabase (Postgres) — user data, stays, payment status
+- **Email:** Resend — verification emails, password resets, payment receipts
+- **Payments:** Stripe — one-time checkout
 - **Analytics:** Vercel Analytics, Vercel Speed Insights, Google Analytics (AW-17780766572)
 - **Package Manager:** pnpm
 - **Deployment:** Vercel
@@ -22,42 +26,88 @@ A free, client-side web calculator for tracking Schengen Area visa compliance un
 ## Project Structure
 
 ```
-app/                        # Next.js App Router pages
+app/
   page.tsx                  # Home — main calculator
   faq/page.tsx              # FAQ about 90/180 rule
   how-it-works/page.tsx     # Educational guide
   privacy/page.tsx          # Privacy policy
   terms/page.tsx            # Terms and conditions
+  sign-in/page.tsx          # Sign-in page
+  sign-up/page.tsx          # Sign-up page
+  reset-password/page.tsx   # Password reset
+  verified/page.tsx         # Email verification landing
+  account/page.tsx          # Account settings (password, deletion)
   layout.tsx                # Root layout (metadata, analytics, fonts)
   globals.css               # Global styles
-  robots.ts / sitemap.ts    # SEO generation
+
+  api/
+    stays/                  # CRUD for recorded stays
+    proposed-trips/         # CRUD for proposed trips
+    import/                 # localStorage → database import
+    stripe/checkout/        # Stripe checkout session creation
+    stripe/webhook/         # Stripe webhook handler
+    payment-status/         # Payment status check
+    payment-status/verify/  # Stripe-direct payment verification (webhook fallback)
+    pricing/                # Geo-based price label
+    account/delete/         # Account deletion
 
 components/
-  schengen-calculator.tsx   # Main calculator component (~1100 lines)
+  schengen-calculator.tsx   # Main calculator component
   three-month-calendar.tsx  # 3-month date range picker
   single-month-calendar.tsx # Single month calendar
   timeline-visualization.tsx # Visual timeline of stays
+  timeline-paywall.tsx      # Paywall overlay with CTA
+  payment-success-modal.tsx # Post-payment success dialog
+  account-deleted-modal.tsx # Post-deletion confirmation
+  layout-shell.tsx          # Conditional layout (hides nav on auth pages)
   navigation.tsx            # Top nav bar
   footer.tsx                # Footer
   theme-provider.tsx        # Dark mode provider
-  ui/                       # shadcn/ui primitives (18+ components)
+  ui/                       # shadcn/ui primitives
 
 lib/
   schengen-calculations.ts  # Core rolling-window calculation logic
   schengenCalculator.ts     # OOP calculator class
+  auth.ts                   # BetterAuth configuration
+  db.ts                     # Postgres connection pool
+  stripe.ts                 # Stripe client singleton
+  email.ts                  # Resend email helpers
+  env.ts                    # Zod-based env validation
+  rate-limit.ts             # In-memory rate limiter
+  security-logger.ts        # Structured security event logging
   utils.ts                  # cn() Tailwind utility
+
+hooks/
+  use-stays.ts              # Stay/trip CRUD (Supabase for auth'd, localStorage for anon)
+  use-payment-status.ts     # Payment status with refresh
+
+middleware.ts               # Rate limiting, bot detection, HTTPS enforcement
+supabase/schema.sql         # Database schema
 ```
+
+## Architecture
+
+- **Anonymous users:** calculator works client-side via localStorage
+- **Signed-in users:** stay/trip data stored in Supabase, syncs across devices
+- **Payment:** one-time Stripe checkout unlocks timeline visualization
+- **Payment verification:** webhook-primary with direct Stripe API fallback on redirect
+
+### What's Free vs Paid
+
+- **Free (no account):** Calculator, recorded stays, proposed trips, hide/show toggles — all via localStorage
+- **Free (signed in):** Same features but data syncs across devices via Supabase
+- **Paid (one-time):** Timeline visualization unlocked
 
 ## Key Data Models
 
 ```typescript
-// Stay — stored in localStorage as JSON
 interface Stay {
   id: string
   entryDate: Date
   exitDate: Date
   stayType: "short" | "residence"
   countryCode?: string
+  hidden?: boolean  // excluded from calculations/timeline, dimmed in list
 }
 ```
 
@@ -80,6 +130,15 @@ pnpm start      # Run production server
 pnpm lint       # ESLint
 ```
 
+## Environment Variables
+
+See `.env.example` for the full list. Key groups:
+- **Database:** `DATABASE_URL`
+- **Auth:** `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`
+- **Email:** `RESEND_API_KEY`
+- **Stripe:** `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
+- **Rate limiting (production):** `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
+
 ## Notes
 
 - No test framework configured
@@ -87,104 +146,3 @@ pnpm lint       # ESLint
 - Images are unoptimized (configured in next.config.mjs)
 - TypeScript build errors are ignored in next.config.mjs
 - 5 pre-existing TS errors in schengen-calculator.tsx (type mismatches — not from our changes)
-- Stays have a `hidden?: boolean` field — hidden stays/proposed trips are excluded from calculations and timeline but remain visible (dimmed) in the list
-
----
-
-## Paywall & Auth Feature (Planned)
-
-**Branch:** `paywall-timeline` (to be created off `main`)
-
-### Overview
-
-The timeline visualization is moving behind a one-time payment paywall. The rest of the calculator remains free and works without an account.
-
-### Tech Stack Additions
-
-- **Auth:** BetterAuth (email/password)
-- **Database:** Supabase (Postgres) — user data, stays, payment status
-- **Email:** Resend — verification emails, password resets, payment receipts
-- **Payments:** Stripe — one-time checkout
-
-### Architecture Changes
-
-- Anonymous users: calculator works client-side via localStorage (unchanged)
-- Signed-in users: stay/trip data stored in Supabase, syncs across devices
-- Payment status stored in Supabase, validated server-side
-- BetterAuth uses Supabase Postgres as its user/session store
-
-### What's Free vs Paid
-
-- **Free (no account):** Calculator, recorded stays, proposed trips, hide/show toggles — all via localStorage
-- **Free (signed in):** Same features but data syncs across devices via Supabase
-- **Paid (one-time):** Timeline visualization unlocked
-
-### Timeline Paywall UX
-
-**For non-paying users:** The timeline section shows the example timeline **blurred/dimmed** behind an overlay with:
-
-> **Never Overstay Again**
-> Track your 90/180 day status at a glance with a visual timeline of all your Schengen stays.
-> [Unlock Timeline — $X one-time]
-> One-time payment. No subscription.
-
-- Anonymous users: CTA says "Sign up to unlock"
-- Signed-in free users: CTA says "Unlock Timeline — $X one-time"
-
-**Remove** the current empty-state copy that tells users to add stays to build their timeline (this gives away value). Replace with the paywall overlay using the example data as a visual teaser.
-
-### User Flows
-
-**Anonymous user → CTA → Payment:**
-1. Sees blurred timeline with "Never Overstay Again" overlay
-2. Clicks CTA → redirected to sign-up page
-3. Sign-up page mentions: "Create an account to unlock the Timeline Visualization"
-4. Signs up (email/password, verified via Resend)
-5. Immediately redirected to Stripe Checkout
-6. Stripe redirects back on success
-7. **If localStorage stays exist** → imported into account, timeline unlocked and visible. Success modal: "You're all set! Your timeline is now unlocked and your recorded stays have been imported. You can view your complete Schengen travel history below." [Got it]
-8. **If no localStorage stays** → timeline shows current empty-state copy (add stays for timeline to appear). Success modal: "You're all set! Your timeline is now unlocked. Start recording your Schengen area visits and your personalized timeline will build out automatically." [Got it]
-
-**Signed-in free user → CTA → Payment:**
-1. Same blurred overlay
-2. Clicks CTA → goes straight to Stripe Checkout (no sign-up needed)
-3. Returns → same success logic as above
-
-**Edge cases:**
-- User closes Stripe before paying → returns unpaid, timeline stays locked
-- User signs up but abandons payment → has account with synced data, timeline locked, CTA shows "Unlock Timeline" (not "Sign up")
-- localStorage data vs existing account data on import → skip duplicates, database takes priority
-
-### Implementation Phases
-
-**Phase 1 — Auth & Database:**
-- Supabase schema (users, stays, trips, payment status)
-- BetterAuth setup with email/password
-- Resend integration for verification emails
-- Sign-in/sign-up UI (mention timeline unlock on sign-up page)
-- Data layer: signed-in users read/write to Supabase, anonymous users use localStorage
-- Import localStorage data on first sign-up
-
-**Phase 2 — Paywall:**
-- Stripe one-time checkout integration
-- Store payment status in Supabase
-- Timeline paywall overlay (blurred example + CTA copy)
-- Gate timeline rendering behind payment check
-- Success modal after payment (two variants: with/without existing stays)
-- Post-payment redirect flow
-
-**Phase 3 — Polish:**
-- Account management (change password, delete account)
-- Payment receipts via Resend
-- Error handling edge cases
-
-### Required Environment Variables (to be set up)
-
-- `DATABASE_URL` — Supabase Postgres connection string
-- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anon key
-- `BETTER_AUTH_SECRET` — random string for signing tokens
-- `RESEND_API_KEY` — Resend API key
-- `STRIPE_SECRET_KEY` — Stripe secret key
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — Stripe publishable key
-- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret
