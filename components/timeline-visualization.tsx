@@ -72,6 +72,15 @@ const EXAMPLE_STAYS: Stay[] = [
   },
 ]
 
+// Hardcoded color map for example stays to guarantee varied colors
+const EXAMPLE_COLOR_MAP = new Map<string, string>([
+  ["example-5", "bg-green-500"],
+  ["example-1", "bg-blue-500"],
+  ["example-2", "bg-yellow-500"],
+  ["example-3", "bg-purple-500"],
+  ["example-4", "bg-orange-500"],
+])
+
 export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -170,8 +179,8 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   ]
 
   const sortedStays = [...displayStays].sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
-  const stayColorMap = externalColorMap ?? new Map<string, string>()
-  if (!externalColorMap) {
+  const stayColorMap = externalColorMap ?? (isEmptyState ? EXAMPLE_COLOR_MAP : new Map<string, string>())
+  if (!externalColorMap && !isEmptyState) {
     sortedStays.forEach((stay, index) => {
       stayColorMap.set(stay.id, stayColors[index % stayColors.length])
     })
@@ -185,31 +194,30 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   const daysLeft = calculationResult.daysLeft
 
   const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
+  const statsColor = daysLeft < 0 ? "bg-red-50 text-red-700" : "bg-blue-50 text-blue-700"
 
   if (isMobile) {
     return (
       <div className="space-y-4">
-        {isEmptyState && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <p className="text-sm text-blue-900 font-medium">📊 Example Timeline</p>
-            <p className="text-xs text-blue-800 mt-1">Here's what your timeline will look like once you add your stays</p>
-          </div>
-        )}
         <div className="flex flex-col items-start gap-3">
           {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
-              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
+              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
                 Show Proposed Trips
               </Label>
             </div>
           )}
-          <div
-            className={`text-sm font-semibold px-3 py-1 rounded ${
-              daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
-            }`}
-          >
-            {daysUsed} days used, {daysRemainingText}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
+              {daysUsed} days used
+            </div>
+            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
+              {daysRemainingText}
+            </div>
+            {isEmptyState && (
+              <span className="text-xs text-muted-foreground italic">Example data shown</span>
+            )}
           </div>
           {displayProposedTrips.length > 0 && showProposedTrips && (
             <>
@@ -342,29 +350,27 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   return (
     <div className="space-y-4">
-      {isEmptyState && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-          <p className="text-sm text-blue-900 font-medium">📊 Example Timeline</p>
-          <p className="text-sm text-blue-800 mt-1">Here's what your timeline will look like once you add your stays. Start by recording your Schengen area visits above.</p>
-        </div>
-      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
-              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} />
+              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
               <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
                 Show Proposed Trips
               </Label>
             </div>
           )}
-          <div
-            className={`text-sm font-semibold px-3 py-1 rounded ${
-              daysLeft < 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
-            }`}
-          >
-            {daysUsed} days used, {daysRemainingText}
+          <div className="flex items-center gap-2">
+            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
+              {daysUsed} days used
+            </div>
+            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
+              {daysRemainingText}
+            </div>
           </div>
+          {isEmptyState && (
+            <span className="text-xs text-muted-foreground italic">Example data shown</span>
+          )}
         </div>
         {displayProposedTrips.length > 0 && showProposedTrips && (
           <div className="flex flex-col items-end gap-1">

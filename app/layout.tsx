@@ -3,8 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Navigation } from "@/components/navigation"
-import { Footer } from "@/components/footer"
+import { LayoutShell } from "@/components/layout-shell"
 import { AuthProvider } from "@/components/auth-provider"
 import "./globals.css"
 
@@ -113,9 +112,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} font-sans antialiased`}>
         <AuthProvider>
-          <Navigation />
-          {children}
-          <Footer />
+          <LayoutShell>{children}</LayoutShell>
         </AuthProvider>
         <Analytics />
         <SpeedInsights />
