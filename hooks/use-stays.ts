@@ -111,6 +111,8 @@ export function useStays() {
     prevAuthenticatedRef.current = isAuthenticated
 
     if (isAuthenticated) {
+      // Ensure spinner shows while fetching
+      setIsLoading(true)
       // Fetch from API
       Promise.all([
         fetch("/api/stays").then((r) => r.json()),
