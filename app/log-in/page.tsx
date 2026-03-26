@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -12,7 +11,6 @@ import { AlertCircle, Loader2, Eye, EyeOff } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 
 export default function SignInPage() {
-  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -45,46 +43,6 @@ export default function SignInPage() {
         return
       }
 
-      // Trigger Chrome/Safari password save by submitting a hidden form to a hidden iframe.
-      // SPA client-side navigations don't trigger the browser's built-in save-password prompt,
-      // but a real form submission to an iframe does.
-      try {
-        const iframe = document.createElement("iframe")
-        iframe.name = "password-save-frame"
-        iframe.style.display = "none"
-        document.body.appendChild(iframe)
-
-        const form = document.createElement("form")
-        form.method = "POST"
-        form.action = "/api/auth/ok" // returns 200 — doesn't need to exist as a real endpoint
-        form.target = "password-save-frame"
-
-        const emailInput = document.createElement("input")
-        emailInput.type = "email"
-        emailInput.name = "email"
-        emailInput.autocomplete = "email"
-        emailInput.value = email
-
-        const passwordInput = document.createElement("input")
-        passwordInput.type = "password"
-        passwordInput.name = "password"
-        passwordInput.autocomplete = "current-password"
-        passwordInput.value = password
-
-        form.appendChild(emailInput)
-        form.appendChild(passwordInput)
-        document.body.appendChild(form)
-        form.submit()
-
-        // Clean up after a short delay
-        setTimeout(() => {
-          form.remove()
-          iframe.remove()
-        }, 2000)
-      } catch {
-        // Non-critical — login still works without password save
-      }
-
       // Import localStorage data if pending from sign-up
       if (localStorage.getItem("schengen-pending-import")) {
         const localStays = localStorage.getItem("schengen-stays")
@@ -112,8 +70,9 @@ export default function SignInPage() {
         }
       }
 
-      router.push("/")
-      router.refresh()
+      // Use full page navigation (not router.push) so Chrome detects the
+      // successful login and prompts to save the password / enable autofill.
+      window.location.href = "/"
     } catch {
       setError("An unexpected error occurred. Please try again.")
       setIsLoading(false)
