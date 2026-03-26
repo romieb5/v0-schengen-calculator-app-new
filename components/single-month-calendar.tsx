@@ -123,18 +123,20 @@ export function SingleMonthCalendar({
         })}
       </div>
 
-      {/* Clear button */}
-      <div className="flex justify-end mt-4">
-        <Button
-          variant="ghost"
-          className="text-primary"
-          onClick={() => {
-            onDateSelect(null as any)
-          }}
-        >
-          Clear Calendar
-        </Button>
-      </div>
+      {/* Clear button — only show when a date is selected */}
+      {entryDate && (
+        <div className="flex justify-end mt-4">
+          <Button
+            variant="ghost"
+            className="text-primary"
+            onClick={() => {
+              onDateSelect(null as any)
+            }}
+          >
+            Clear Selection
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

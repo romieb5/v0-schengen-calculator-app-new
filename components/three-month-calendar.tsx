@@ -220,11 +220,13 @@ export function ThreeMonthCalendar({
         </Button>
       </div>
 
-      <div className="flex justify-end">
-        <Button variant="link" onClick={onClear} className="text-primary font-semibold hover:text-primary/80">
-          Clear Calendar
-        </Button>
-      </div>
+      {entryDate && (
+        <div className="flex justify-end">
+          <Button variant="link" onClick={onClear} className="text-primary font-semibold hover:text-primary/80">
+            Clear Selection
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
