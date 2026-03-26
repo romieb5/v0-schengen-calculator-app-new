@@ -37,6 +37,12 @@ CREATE TABLE payment_status (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Webhook idempotency: prevent duplicate event processing
+CREATE TABLE processed_webhook_events (
+  event_id TEXT PRIMARY KEY,
+  processed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Indexes
 CREATE INDEX idx_stays_user_id ON stays(user_id);
 CREATE INDEX idx_proposed_trips_user_id ON proposed_trips(user_id);

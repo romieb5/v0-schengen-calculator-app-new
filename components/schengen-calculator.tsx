@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -11,12 +12,16 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ThreeMonthCalendar } from "./three-month-calendar"
 import { TimelineVisualization } from "./timeline-visualization"
-import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff } from "lucide-react"
+import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2 } from "lucide-react"
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
 import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
 import { useStays } from "@/hooks/use-stays"
+import { usePaymentStatus } from "@/hooks/use-payment-status"
+import { TimelinePaywall } from "./timeline-paywall"
+import { PaymentSuccessModal } from "./payment-success-modal"
+import { AccountDeletedModal } from "./account-deleted-modal"
 
 interface Stay {
   id: string
@@ -43,8 +48,42 @@ export function SchengenCalculator() {
     proposedTrips,
     setStays,
     setProposedTrips,
+    addStay: addStayToDb,
+    updateStay: updateStayInDb,
+    deleteStay: deleteStayFromDb,
+    toggleStayVisibility: toggleStayVisibilityInDb,
+    addProposedTrip: addProposedTripToDb,
+    updateProposedTrip: updateProposedTripInDb,
+    deleteProposedTrip: deleteProposedTripFromDb,
+    toggleProposedTripVisibility: toggleProposedTripVisibilityInDb,
     isLoading: dataLoading,
   } = useStays()
+
+  const { hasPaid, isAuthenticated, isLoading: paymentLoading, refresh: refreshPayment } = usePaymentStatus()
+  const searchParams = useSearchParams()
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showAccountDeletedModal, setShowAccountDeletedModal] = useState(false)
+
+  // Handle post-payment redirect — verify with Stripe directly since webhook may be delayed
+  useEffect(() => {
+    if (searchParams.get("payment") === "success" && !paymentLoading) {
+      fetch("/api/payment-status/verify", { method: "POST" })
+        .then((res) => res.json())
+        .then(() => refreshPayment())
+        .then(() => setShowSuccessModal(true))
+        .catch(() => refreshPayment().then(() => setShowSuccessModal(true)))
+      // Clean up URL
+      window.history.replaceState({}, "", "/")
+    }
+  }, [searchParams, paymentLoading, refreshPayment])
+
+  // Handle post-account-deletion redirect
+  useEffect(() => {
+    if (searchParams.get("account_deleted") === "true") {
+      setShowAccountDeletedModal(true)
+      window.history.replaceState({}, "", "/")
+    }
+  }, [searchParams])
 
   const [entryDate, setEntryDate] = useState<Date>()
   const [exitDate, setExitDate] = useState<Date>()
@@ -64,15 +103,15 @@ export function SchengenCalculator() {
   const [proposedExitPopoverOpen, setProposedExitPopoverOpen] = useState(false)
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const [editDialogEntry, setEditDialogEntry] = useState<Date>()
-  const [editDialogExit, setEditDialogExit] = useState<Date>()
+  const [editDialogEntry, setEditDialogEntry] = useState<Date | null>(null)
+  const [editDialogExit, setEditDialogExit] = useState<Date | null>(null)
   const [editDialogStayType, setEditDialogStayType] = useState<"short" | "residence">("short")
   const [editDialogCountryCode, setEditDialogCountryCode] = useState("")
   const [editDialogId, setEditDialogId] = useState<string | null>(null)
 
   const [editProposedDialogOpen, setEditProposedDialogOpen] = useState(false)
-  const [editProposedDialogEntry, setEditProposedDialogEntry] = useState<Date>()
-  const [editProposedDialogExit, setEditProposedDialogExit] = useState<Date>()
+  const [editProposedDialogEntry, setEditProposedDialogEntry] = useState<Date | null>(null)
+  const [editProposedDialogExit, setEditProposedDialogExit] = useState<Date | null>(null)
   const [editProposedDialogId, setEditProposedDialogId] = useState<string | null>(null)
 
   const addOrUpdateStay = () => {
@@ -92,10 +131,10 @@ export function SchengenCalculator() {
     }
 
     if (editingId) {
-      setStays(stays.map((s) => (s.id === editingId ? stay : s)))
+      updateStayInDb(stay)
       setEditingId(null)
     } else {
-      setStays([...stays, stay])
+      addStayToDb(stay)
     }
 
     // Reset form
@@ -130,23 +169,23 @@ export function SchengenCalculator() {
       countryCode: editDialogCountryCode || undefined,
     }
 
-    setStays(stays.map((s) => (s.id === editDialogId ? stay : s)))
+    updateStayInDb(stay)
 
     // Reset dialog state
     setEditDialogOpen(false)
-    setEditDialogEntry(undefined)
-    setEditDialogExit(undefined)
+    setEditDialogEntry(null)
+    setEditDialogExit(null)
     setEditDialogStayType("short")
     setEditDialogCountryCode("")
     setEditDialogId(null)
   }
 
   const deleteStay = (id: string) => {
-    setStays(stays.filter((s) => s.id !== id))
+    deleteStayFromDb(id)
   }
 
   const toggleStayVisibility = (id: string) => {
-    setStays(stays.map((s) => (s.id === id ? { ...s, hidden: !s.hidden } : s)))
+    toggleStayVisibilityInDb(id)
   }
 
   // REMOVED LOCAL calculateDaysUsed function
@@ -211,7 +250,7 @@ export function SchengenCalculator() {
     let lastEligibleDate: Date | null = null
 
     const tripsToInclude = visibleProposedTrips.filter((t) => !currentTripId || t.id !== currentTripId)
-    tripsToInclude.push({ id: "temp", entryDate: tripEntry, exitDate: tripExit })
+    tripsToInclude.push({ id: "temp", entryDate: tripEntry, exitDate: tripExit, stayType: "short" as const })
 
     const { daysUsed: calculatedDaysUsedOnLastDay, daysLeft: daysRemainingAfterTrip } = calculateDaysUsedForDate(
       tripExit,
@@ -305,11 +344,10 @@ export function SchengenCalculator() {
     }
 
     if (editingProposedId) {
-      setProposedTrips(
-        proposedTrips.map((trip) =>
-          trip.id === editingProposedId ? { ...trip, entryDate: proposedEntry, exitDate: proposedExit } : trip,
-        ),
-      )
+      const trip = proposedTrips.find((t) => t.id === editingProposedId)
+      if (trip) {
+        updateProposedTripInDb({ ...trip, entryDate: proposedEntry, exitDate: proposedExit })
+      }
       setEditingProposedId(null)
     } else {
       const newTrip: Stay = {
@@ -319,7 +357,7 @@ export function SchengenCalculator() {
         stayType: "short",
         countryCode: "",
       }
-      setProposedTrips([...proposedTrips, newTrip])
+      addProposedTripToDb(newTrip)
     }
 
     setProposedEntry(undefined)
@@ -344,30 +382,27 @@ export function SchengenCalculator() {
       return
     }
 
-    setProposedTrips(
-      proposedTrips.map((trip) =>
-        trip.id === editProposedDialogId
-          ? { ...trip, entryDate: editProposedDialogEntry, exitDate: editProposedDialogExit }
-          : trip,
-      ),
-    )
+    const trip = proposedTrips.find((t) => t.id === editProposedDialogId)
+    if (trip) {
+      updateProposedTripInDb({ ...trip, entryDate: editProposedDialogEntry, exitDate: editProposedDialogExit })
+    }
 
     // Reset dialog state
     setEditProposedDialogOpen(false)
-    setEditProposedDialogEntry(undefined)
-    setEditProposedDialogExit(undefined)
+    setEditProposedDialogEntry(null)
+    setEditProposedDialogExit(null)
     setEditProposedDialogId(null)
   }
 
   const deleteProposedTrip = (id: string) => {
-    setProposedTrips(proposedTrips.filter((trip) => trip.id !== id))
+    deleteProposedTripFromDb(id)
   }
 
   const toggleProposedTripVisibility = (id: string) => {
-    setProposedTrips(proposedTrips.map((trip) => (trip.id === id ? { ...trip, hidden: !trip.hidden } : trip)))
+    toggleProposedTripVisibilityInDb(id)
   }
 
-  const proposedTripResults = proposedTrips
+  const proposedTripResults = [...proposedTrips]
     .sort((a, b) => a.entryDate.getTime() - b.entryDate.getTime())
     .map((trip) => ({
       trip,
@@ -431,7 +466,7 @@ export function SchengenCalculator() {
                   onDateSelect={(date) => {
                     if (!editDialogEntry || (editDialogEntry && editDialogExit)) {
                       setEditDialogEntry(date)
-                      setEditDialogExit(undefined)
+                      setEditDialogExit(null)
                     } else {
                       if (date < editDialogEntry) {
                         setEditDialogExit(editDialogEntry)
@@ -441,7 +476,7 @@ export function SchengenCalculator() {
                       }
                     }
                   }}
-                  initialMonth={editDialogEntry}
+                  initialMonth={editDialogEntry ?? undefined}
                   disabledRanges={getDisabledDateRanges(stays, proposedTrips, editDialogId)}
                 />
 
@@ -472,8 +507,8 @@ export function SchengenCalculator() {
                   variant="outline"
                   onClick={() => {
                     setEditDialogOpen(false)
-                    setEditDialogEntry(undefined)
-                    setEditDialogExit(undefined)
+                    setEditDialogEntry(null)
+                    setEditDialogExit(null)
                     setEditDialogStayType("short")
                     setEditDialogCountryCode("")
                     setEditDialogId(null)
@@ -508,7 +543,7 @@ export function SchengenCalculator() {
                   onDateSelect={(date) => {
                     if (!editProposedDialogEntry || (editProposedDialogEntry && editProposedDialogExit)) {
                       setEditProposedDialogEntry(date)
-                      setEditProposedDialogExit(undefined)
+                      setEditProposedDialogExit(null)
                     } else {
                       if (date < editProposedDialogEntry) {
                         setEditProposedDialogExit(editProposedDialogEntry)
@@ -518,7 +553,7 @@ export function SchengenCalculator() {
                       }
                     }
                   }}
-                  initialMonth={editProposedDialogEntry}
+                  initialMonth={editProposedDialogEntry ?? undefined}
                   disabledRanges={getDisabledDateRanges(stays, proposedTrips, editProposedDialogId)}
                 />
 
@@ -547,8 +582,8 @@ export function SchengenCalculator() {
                   variant="outline"
                   onClick={() => {
                     setEditProposedDialogOpen(false)
-                    setEditProposedDialogEntry(undefined)
-                    setEditProposedDialogExit(undefined)
+                    setEditProposedDialogEntry(null)
+                    setEditProposedDialogExit(null)
                     setEditProposedDialogId(null)
                   }}
                 >
@@ -956,26 +991,73 @@ export function SchengenCalculator() {
             </Card>
           </div>
 
-          <Card className="border-2 shadow-lg">
-            <CardHeader className="pb-6 px-4 sm:px-6">
-              <CardTitle className="text-lg sm:text-xl lg:text-2xl">Timeline Visualization</CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                Visual representation of your stays within the rolling 180-day window
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <TimelineVisualization
-                stays={visibleStays}
-                proposedTrips={visibleProposedTrips.map((trip) => ({
-                  id: trip.id,
-                  entryDate: trip.entryDate,
-                  exitDate: trip.exitDate,
-                }))}
-                referenceDate={referenceDate}
-                stayColorMap={stayColorMap}
-              />
-            </CardContent>
+          <Card className="border-2 shadow-lg overflow-hidden">
+            {(paymentLoading || (hasPaid && dataLoading)) ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="mt-3 text-sm text-muted-foreground">Loading timeline...</p>
+              </div>
+            ) : hasPaid ? (
+              <>
+                <CardHeader className="pb-6 px-4 sm:px-6">
+                  <CardTitle className="text-lg sm:text-xl lg:text-2xl">Timeline Visualization</CardTitle>
+                  <CardDescription className="text-sm sm:text-base">
+                    Visual representation of your stays within the rolling 180-day window
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <TimelineVisualization
+                    stays={visibleStays}
+                    proposedTrips={visibleProposedTrips.map((trip) => ({
+                      id: trip.id,
+                      entryDate: trip.entryDate,
+                      exitDate: trip.exitDate,
+                    }))}
+                    referenceDate={referenceDate}
+                    stayColorMap={stayColorMap}
+                  />
+                </CardContent>
+              </>
+            ) : (
+              <div className="flex flex-col sm:flex-row">
+                <div className="sm:w-[240px] flex-shrink-0 p-4 sm:p-6 flex">
+                  <TimelinePaywall isAuthenticated={isAuthenticated} />
+                </div>
+                <div className="border-t sm:border-t-0 sm:border-l border-border" />
+                <div className="flex-1 min-w-0 relative max-h-[600px] sm:max-h-none overflow-y-auto sm:overflow-y-visible">
+                  <CardHeader className="pt-5 pb-6 px-4 sm:px-6">
+                    <CardTitle className="text-lg sm:text-xl lg:text-2xl flex items-center gap-2">
+                      Timeline Visualization
+                      <span className="h-7 w-7 rounded-full bg-foreground/10 flex items-center justify-center">
+                        <Lock className="h-4 w-4 text-foreground/70" />
+                      </span>
+                    </CardTitle>
+                    <CardDescription className="text-sm sm:text-base">
+                      Visual representation of your stays within the rolling 180-day window
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="select-none">
+                    <TimelineVisualization
+                      stays={[]}
+                      proposedTrips={[]}
+                      referenceDate={referenceDate}
+                    />
+                  </CardContent>
+                </div>
+              </div>
+            )}
           </Card>
+
+          <PaymentSuccessModal
+            open={showSuccessModal}
+            onClose={() => setShowSuccessModal(false)}
+            hasStays={stays.length > 0}
+          />
+
+          <AccountDeletedModal
+            open={showAccountDeletedModal}
+            onClose={() => setShowAccountDeletedModal(false)}
+          />
 
           {stays.length > 0 && (
             <Card className="border-2 shadow-lg">
