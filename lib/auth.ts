@@ -40,7 +40,7 @@ export const auth = betterAuth({
   },
   rateLimit: {
     window: 60, // 60 seconds
-    max: 5, // max 5 requests per window
+    max: 30, // generous limit here — middleware handles strict auth rate limiting
   },
   trustedOrigins: [
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
