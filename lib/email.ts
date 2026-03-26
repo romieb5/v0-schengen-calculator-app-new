@@ -32,7 +32,7 @@ function validateUrl(url: string): string {
 
 export async function sendVerificationEmail(email: string, verificationUrl: string) {
   const safeUrl = validateUrl(verificationUrl)
-  await getResend().emails.send({
+  const result = await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "Verify your email — Schengen Monitor",
@@ -47,6 +47,10 @@ export async function sendVerificationEmail(email: string, verificationUrl: stri
       </div>
     `,
   })
+  if (result.error) {
+    console.error("[email] Verification email failed:", JSON.stringify(result.error))
+    throw new Error(`Failed to send verification email: ${result.error.message}`)
+  }
 }
 
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
