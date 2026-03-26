@@ -161,12 +161,14 @@ export function SchengenCalculator() {
       return
     }
 
+    const original = stays.find((s) => s.id === editDialogId)
     const stay: Stay = {
       id: editDialogId,
       entryDate: editDialogEntry,
       exitDate: editDialogExit,
       stayType: editDialogStayType,
       countryCode: editDialogCountryCode || undefined,
+      hidden: original?.hidden,
     }
 
     updateStayInDb(stay)
