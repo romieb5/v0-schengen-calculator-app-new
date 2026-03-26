@@ -32,7 +32,7 @@ function createUpstashLimiters() {
     }),
     auth: new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(8, "60 s"),
+      limiter: Ratelimit.slidingWindow(15, "60 s"),
       prefix: "rl:auth",
     }),
   }
@@ -68,7 +68,7 @@ function createMemoryLimiters() {
 
   return {
     global: makeMemoryLimiter(120, 60_000),
-    auth: makeMemoryLimiter(8, 60_000),
+    auth: makeMemoryLimiter(15, 60_000),
   }
 }
 
