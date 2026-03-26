@@ -1,37 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { AlertCircle, Loader2, Eye, EyeOff, Check } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 
 export default function SignUpPage() {
   const router = useRouter()
-  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [honeypot, setHoneypot] = useState("")
+  const formLoadedAt = useRef(Date.now())
+
+  const passwordChecks = [
+    { label: "8+ characters", met: password.length >= 8 },
+    { label: "Capital letter", met: /[A-Z]/.test(password) },
+    { label: "Number", met: /[0-9]/.test(password) },
+    { label: "Special character (!@#$)", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password) },
+  ]
+
+  const allChecksMet = passwordChecks.every((check) => check.met)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      return
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters")
+    // Bot detection: honeypot field should be empty, form should take >2s to fill
+    if (honeypot) return
+    const elapsed = Date.now() - formLoadedAt.current
+    if (elapsed < 2000) {
+      setError("Please slow down and try again.")
       return
     }
 
@@ -41,35 +48,22 @@ export default function SignUpPage() {
       const result = await authClient.signUp.email({
         email,
         password,
-        name: name || email.split("@")[0],
+        name: email.split("@")[0],
+        callbackURL: "/verified",
       })
 
       if (result.error) {
-        setError(result.error.message || "Failed to create account")
+        // Don't reveal whether the email is already registered
+        setError("Could not create account. Please try again or log in if you already have one.")
         setIsLoading(false)
         return
       }
 
-      // Try to import localStorage data
+      // Mark that we should import localStorage data after email verification + first sign-in
       const localStays = localStorage.getItem("schengen-stays")
       const localTrips = localStorage.getItem("schengen-proposed-trips")
-
       if (localStays || localTrips) {
-        try {
-          await fetch("/api/import", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              stays: localStays ? JSON.parse(localStays) : [],
-              proposedTrips: localTrips ? JSON.parse(localTrips) : [],
-            }),
-          })
-          // Clear localStorage after successful import
-          localStorage.removeItem("schengen-stays")
-          localStorage.removeItem("schengen-proposed-trips")
-        } catch {
-          // Import failed silently — data stays in localStorage as fallback
-        }
+        localStorage.setItem("schengen-pending-import", "true")
       }
 
       setEmailSent(true)
@@ -80,112 +74,178 @@ export default function SignUpPage() {
     }
   }
 
-  if (emailSent) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4">
-        <Card className="w-full max-w-md border-2 shadow-lg">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Check your email</CardTitle>
-            <CardDescription className="text-base">
-              We&apos;ve sent a verification link to <strong>{email}</strong>. Click the link to verify
-              your account and get started.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Button variant="outline" onClick={() => router.push("/sign-in")} className="mt-2">
-              Go to Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4">
-      <Card className="w-full max-w-md border-2 shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create your account</CardTitle>
-          <CardDescription className="text-base">
-            Create an account to unlock the Timeline Visualization
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+    <div className="min-h-screen flex">
+      {/* Left panel — image + overlay text */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        {/* Blurred placeholder – visible instantly while the full image loads */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCARXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUAAAABAAAARgEoAAMAAAABAAIAAIdpAAQAAAABAAAATgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAAB4AAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/CABEIAB4AFAMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAADAgQBBQAGBwgJCgv/xADDEAABAwMCBAMEBgQHBgQIBnMBAgADEQQSIQUxEyIQBkFRMhRhcSMHgSCRQhWhUjOxJGIwFsFy0UOSNIII4VNAJWMXNfCTc6JQRLKD8SZUNmSUdMJg0oSjGHDiJ0U3ZbNVdaSVw4Xy00Z2gONHVma0CQoZGigpKjg5OkhJSldYWVpnaGlqd3h5eoaHiImKkJaXmJmaoKWmp6ipqrC1tre4ubrAxMXGx8jJytDU1dbX2Nna4OTl5ufo6erz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAECAAMEBQYHCAkKC//EAMMRAAICAQMDAwIDBQIFAgQEhwEAAhEDEBIhBCAxQRMFMCIyURRABjMjYUIVcVI0gVAkkaFDsRYHYjVT8NElYMFE4XLxF4JjNnAmRVSSJ6LSCAkKGBkaKCkqNzg5OkZHSElKVVZXWFlaZGVmZ2hpanN0dXZ3eHl6gIOEhYaHiImKkJOUlZaXmJmaoKOkpaanqKmqsLKztLW2t7i5usDCw8TFxsfIycrQ09TV1tfY2drg4uPk5ebn6Onq8vP09fb3+Pn6/9sAQwAWFhYWFhYmFhYmNiYmJjZJNjY2NklcSUlJSUlcb1xcXFxcXG9vb29vb29vhoaGhoaGnJycnJyvr6+vr6+vr6+v/9sAQwEbHR0tKS1MKSlMt3xmfLe3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3t7e3/9oADAMBAAIRAxEAAAEbZwoqQmUCwnEpxKZx0//aAAgBAQABBQJQq8S0poMnwAJZaVV7hh//2gAIAQMRAT8B0g0H/9oACAECEQE/AdJeHcX/2gAIAQEABj8C+5X+Y//EADMQAQADAAICAgICAwEBAAACCwERACExQVFhcYGRobHB8NEQ4fEgMEBQYHCAkKCwwNDg/9oACAEBAAE/IX41Dm9be4lndzWk1IKVADRYo0G0QRf/2gAMAwEAAhEDEQAAECFiF//EADMRAQEBAAMAAQIFBQEBAAEBCQEAESExEEFRYSBx8JGBobHRweHxMEBQYHCAkKCwwNDg/9oACAEDEQE/EAc4kuTjfav/2gAIAQIRAT8QU3mGeavuX//aAAgBAQABPxDQ6ZDUIHzWMdOtGvDGXJqjS49B1PilQSbMdX4wl8lJDKkJ01EH4PVgUz7v/9k=')` }}
+        />
+        <img
+          src="/signup-bg.jpg"
+          alt="Vintage camera, passport, and travel journal on a world map"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-12 text-white text-center">
+          <h2 className="text-3xl font-bold leading-tight [text-shadow:_0_2px_12px_rgba(0,0,0,0.7)]">
+            Never overstay your Schengen visa again
+          </h2>
+          <p className="mt-3 text-lg font-semibold text-white/90 max-w-md [text-shadow:_0_2px_12px_rgba(0,0,0,0.8),_0_0_4px_rgba(0,0,0,0.5)]">
+            Track your 90/180 day status at a glance with a visual timeline of all your stays.
+          </p>
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-6 py-4 sm:px-10">
+          <Link href="/" className="font-semibold text-lg">
+            Schengen Monitor
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/sign-in" className="font-medium text-foreground hover:underline">
+              Log in
+            </Link>
+          </p>
+        </div>
+
+        {/* Form area */}
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-10">
+          <div className="w-full max-w-sm space-y-6">
+            {emailSent ? (
+              <div className="text-center space-y-4">
+                <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
+                <p className="text-muted-foreground">
+                  We&apos;ve sent a verification link to <strong>{email}</strong>. Click the link to verify
+                  your account and get started.
+                </p>
+                <Button variant="outline" onClick={() => router.push("/sign-in")} className="mt-2">
+                  Go to Log In
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
+                  <p className="mt-1 text-muted-foreground">
+                    Sign up to unlock the Timeline Visualization
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Honeypot — invisible to real users, bots auto-fill it */}
+                  <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden" tabIndex={-1}>
+                    <label htmlFor="website">Website</label>
+                    <input
+                      id="website"
+                      name="website"
+                      type="text"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      autoComplete="off"
+                      tabIndex={-1}
+                    />
+                  </div>
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Create a password"
+                        className="pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {/* Password requirement indicators */}
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+                        {passwordChecks.map((check) => (
+                          <div key={check.label} className="flex items-center gap-1.5 text-xs">
+                            <div
+                              className={`h-3.5 w-3.5 rounded-full border flex items-center justify-center transition-colors ${
+                                check.met
+                                  ? "bg-primary border-primary text-primary-foreground"
+                                  : "border-muted-foreground/40"
+                              }`}
+                            >
+                              {check.met && <Check className="h-2.5 w-2.5" />}
+                            </div>
+                            <span className={check.met ? "text-foreground" : "text-muted-foreground"}>
+                              {check.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                  </div>
+
+                  <Button type="submit" className="w-full" size="lg" disabled={isLoading || !allChecksMet}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Sign up"
+                    )}
+                  </Button>
+                </form>
+              </>
             )}
+          </div>
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">Name (optional)</Label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                required
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/sign-in" className="text-primary font-medium hover:underline">
-                Sign in
+        {/* Footer */}
+        {!emailSent && (
+          <div className="px-6 py-4 sm:px-10 text-center">
+            <p className="text-xs text-muted-foreground">
+              By signing up, you agree to our{" "}
+              <Link href="/terms" className="underline hover:text-foreground">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="underline hover:text-foreground">
+                Privacy Policy
               </Link>
+              .
             </p>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
