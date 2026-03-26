@@ -696,6 +696,11 @@ export function SchengenCalculator() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
+                {dataLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (<>
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex justify-between items-baseline gap-2">
                     <span className="text-xs sm:text-sm font-semibold text-foreground">Days Used</span>
@@ -780,6 +785,7 @@ export function SchengenCalculator() {
                     </PopoverContent>
                   </Popover>
                 </div>
+                </>)}
               </CardContent>
             </Card>
 
@@ -794,6 +800,11 @@ export function SchengenCalculator() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-4 sm:px-6">
+                {dataLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (<>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="proposed-entry" className="text-sm sm:text-base">
@@ -989,6 +1000,7 @@ export function SchengenCalculator() {
                     </div>
                   </div>
                 )}
+                </>)}
               </CardContent>
             </Card>
           </div>
