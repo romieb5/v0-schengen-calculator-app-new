@@ -66,7 +66,7 @@ function appStayToApi(stay: Stay) {
     entryDate: toDateString(stay.entryDate),
     exitDate: toDateString(stay.exitDate),
     stayType: stay.stayType,
-    countryCode: stay.countryCode || null,
+    countryCode: stay.countryCode || undefined,
     hidden: stay.hidden ?? false,
   }
 }

@@ -74,9 +74,6 @@ function ResetPasswordForm() {
   if (success) {
     return (
       <div className="text-center space-y-4">
-        <div className="flex justify-center">
-          <CheckCircle2 className="h-12 w-12 text-green-600" />
-        </div>
         <h1 className="text-2xl font-bold tracking-tight">Password reset</h1>
         <p className="text-muted-foreground">
           Your password has been updated. You can now log in with your new password.
