@@ -20,6 +20,12 @@ yarn-error.log*
 .env*.local
 .env
 
+# editor history (may contain env snapshots)
+.history/
+
+# mcp config (contains secrets)
+.mcp.json
+
 # vercel
 .vercel
 
