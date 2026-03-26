@@ -174,7 +174,9 @@ export default function SignInPage() {
                     <Label htmlFor="forgot-email">Email</Label>
                     <Input
                       id="forgot-email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -241,7 +243,9 @@ export default function SignInPage() {
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
@@ -266,7 +270,9 @@ export default function SignInPage() {
                   <div className="relative">
                     <Input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Your password"

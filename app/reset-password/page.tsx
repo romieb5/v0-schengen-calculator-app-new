@@ -104,7 +104,9 @@ function ResetPasswordForm() {
           <Label htmlFor="password">New Password</Label>
           <Input
             id="password"
+            name="password"
             type="password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 8 characters"

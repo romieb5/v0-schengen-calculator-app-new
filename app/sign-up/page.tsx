@@ -156,7 +156,9 @@ export default function SignUpPage() {
                     <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -169,7 +171,9 @@ export default function SignUpPage() {
                     <div className="relative">
                       <Input
                         id="password"
+                        name="password"
                         type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Create a password"
