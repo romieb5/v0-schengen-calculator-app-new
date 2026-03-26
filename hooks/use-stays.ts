@@ -20,12 +20,30 @@ interface ProposedTrip {
   hidden?: boolean
 }
 
-// Convert database row (snake_case, date strings) to app format (camelCase, Date objects)
+// Parse a "YYYY-MM-DD" date string into a local-midnight Date.
+// new Date("YYYY-MM-DD") parses as UTC midnight per spec, which drifts in
+// non-UTC timezones. Splitting the parts and using the Date constructor
+// gives us local midnight — the only thing this app cares about.
+function parseDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number)
+  return new Date(y, m - 1, d)
+}
+
+// Format a Date as "YYYY-MM-DD" using local date components.
+// Never goes through UTC so the calendar date is always preserved.
+function toDateString(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, "0")
+  const d = String(date.getDate()).padStart(2, "0")
+  return `${y}-${m}-${d}`
+}
+
+// Convert database row (snake_case, "YYYY-MM-DD" strings) → app format (camelCase, Date)
 function dbStayToApp(row: any): Stay {
   return {
     id: row.id,
-    entryDate: new Date(row.entry_date),
-    exitDate: new Date(row.exit_date),
+    entryDate: parseDate(row.entry_date),
+    exitDate: parseDate(row.exit_date),
     stayType: row.stay_type,
     countryCode: row.country_code || undefined,
     hidden: row.hidden ?? false,
@@ -35,18 +53,18 @@ function dbStayToApp(row: any): Stay {
 function dbTripToApp(row: any): ProposedTrip {
   return {
     id: row.id,
-    entryDate: new Date(row.entry_date),
-    exitDate: new Date(row.exit_date),
+    entryDate: parseDate(row.entry_date),
+    exitDate: parseDate(row.exit_date),
     stayType: "short",
     hidden: row.hidden ?? false,
   }
 }
 
-// Convert app format to API request body
+// Convert app format → API request body ("YYYY-MM-DD" strings)
 function appStayToApi(stay: Stay) {
   return {
-    entryDate: stay.entryDate.toISOString().split("T")[0],
-    exitDate: stay.exitDate.toISOString().split("T")[0],
+    entryDate: toDateString(stay.entryDate),
+    exitDate: toDateString(stay.exitDate),
     stayType: stay.stayType,
     countryCode: stay.countryCode || null,
     hidden: stay.hidden ?? false,
@@ -55,20 +73,22 @@ function appStayToApi(stay: Stay) {
 
 function appTripToApi(trip: ProposedTrip) {
   return {
-    entryDate: trip.entryDate.toISOString().split("T")[0],
-    exitDate: trip.exitDate.toISOString().split("T")[0],
+    entryDate: toDateString(trip.entryDate),
+    exitDate: toDateString(trip.exitDate),
     hidden: trip.hidden ?? false,
   }
 }
 
+// Parse localStorage entries. Dates are stored as ISO strings by JSON.stringify,
+// so we extract just the "YYYY-MM-DD" portion and parse as local midnight.
 function parseLocalStorageStays(key: string): Stay[] | ProposedTrip[] {
   try {
     const saved = localStorage.getItem(key)
     if (!saved) return []
     return JSON.parse(saved).map((s: any) => ({
       ...s,
-      entryDate: new Date(s.entryDate),
-      exitDate: new Date(s.exitDate),
+      entryDate: parseDate(String(s.entryDate).slice(0, 10)),
+      exitDate: parseDate(String(s.exitDate).slice(0, 10)),
     }))
   } catch {
     return []

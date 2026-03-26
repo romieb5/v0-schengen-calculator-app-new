@@ -5,21 +5,29 @@ import { rateLimit } from "@/lib/rate-limit"
 import { logSecurityEvent, requestInfo } from "@/lib/security-logger"
 import { z } from "zod"
 
+// Extract "YYYY-MM-DD" from any date string (ISO datetime or date-only).
+// Never round-trips through a Date object, so timezone cannot shift the date.
+function toDateOnly(s: string): string {
+  return s.slice(0, 10)
+}
+
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}/
+
 const localStaySchema = z.object({
-  entryDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
-  exitDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  entryDate: z.string().refine((s) => DATE_REGEX.test(s), { message: "Invalid date" }),
+  exitDate: z.string().refine((s) => DATE_REGEX.test(s), { message: "Invalid date" }),
   stayType: z.enum(["short", "residence"]),
   countryCode: z.string().max(3).optional(),
   hidden: z.boolean().optional(),
-}).refine((d) => new Date(d.exitDate) >= new Date(d.entryDate), {
+}).refine((d) => toDateOnly(d.exitDate) >= toDateOnly(d.entryDate), {
   message: "exitDate must be on or after entryDate",
 })
 
 const localTripSchema = z.object({
-  entryDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
-  exitDate: z.string().refine((s) => !isNaN(Date.parse(s)), { message: "Invalid date" }),
+  entryDate: z.string().refine((s) => DATE_REGEX.test(s), { message: "Invalid date" }),
+  exitDate: z.string().refine((s) => DATE_REGEX.test(s), { message: "Invalid date" }),
   hidden: z.boolean().optional(),
-}).refine((d) => new Date(d.exitDate) >= new Date(d.entryDate), {
+}).refine((d) => toDateOnly(d.exitDate) >= toDateOnly(d.entryDate), {
   message: "exitDate must be on or after entryDate",
 })
 
@@ -60,14 +68,14 @@ export async function POST(request: Request) {
 
     const newStays = stays
       .filter((s) => {
-        const entryDate = new Date(s.entryDate).toISOString().split("T")[0]
-        const exitDate = new Date(s.exitDate).toISOString().split("T")[0]
+        const entryDate = toDateOnly(s.entryDate)
+        const exitDate = toDateOnly(s.exitDate)
         return !existingSet.has(`${entryDate}|${exitDate}|${s.stayType}`)
       })
       .map((s) => ({
         user_id: user.id,
-        entry_date: new Date(s.entryDate).toISOString().split("T")[0],
-        exit_date: new Date(s.exitDate).toISOString().split("T")[0],
+        entry_date: toDateOnly(s.entryDate),
+        exit_date: toDateOnly(s.exitDate),
         stay_type: s.stayType,
         country_code: s.countryCode || null,
         hidden: s.hidden ?? false,
@@ -92,14 +100,14 @@ export async function POST(request: Request) {
 
     const newTrips = proposedTrips
       .filter((t) => {
-        const entryDate = new Date(t.entryDate).toISOString().split("T")[0]
-        const exitDate = new Date(t.exitDate).toISOString().split("T")[0]
+        const entryDate = toDateOnly(t.entryDate)
+        const exitDate = toDateOnly(t.exitDate)
         return !existingSet.has(`${entryDate}|${exitDate}`)
       })
       .map((t) => ({
         user_id: user.id,
-        entry_date: new Date(t.entryDate).toISOString().split("T")[0],
-        exit_date: new Date(t.exitDate).toISOString().split("T")[0],
+        entry_date: toDateOnly(t.entryDate),
+        exit_date: toDateOnly(t.exitDate),
         hidden: t.hidden ?? false,
       }))
 
