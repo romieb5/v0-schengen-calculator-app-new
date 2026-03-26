@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -19,7 +19,6 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [honeypot, setHoneypot] = useState("")
-  const formLoadedAt = useRef(Date.now())
 
   const passwordChecks = [
     { label: "8+ characters", met: password.length >= 8 },
@@ -34,13 +33,7 @@ export default function SignUpPage() {
     e.preventDefault()
     setError("")
 
-    // Bot detection: honeypot field should be empty, form should take >2s to fill
     if (honeypot) return
-    const elapsed = Date.now() - formLoadedAt.current
-    if (elapsed < 2000) {
-      setError("Please slow down and try again.")
-      return
-    }
 
     setIsLoading(true)
 

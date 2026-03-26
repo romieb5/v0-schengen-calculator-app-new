@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -24,29 +24,12 @@ export default function SignInPage() {
   const [forgotSent, setForgotSent] = useState(false)
   const [showForgot, setShowForgot] = useState(false)
   const [honeypot, setHoneypot] = useState("")
-  const [failCount, setFailCount] = useState(0)
-  const [lockedUntil, setLockedUntil] = useState(0)
-  const formLoadedAt = useRef(Date.now())
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
-    // Bot detection: honeypot field should be empty, form should take >1.5s to fill
     if (honeypot) return
-    const elapsed = Date.now() - formLoadedAt.current
-    if (elapsed < 1500) {
-      setError("Please slow down and try again.")
-      return
-    }
-
-    // Progressive lockout: exponential backoff after repeated failures
-    const now = Date.now()
-    if (now < lockedUntil) {
-      const waitSec = Math.ceil((lockedUntil - now) / 1000)
-      setError(`Too many failed attempts. Please wait ${waitSec} seconds.`)
-      return
-    }
 
     setIsLoading(true)
 
@@ -57,21 +40,10 @@ export default function SignInPage() {
       })
 
       if (result.error) {
-        const newFailCount = failCount + 1
-        setFailCount(newFailCount)
-        // Lock for 2^(failures-3) seconds after 3+ failures (4s, 8s, 16s, 32s...)
-        if (newFailCount >= 3) {
-          const lockDuration = Math.min(Math.pow(2, newFailCount - 3) * 4000, 60000)
-          setLockedUntil(Date.now() + lockDuration)
-        }
         setError("Invalid email or password")
         setIsLoading(false)
         return
       }
-
-      // Reset on success
-      setFailCount(0)
-      setLockedUntil(0)
 
       // Import localStorage data if pending from sign-up
       if (localStorage.getItem("schengen-pending-import")) {
