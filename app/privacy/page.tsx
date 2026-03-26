@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyPage() {
-  const lastUpdated = "December 2025"
+  const lastUpdated = "March 2026"
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-4xl">
@@ -35,23 +35,44 @@ export default function PrivacyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">2. Information We Collect</h2>
           <h3 className="text-xl font-semibold mb-3">2.1 Information You Provide</h3>
-          <p>When you use our calculator, you may enter:</p>
+          <p className="mb-2">When you use our calculator, you may enter:</p>
           <ul className="list-disc pl-6 mb-4">
             <li>Entry and exit dates for your Schengen Area visits</li>
             <li>Reference dates for calculating compliance</li>
             <li>Proposed trip dates for planning purposes</li>
           </ul>
+          <p className="mb-2">If you create an account, we also collect:</p>
+          <ul className="list-disc pl-6 mb-4">
+            <li>Your email address (for account verification and login)</li>
+            <li>Your password (stored securely using industry-standard hashing)</li>
+          </ul>
 
-          <h3 className="text-xl font-semibold mb-3">2.2 Local Storage</h3>
-          <p>All data you enter into the calculator is stored locally in your browser's local storage. This means:</p>
+          <h3 className="text-xl font-semibold mb-3">2.2 Data Storage</h3>
+          <p className="font-medium mb-2">Anonymous users (no account):</p>
+          <p className="mb-2">All data you enter into the calculator is stored locally in your browser's local storage. This means:</p>
           <ul className="list-disc pl-6 mb-4">
             <li>Your data never leaves your device</li>
             <li>We do not have access to your travel information</li>
             <li>Your data is not transmitted to our servers or any third parties</li>
             <li>Clearing your browser data will delete your saved information</li>
           </ul>
+          <p className="font-medium mb-2">Account holders:</p>
+          <p className="mb-2">If you create an account, your travel data is stored on our servers (hosted by Supabase) to enable cross-device syncing. This means:</p>
+          <ul className="list-disc pl-6 mb-4">
+            <li>Your stay and trip data is stored securely in our database</li>
+            <li>Your data is accessible from any device where you sign in</li>
+            <li>You can delete your data and account at any time through account settings</li>
+          </ul>
 
-          <h3 className="text-xl font-semibold mb-3">2.3 Analytics</h3>
+          <h3 className="text-xl font-semibold mb-3">2.3 Payment Information</h3>
+          <p className="mb-4">
+            If you purchase a paid feature, payment is processed by Stripe. We do not store your credit card
+            details or full payment information on our servers. We only store a record that a payment was
+            successfully completed and the associated account. For details on how Stripe handles your payment data,
+            see Stripe's privacy policy.
+          </p>
+
+          <h3 className="text-xl font-semibold mb-3">2.4 Analytics</h3>
           <p>We use Vercel Analytics to collect anonymous usage statistics, including:</p>
           <ul className="list-disc pl-6 mb-4">
             <li>Page views and navigation patterns</li>
@@ -77,13 +98,19 @@ export default function PrivacyPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">4. Data Security</h2>
-          <p>
-            Since your travel data is stored locally on your device and never transmitted to our servers, the security
-            of this data is dependent on your device's security measures. We recommend:
+          <p className="mb-4">
+            For anonymous users, your travel data is stored locally on your device and the security of this data is
+            dependent on your device's security measures.
           </p>
+          <p className="mb-4">
+            For account holders, we use industry-standard security measures to protect your data, including encrypted
+            database connections, secure password hashing, and HTTPS for all data transmission.
+          </p>
+          <p className="mb-2">We recommend:</p>
           <ul className="list-disc pl-6 mb-4">
             <li>Using secure, password-protected devices</li>
             <li>Keeping your browser and operating system updated</li>
+            <li>Using a strong, unique password for your account</li>
             <li>Using caution when accessing the calculator on public or shared devices</li>
           </ul>
         </section>
@@ -100,7 +127,7 @@ export default function PrivacyPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">6. Third-Party Services</h2>
-          <p>We use the following third-party service:</p>
+          <p>We use the following third-party services:</p>
           <ul className="list-disc pl-6 mb-4">
             <li>
               <strong>Vercel Analytics:</strong> For anonymous usage analytics. Vercel's privacy policy can be found at{" "}
@@ -111,6 +138,40 @@ export default function PrivacyPage() {
                 rel="noopener noreferrer"
               >
                 https://vercel.com/legal/privacy-policy
+              </a>
+            </li>
+            <li>
+              <strong>Supabase:</strong> For secure database hosting and user authentication for account holders.{" "}
+              <a
+                href="https://supabase.com/privacy"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://supabase.com/privacy
+              </a>
+            </li>
+            <li>
+              <strong>Stripe:</strong> For secure payment processing. Stripe may collect payment-related information
+              in accordance with their privacy policy.{" "}
+              <a
+                href="https://stripe.com/privacy"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://stripe.com/privacy
+              </a>
+            </li>
+            <li>
+              <strong>Resend:</strong> For sending account verification and password reset emails.{" "}
+              <a
+                href="https://resend.com/legal/privacy-policy"
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://resend.com/legal/privacy-policy
               </a>
             </li>
           </ul>
@@ -126,19 +187,25 @@ export default function PrivacyPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">8. International Data Transfers</h2>
+          <p className="mb-4">
+            For anonymous users, all your travel data remains on your local device and there are no international
+            data transfers of your personal travel information.
+          </p>
           <p>
-            Since all your travel data remains on your local device, there are no international data transfers of your
-            personal travel information. Analytics data may be processed by Vercel in accordance with their privacy
-            policy.
+            For account holders, your data may be processed and stored by our third-party service providers
+            (Supabase, Stripe, Resend, Vercel) in data centres outside your country of residence. These providers
+            maintain appropriate safeguards for international data transfers in accordance with their respective
+            privacy policies.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">9. Your Rights</h2>
-          <p>Since your data is stored locally on your device, you have complete control over it:</p>
+          <p className="mb-2">You have control over your data:</p>
           <ul className="list-disc pl-6 mb-4">
-            <li>You can delete your data at any time by clearing your browser's local storage</li>
-            <li>You can export or backup your data through your browser's developer tools</li>
+            <li>Anonymous users can delete their data at any time by clearing their browser's local storage</li>
+            <li>Account holders can delete their account and all associated data through the account settings page</li>
+            <li>You can request a copy of your data by contacting us at support@schengenmonitor.com</li>
             <li>You can opt out of analytics by using browser privacy extensions or settings</li>
           </ul>
         </section>
@@ -153,12 +220,16 @@ export default function PrivacyPage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">11. Contact Information</h2>
-          <p>If you have questions about this Privacy Policy, please note that:</p>
+          <p>If you have questions about this Privacy Policy or your data, you can reach us at:</p>
           <ul className="list-disc pl-6 mb-4">
-            <li>This is an open-source, informational tool provided as-is</li>
-            <li>All travel data remains on your local device</li>
             <li>
-              For technical issues, please refer to our{" "}
+              Email:{" "}
+              <a href="mailto:support@schengenmonitor.com" className="text-primary hover:underline">
+                support@schengenmonitor.com
+              </a>
+            </li>
+            <li>
+              For general questions, please refer to our{" "}
               <Link href="/faq" className="text-primary hover:underline">
                 FAQ page
               </Link>

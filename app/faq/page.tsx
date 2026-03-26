@@ -177,6 +177,98 @@ export default function FAQPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle>Accounts, Payments & Data</CardTitle>
+              <CardDescription>Questions about accounts, the timeline feature, and your data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-account-1">
+                  <AccordionTrigger>What can I use for free?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="mb-3">
+                      The core calculator is completely free, with or without an account. This includes recording
+                      stays, checking proposed trips, compliance status, and the reference date tool.
+                    </p>
+                    <p>
+                      Creating a free account lets you sync your data across devices. The Timeline Visualization is
+                      the only feature that requires a one-time payment to unlock.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-2">
+                  <AccordionTrigger>Do I need an account to use the calculator?</AccordionTrigger>
+                  <AccordionContent>
+                    <p>
+                      No. You can use the calculator without an account. Your data will be stored locally in your
+                      browser. An account is only needed if you want to sync data across devices or unlock the
+                      Timeline Visualization.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-3">
+                  <AccordionTrigger>Is the timeline a subscription?</AccordionTrigger>
+                  <AccordionContent>
+                    <p>
+                      No. The Timeline Visualization is a one-time purchase. Once you unlock it, it stays unlocked
+                      on your account permanently. There are no recurring charges.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-4">
+                  <AccordionTrigger>Can I get a refund?</AccordionTrigger>
+                  <AccordionContent>
+                    <p>
+                      All purchases are final. Because the Timeline Visualization is a digital feature that is
+                      accessible immediately upon purchase, we are unable to offer refunds. You can preview the
+                      timeline with example data before purchasing to understand what the feature provides.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-5">
+                  <AccordionTrigger>Is my data safe with an account?</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="mb-3">
+                      Yes. Your data is stored securely using Supabase (a trusted database provider). Passwords are
+                      hashed using industry-standard algorithms, and all data is transmitted over encrypted
+                      connections (HTTPS).
+                    </p>
+                    <p>
+                      We do not store your payment card details — all payment processing is handled securely by
+                      Stripe.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-6">
+                  <AccordionTrigger>Can I delete my account?</AccordionTrigger>
+                  <AccordionContent>
+                    <p>
+                      Yes. You can delete your account and all associated data at any time through the account
+                      settings page. This action is permanent and cannot be undone.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-account-7">
+                  <AccordionTrigger>What happens to my local data when I create an account?</AccordionTrigger>
+                  <AccordionContent>
+                    <p>
+                      When you sign up, any stays you've already recorded locally in your browser are automatically
+                      imported into your account. After that, your data syncs across all devices where you're signed
+                      in.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Special Situations</CardTitle>
               <CardDescription>Uncommon scenarios and edge cases</CardDescription>
             </CardHeader>

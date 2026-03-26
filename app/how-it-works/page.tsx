@@ -144,6 +144,7 @@ export default function HowItWorksPage() {
           <Card>
             <CardHeader>
               <CardTitle>Timeline Visualization</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">Requires a one-time purchase to unlock</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>A visual representation of your stays and the 180-day compliance window. The timeline shows:</p>
@@ -153,6 +154,13 @@ export default function HowItWorksPage() {
                 <li>The rolling 180-day window as a blue border</li>
                 <li>Current compliance status (days used / days remaining)</li>
               </ul>
+              <div className="bg-muted p-4 rounded-lg space-y-2">
+                <p className="font-medium">How to unlock:</p>
+                <p className="text-sm">
+                  Create a free account and make a one-time payment to unlock the timeline permanently. Once
+                  unlocked, the timeline is accessible on any device where you sign in.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
