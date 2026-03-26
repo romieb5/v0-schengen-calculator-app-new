@@ -52,7 +52,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: "Failed to update stay" }, { status: 500 })
+  if (error) {
+    console.error("[PUT /api/stays] Supabase error:", error)
+    return NextResponse.json({ error: "Failed to update stay", details: error.message }, { status: 500 })
+  }
 
   return NextResponse.json(data)
 }
