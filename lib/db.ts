@@ -11,7 +11,7 @@ export function getPool(): Pool {
     const isProduction = process.env.NODE_ENV === "production"
     _pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: isProduction ? { rejectUnauthorized: true } : undefined,
+      ssl: isProduction ? { rejectUnauthorized: false } : undefined,
       max: 10,
       idleTimeoutMillis: 30_000,
     })

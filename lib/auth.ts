@@ -11,7 +11,7 @@ const isProduction = process.env.NODE_ENV === "production"
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: isProduction ? { rejectUnauthorized: true } : undefined,
+    ssl: isProduction ? { rejectUnauthorized: false } : undefined,
   }),
   emailAndPassword: {
     enabled: true,
