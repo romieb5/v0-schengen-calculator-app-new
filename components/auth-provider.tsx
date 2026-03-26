@@ -25,8 +25,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     : null
 
   const signOut = async () => {
-    await authClient.signOut()
-    window.location.href = "/"
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/"
+        },
+      },
+    })
   }
 
   return (
