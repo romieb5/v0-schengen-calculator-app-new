@@ -39,7 +39,8 @@ export const auth = betterAuth({
     },
   },
   rateLimit: {
-    enabled: false, // Disabled — middleware.ts handles rate limiting via Upstash Redis
+    window: 60,
+    max: 1000, // Effectively disabled — middleware.ts handles real rate limiting
   },
   trustedOrigins: [
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
