@@ -30,11 +30,6 @@ function createUpstashLimiters() {
       limiter: Ratelimit.slidingWindow(120, "60 s"),
       prefix: "rl:global",
     }),
-    auth: new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(15, "60 s"),
-      prefix: "rl:auth",
-    }),
   }
 }
 
@@ -68,19 +63,11 @@ function createMemoryLimiters() {
 
   return {
     global: makeMemoryLimiter(120, 60_000),
-    auth: makeMemoryLimiter(15, 60_000),
   }
 }
 
 const limiters = isRedisConfigured ? createUpstashLimiters() : createMemoryLimiters()
 
-// Stricter limits for auth-related paths
-const AUTH_PATHS = new Set([
-  "/api/auth/sign-in/email",
-  "/api/auth/sign-up/email",
-  "/api/auth/forget-password",
-  "/api/auth/reset-password",
-])
 
 // ---------------------------------------------------------------------------
 // Bot detection signals
@@ -125,7 +112,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(httpsUrl, 301)
   }
 
-  const path = request.nextUrl.pathname
   const ip = getIp(request)
 
   // 2. Block bots on API routes
@@ -136,18 +122,7 @@ export async function middleware(request: NextRequest) {
     )
   }
 
-  // 3. Stricter rate limit on auth endpoints
-  if (AUTH_PATHS.has(path)) {
-    const { success } = await limiters.auth.limit(ip)
-    if (!success) {
-      return NextResponse.json(
-        { error: "Too many attempts. Please wait and try again." },
-        { status: 429 }
-      )
-    }
-  }
-
-  // 4. Global per-IP rate limit across all routes
+  // 3. Global per-IP rate limit across all routes
   const { success } = await limiters.global.limit(ip)
   if (!success) {
     return NextResponse.json(
