@@ -37,7 +37,7 @@ const importSchema = z.object({
 })
 
 export async function POST(request: Request) {
-  const limited = rateLimit(request, { limit: 5, windowSeconds: 60 })
+  const limited = rateLimit(request, { limit: 15, windowSeconds: 60 })
   if (limited) return limited
 
   const user = await getAuthenticatedUser()
