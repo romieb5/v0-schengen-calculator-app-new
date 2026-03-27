@@ -45,6 +45,14 @@ export default function AboutPage() {
             and which stay was about to &ldquo;fall off.&rdquo;
           </p>
 
+          <div className="my-6 rounded-xl border overflow-hidden">
+            <img
+              src="/timeline-preview.png"
+              alt="Timeline Visualization showing stays within a rolling 180-day window"
+              className="w-full"
+            />
+          </div>
+
           <h3 className="text-lg font-semibold mt-6 mb-2">My timing really matters right now.</h3>
           <p>
             I&apos;m preparing for residency in Luxembourg, which means I&apos;ve been tiptoeing right up to the
@@ -100,7 +108,7 @@ export default function AboutPage() {
           </ul>
 
           <p>
-            It&apos;s free, fast, and honestly fun to play with. If you try it and have ideas, I&apos;d love to hear
+            It&apos;s fast and honestly fun to play with. If you try it and have ideas, I&apos;d love to hear
             them. This is one of those little projects born out of curiosity and mild panic, but if it helps
             anyone else avoid surprises at passport control, then amazing.
           </p>
