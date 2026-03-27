@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { Loader2, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface TimelinePaywallProps {
@@ -65,9 +65,20 @@ export function TimelinePaywall({ isAuthenticated }: TimelinePaywallProps) {
             "Get Access"
           )}
         </Button>
-        <p className="text-[10px] text-muted-foreground mt-2">
-          Pay once &middot; Lifetime access
-        </p>
+        <div className="flex flex-col gap-1 mt-3 self-start pl-2">
+          <div className="flex items-center gap-1.5 text-xs text-foreground">
+            <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+            One-time payment
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-foreground">
+            <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+            Lifetime access
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-foreground">
+            <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+            No subscription
+          </div>
+        </div>
       </div>
       {!isAuthenticated && (
         <p className="text-[11px] text-foreground mt-8 -mb-2">
