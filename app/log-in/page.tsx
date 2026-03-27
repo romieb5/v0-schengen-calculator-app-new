@@ -38,7 +38,14 @@ export default function SignInPage() {
       })
 
       if (result.error) {
-        setError("Invalid email or password")
+        const code = result.error.code ?? result.error.status
+        if (code === "TOO_MANY_REQUESTS" || code === 429) {
+          setError("Too many attempts. Please wait a minute and try again.")
+        } else if (code === "EMAIL_NOT_VERIFIED" || code === "FORBIDDEN") {
+          setError("Please verify your email before logging in. Check your inbox for a verification link.")
+        } else {
+          setError("Invalid email or password")
+        }
         setIsLoading(false)
         return
       }
