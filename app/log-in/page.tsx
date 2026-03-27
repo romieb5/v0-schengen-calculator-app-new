@@ -40,16 +40,23 @@ export default function SignInPage() {
       })
 
       if (result.error) {
-        const code = result.error.code ?? result.error.status
-        if (code === "TOO_MANY_REQUESTS" || code === 429) {
-          setError("Too many attempts. Please wait a minute and try again.")
-        } else if (code === "EMAIL_NOT_VERIFIED" || code === "FORBIDDEN") {
-          setError("Please verify your email before logging in. Check your inbox for a verification link.")
+        // Check if sign-in actually succeeded despite the error response
+        // (BetterAuth may set the session cookie before the client-side error)
+        const session = await authClient.getSession()
+        if (session?.data?.user) {
+          // Sign-in worked — proceed with redirect
         } else {
-          setError("Invalid email or password")
+          const code = result.error.code ?? result.error.status
+          if (code === "TOO_MANY_REQUESTS" || code === 429) {
+            setError("Too many attempts. Please wait a minute and try again.")
+          } else if (code === "EMAIL_NOT_VERIFIED" || code === "FORBIDDEN") {
+            setError("Please verify your email before logging in. Check your inbox for a verification link.")
+          } else {
+            setError("Invalid email or password")
+          }
+          setIsLoading(false)
+          return
         }
-        setIsLoading(false)
-        return
       }
 
       // Import localStorage data if pending from sign-up
@@ -79,8 +86,18 @@ export default function SignInPage() {
         }
       }
 
-      router.push("/")
+      window.location.href = "/"
     } catch {
+      // Check if sign-in actually succeeded despite the exception
+      try {
+        const session = await authClient.getSession()
+        if (session?.data?.user) {
+          window.location.href = "/"
+          return
+        }
+      } catch {
+        // Session check failed too — show the original error
+      }
       setError("An unexpected error occurred. Please try again.")
       setIsLoading(false)
     }
