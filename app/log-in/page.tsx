@@ -70,9 +70,7 @@ export default function SignInPage() {
         }
       }
 
-      // Use full page navigation (not router.push) so Chrome detects the
-      // successful login and prompts to save the password / enable autofill.
-      window.location.href = "/"
+      router.push("/")
     } catch {
       setError("An unexpected error occurred. Please try again.")
       setIsLoading(false)
