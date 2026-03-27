@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -610,6 +611,15 @@ export function SchengenCalculator() {
           <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto min-h-[1.5rem]">
             Track your stays and ensure compliance with Schengen visa rules
           </p>
+          {!paymentLoading && !isAuthenticated && (
+            <p className="md:hidden text-[13px] text-muted-foreground">
+              Have an account?{" "}
+              <Link href="/log-in" className="text-foreground font-semibold hover:underline">
+                Log in
+              </Link>{" "}
+              to sync your data
+            </p>
+          )}
         </div>
 
         <div className="space-y-6 sm:space-y-8">

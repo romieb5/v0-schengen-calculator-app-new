@@ -88,14 +88,7 @@ export function Navigation() {
             </div>
 
             {/* Mobile dropdown - hidden on desktop */}
-            <div className="md:hidden flex items-center gap-2">
-              {!authLoading && !isAuthenticated && (
-                <Link href="/log-in">
-                  <Button variant="ghost" size="sm" className="text-sm font-medium">
-                    Log in
-                  </Button>
-                </Link>
-              )}
+            <div className="md:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-2 bg-transparent">
