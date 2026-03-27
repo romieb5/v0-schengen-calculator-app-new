@@ -67,6 +67,17 @@ export function TimelinePaywall({ isAuthenticated }: TimelinePaywallProps) {
       <p className="text-[10px] text-muted-foreground mt-2">
         Pay once &middot; Lifetime access
       </p>
+      {!isAuthenticated && (
+        <p className="text-[11px] text-muted-foreground mt-3">
+          Already paid?{" "}
+          <button
+            onClick={() => router.push("/sign-in")}
+            className="text-foreground font-semibold hover:underline"
+          >
+            Log in
+          </button>
+        </p>
+      )}
     </div>
   )
 }
