@@ -44,31 +44,33 @@ export function TimelinePaywall({ isAuthenticated }: TimelinePaywallProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
-      <p className="text-3xl font-bold text-primary mb-1">
-        {priceLabel ?? "\u00A0"}
-      </p>
-      <h4 className="font-semibold text-sm mb-3">Unlock Your Timeline</h4>
-      <Button
-        onClick={handleCTA}
-        disabled={isRedirecting}
-        size="sm"
-        className="w-full font-semibold text-xs"
-      >
-        {isRedirecting ? (
-          <>
-            <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
-            Redirecting...
-          </>
-        ) : (
-          "Get Access"
-        )}
-      </Button>
-      <p className="text-[10px] text-muted-foreground mt-2">
-        Pay once &middot; Lifetime access
-      </p>
+    <div className="flex-1 flex flex-col items-center text-center px-2">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <p className="text-3xl font-bold text-primary mb-1">
+          {priceLabel ?? "\u00A0"}
+        </p>
+        <h4 className="font-semibold text-sm mb-3">Unlock Your Timeline</h4>
+        <Button
+          onClick={handleCTA}
+          disabled={isRedirecting}
+          size="sm"
+          className="w-full font-semibold text-xs"
+        >
+          {isRedirecting ? (
+            <>
+              <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+              Redirecting...
+            </>
+          ) : (
+            "Get Access"
+          )}
+        </Button>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          Pay once &middot; Lifetime access
+        </p>
+      </div>
       {!isAuthenticated && (
-        <p className="text-[11px] text-muted-foreground mt-3">
+        <p className="text-[11px] text-muted-foreground pb-4">
           Already paid?{" "}
           <button
             onClick={() => router.push("/sign-in")}
