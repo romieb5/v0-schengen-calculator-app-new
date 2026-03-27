@@ -70,7 +70,7 @@ export function TimelinePaywall({ isAuthenticated }: TimelinePaywallProps) {
         </p>
       </div>
       {!isAuthenticated && (
-        <p className="text-[11px] text-foreground mt-4 -mb-2">
+        <p className="text-[11px] text-foreground mt-8 -mb-2">
           Already paid?{" "}
           <button
             onClick={() => router.push("/sign-in")}
