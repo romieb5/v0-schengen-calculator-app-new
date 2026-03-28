@@ -131,10 +131,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
-  // Always include all proposed trips in date range so the timeline scale stays constant when toggling
+  // Only include visible proposed trips in date range so the timeline rescales on toggle
   const allDates = [
     ...displayStays.flatMap((s) => [s.entryDate, s.exitDate]),
-    ...displayProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
+    ...visibleProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
     referenceDate,
   ]
 
@@ -268,7 +268,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
-                <div key={marker.toISOString()} className="absolute left-0" style={{ top: `${top}%`, width: "80px" }}>
+                <div key={marker.toISOString()} className="absolute left-0 transition-all duration-500 ease-in-out" style={{ top: `${top}%`, width: "80px" }}>
                   <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
                     {format(marker, "MMM yyyy")}
                   </div>
@@ -421,7 +421,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           {monthMarkers.map((marker) => {
             const pos = dateToPosition(marker)
             return (
-              <div key={marker.toISOString()} className="absolute bottom-0" style={{ left: `${pos}%` }}>
+              <div key={marker.toISOString()} className="absolute bottom-0 transition-all duration-500 ease-in-out" style={{ left: `${pos}%` }}>
                 <div className="w-px h-3 bg-border" />
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
                   {format(marker, "MMM yyyy")}
