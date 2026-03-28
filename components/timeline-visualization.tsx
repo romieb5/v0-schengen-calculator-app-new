@@ -9,6 +9,7 @@ import {
   differenceInMonths,
   subDays,
   subMonths,
+  addDays,
   addMonths,
   min,
   max,
@@ -88,7 +89,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   // Use example data only if absolutely no data exists (no stays AND no proposed trips)
   const isEmptyState = stays.length === 0 && proposedTrips.length === 0
   const displayStays = isEmptyState ? EXAMPLE_STAYS : stays
-  const displayProposedTrips = isEmptyState ? [] : proposedTrips
+  const exampleProposedTrips: ProposedTrip[] = [{
+    id: "example-proposed-1",
+    entryDate: addDays(startOfDay(new Date()), 14),
+    exitDate: addDays(startOfDay(new Date()), 27),
+  }]
+  const displayProposedTrips = isEmptyState ? exampleProposedTrips : proposedTrips
 
   useEffect(() => {
     const checkMobile = () => {
