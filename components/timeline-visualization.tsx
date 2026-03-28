@@ -39,47 +39,49 @@ interface TimelineVisualizationProps {
   stayColorMap?: Map<string, string>
 }
 
-// Example data for empty state
+// Example data for empty state — stays placed in Nov 2025–Mar 2026 so they
+// remain inside the 180-day window regardless of proposed-trip toggle state.
+// This makes the toggle meaningfully *add* days rather than just shifting them.
 const EXAMPLE_STAYS: Stay[] = [
   {
     id: "example-1",
-    entryDate: new Date(2025, 7, 15), // Aug 15
-    exitDate: new Date(2025, 8, 5), // Sep 5
+    entryDate: new Date(2025, 10, 15), // Nov 15
+    exitDate: new Date(2025, 10, 24), // Nov 24
     stayType: "short",
   },
   {
     id: "example-2",
-    entryDate: new Date(2025, 8, 10), // Sep 10
-    exitDate: new Date(2025, 8, 30), // Sep 30
+    entryDate: new Date(2025, 11, 8), // Dec 8
+    exitDate: new Date(2025, 11, 17), // Dec 17
     stayType: "short",
   },
   {
     id: "example-3",
-    entryDate: new Date(2025, 9, 8), // Oct 8
-    exitDate: new Date(2025, 10, 2), // Nov 2
+    entryDate: new Date(2026, 0, 5), // Jan 5
+    exitDate: new Date(2026, 0, 13), // Jan 13
     stayType: "short",
   },
   {
     id: "example-4",
-    entryDate: new Date(2025, 10, 15), // Nov 15
-    exitDate: new Date(2025, 11, 5), // Dec 5
+    entryDate: new Date(2026, 1, 2), // Feb 2
+    exitDate: new Date(2026, 1, 9), // Feb 9
     stayType: "short",
   },
   {
     id: "example-5",
-    entryDate: new Date(2025, 6, 1), // Jul 1 (partially off-screen on left)
-    exitDate: new Date(2025, 7, 10), // Aug 10
+    entryDate: new Date(2026, 2, 1), // Mar 1
+    exitDate: new Date(2026, 2, 8), // Mar 8
     stayType: "short",
   },
 ]
 
 // Hardcoded color map for example stays to guarantee varied colors
 const EXAMPLE_COLOR_MAP = new Map<string, string>([
-  ["example-5", "bg-green-500"],
   ["example-1", "bg-blue-500"],
-  ["example-2", "bg-yellow-500"],
-  ["example-3", "bg-purple-500"],
-  ["example-4", "bg-orange-500"],
+  ["example-2", "bg-green-500"],
+  ["example-3", "bg-yellow-500"],
+  ["example-4", "bg-purple-500"],
+  ["example-5", "bg-orange-500"],
 ])
 
 export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
