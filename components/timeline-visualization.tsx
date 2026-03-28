@@ -94,7 +94,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   const exampleProposedTrips: ProposedTrip[] = [{
     id: "example-proposed-1",
     entryDate: addDays(startOfDay(new Date()), 14),
-    exitDate: addDays(startOfDay(new Date()), 29),
+    exitDate: addDays(startOfDay(new Date()), 34),
   }]
   const displayProposedTrips = isEmptyState ? exampleProposedTrips : proposedTrips
 
