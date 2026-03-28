@@ -130,7 +130,7 @@ export default function SignUpPage() {
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} action="/sign-up" method="post" className="space-y-4">
                   {/* Honeypot — invisible to real users, bots auto-fill it */}
                   <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden" tabIndex={-1}>
                     <label htmlFor="website">Website</label>

@@ -240,8 +240,8 @@ export default function SignInPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Honeypot — invisible to real users, bots auto-fill it */}
+              <form onSubmit={handleSubmit} action="/log-in" method="post" className="space-y-4">
+                {/* Honeypot — outside the form visually, prevents confusing password managers */}
                 <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden" tabIndex={-1}>
                   <label htmlFor="company">Company</label>
                   <input
