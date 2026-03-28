@@ -268,7 +268,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
-                <div key={marker.toISOString()} className="absolute left-0 transition-all duration-500 ease-in-out" style={{ top: `${top}%`, width: "80px" }}>
+                <div key={marker.toISOString()} className="absolute left-0 transition-all duration-[600ms] ease-in-out" style={{ top: `${top}%`, width: "80px" }}>
                   <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
                     {format(marker, "MMM yyyy")}
                   </div>
@@ -278,7 +278,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             })}
 
             <div
-              className="absolute left-0 bg-primary/5 pointer-events-none transition-all duration-500 ease-in-out"
+              className="absolute left-0 bg-primary/5 pointer-events-none transition-all duration-[600ms] ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 height: `${(180 / totalDays) * 100}%`,
@@ -297,7 +297,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               return (
                 <div
                   key={stay.id}
-                  className="absolute transition-all duration-500 ease-in-out"
+                  className="absolute transition-all duration-[600ms] ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
@@ -323,7 +323,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               return (
                 <div
                   key={trip.id}
-                  className="absolute transition-all duration-500 ease-in-out"
+                  className="absolute transition-all duration-[600ms] ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
@@ -342,7 +342,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             })}
 
             <div
-              className="absolute left-0 pointer-events-none z-10 transition-all duration-500 ease-in-out"
+              className="absolute left-0 pointer-events-none z-10 transition-all duration-[600ms] ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 marginLeft: "80px",
@@ -352,7 +352,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             </div>
 
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-[600ms] ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -364,7 +364,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               </div>
             </div>
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-[600ms] ease-in-out"
               style={{
                 top: `${(differenceInDays(windowEnd, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -421,7 +421,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           {monthMarkers.map((marker) => {
             const pos = dateToPosition(marker)
             return (
-              <div key={marker.toISOString()} className="absolute bottom-0 transition-all duration-500 ease-in-out" style={{ left: `${pos}%` }}>
+              <div key={marker.toISOString()} className="absolute bottom-0 transition-all duration-[600ms] ease-in-out" style={{ left: `${pos}%` }}>
                 <div className="w-px h-3 bg-border" />
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
                   {format(marker, "MMM yyyy")}
@@ -431,7 +431,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           })}
 
           <div
-            className="absolute bottom-4 bg-primary/5 pointer-events-none z-0 transition-all duration-500 ease-in-out"
+            className="absolute bottom-4 bg-primary/5 pointer-events-none z-0 transition-all duration-[600ms] ease-in-out"
             style={{
               left: `${dateToPosition(windowStart)}%`,
               width: `${dateToPosition(windowEnd) - dateToPosition(windowStart)}%`,
@@ -453,7 +453,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             return (
               <div
                 key={stay.id}
-                className="absolute transition-all duration-500 ease-in-out"
+                className="absolute transition-all duration-[600ms] ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
@@ -479,7 +479,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             return (
               <div
                 key={trip.id}
-                className="absolute transition-all duration-500 ease-in-out"
+                className="absolute transition-all duration-[600ms] ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
@@ -497,7 +497,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           })}
 
           <div
-            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-[600ms] ease-in-out"
             style={{ left: `${dateToPosition(windowStart)}%`, height: "calc(100% - 2rem)" }}
           >
             <div className="absolute -top-6 left-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
@@ -505,7 +505,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             </div>
           </div>
           <div
-            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-[600ms] ease-in-out"
             style={{ left: `${dateToPosition(windowEnd)}%`, height: "calc(100% - 2rem)" }}
           >
             <div className="absolute -top-6 right-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
