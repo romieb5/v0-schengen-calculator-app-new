@@ -101,9 +101,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
+  // Always include all proposed trips in date range so the timeline scale stays constant when toggling
   const allDates = [
     ...displayStays.flatMap((s) => [s.entryDate, s.exitDate]),
-    ...visibleProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
+    ...displayProposedTrips.flatMap((p) => [p.entryDate, p.exitDate]),
     referenceDate,
   ]
 
@@ -247,7 +248,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             })}
 
             <div
-              className="absolute left-0 bg-primary/5 pointer-events-none"
+              className="absolute left-0 bg-primary/5 pointer-events-none transition-all duration-500 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 height: `${(180 / totalDays) * 100}%`,
@@ -266,7 +267,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               return (
                 <div
                   key={stay.id}
-                  className="absolute"
+                  className="absolute transition-all duration-500 ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
@@ -284,7 +285,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               )
             })}
 
-            {visibleProposedTrips.map((trip, index) => {
+            {displayProposedTrips.map((trip, index) => {
               const top = (differenceInDays(trip.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(trip.exitDate, trip.entryDate) + 1) / totalDays) * 100
               const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
@@ -292,16 +293,18 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               return (
                 <div
                   key={trip.id}
-                  className="absolute"
+                  className="absolute transition-all duration-500 ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
                     left: "90px",
                     right: "10px",
+                    opacity: showProposedTrips ? 0.9 : 0,
+                    pointerEvents: showProposedTrips ? "auto" : "none",
                   }}
                 >
                   <div
-                    className={`h-full ${proposedTripColor} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                    className={`h-full ${proposedTripColor} rounded hover:opacity-100 cursor-pointer shadow-sm`}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   />
                 </div>
@@ -309,7 +312,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             })}
 
             <div
-              className="absolute left-0 pointer-events-none z-10"
+              className="absolute left-0 pointer-events-none z-10 transition-all duration-500 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 marginLeft: "80px",
@@ -319,7 +322,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             </div>
 
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none"
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -331,7 +334,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               </div>
             </div>
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none"
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowEnd, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -398,7 +401,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           })}
 
           <div
-            className="absolute bottom-4 bg-primary/5 pointer-events-none z-0"
+            className="absolute bottom-4 bg-primary/5 pointer-events-none z-0 transition-all duration-500 ease-in-out"
             style={{
               left: `${dateToPosition(windowStart)}%`,
               width: `${dateToPosition(windowEnd) - dateToPosition(windowStart)}%`,
@@ -420,7 +423,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             return (
               <div
                 key={stay.id}
-                className="absolute"
+                className="absolute transition-all duration-500 ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
@@ -437,7 +440,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             )
           })}
 
-          {visibleProposedTrips.map((trip, index) => {
+          {displayProposedTrips.map((trip, index) => {
             const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
             const startPos = dateToPosition(trip.entryDate)
             const endPos = dateToPosition(trip.exitDate)
@@ -445,16 +448,18 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
             return (
               <div
-                key={index}
-                className="absolute"
+                key={trip.id}
+                className="absolute transition-all duration-500 ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
                   bottom: "1rem",
+                  opacity: showProposedTrips ? 0.9 : 0,
+                  pointerEvents: showProposedTrips ? "auto" : "none",
                 }}
               >
                 <div
-                  className={`h-20 ${proposedTripColor} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm`}
+                  className={`h-20 ${proposedTripColor} rounded hover:opacity-100 cursor-pointer shadow-sm`}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 />
               </div>
@@ -462,7 +467,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           })}
 
           <div
-            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none"
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
             style={{ left: `${dateToPosition(windowStart)}%`, height: "calc(100% - 2rem)" }}
           >
             <div className="absolute -top-6 left-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
@@ -470,7 +475,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             </div>
           </div>
           <div
-            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none"
+            className="absolute bottom-4 w-0.5 bg-primary pointer-events-none transition-all duration-500 ease-in-out"
             style={{ left: `${dateToPosition(windowEnd)}%`, height: "calc(100% - 2rem)" }}
           >
             <div className="absolute -top-6 right-0 text-xs font-semibold whitespace-nowrap text-primary px-2 py-1 bg-background border border-primary/20 rounded shadow-sm z-20">
