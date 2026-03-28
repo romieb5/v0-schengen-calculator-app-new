@@ -219,13 +219,13 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               <span className="text-xs text-muted-foreground italic">Example data shown</span>
             )}
           </div>
-          {displayProposedTrips.length > 0 && showProposedTrips && (
-            <>
+          {displayProposedTrips.length > 0 && (
+            <div className={`flex flex-col gap-1 transition-opacity duration-200 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
               <div className="text-xs text-muted-foreground italic">
                 Reference date based on most recent proposed trip.
               </div>
-            </>
+            </div>
           )}
         </div>
 
@@ -372,8 +372,8 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             <span className="text-xs text-muted-foreground italic">Example data shown</span>
           )}
         </div>
-        {displayProposedTrips.length > 0 && showProposedTrips && (
-          <div className="flex flex-col items-end gap-1">
+        {displayProposedTrips.length > 0 && (
+          <div className={`flex flex-col items-end gap-1 transition-opacity duration-200 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
             <div className="text-xs text-muted-foreground italic">
               Reference date based on most recent proposed trip.
