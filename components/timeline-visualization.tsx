@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   format,
   startOfDay,
@@ -85,6 +85,8 @@ const EXAMPLE_COLOR_MAP = new Map<string, string>([
 export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const hasAutoToggled = useRef(false)
 
   // Use example data only if absolutely no data exists (no stays AND no proposed trips)
   const isEmptyState = stays.length === 0 && proposedTrips.length === 0
@@ -104,6 +106,26 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
+
+  // Auto-toggle proposed trips when the paywalled example scrolls into view
+  useEffect(() => {
+    if (!isEmptyState || hasAutoToggled.current) return
+    const el = containerRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAutoToggled.current) {
+          hasAutoToggled.current = true
+          setTimeout(() => setShowProposedTrips(true), 600)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [isEmptyState])
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
@@ -205,7 +227,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
+      <div ref={containerRef} className="space-y-4">
         <div className="flex flex-col items-start gap-3">
           {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
@@ -358,7 +380,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   }
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {displayProposedTrips.length > 0 && (
