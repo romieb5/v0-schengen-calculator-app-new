@@ -151,7 +151,7 @@ export default function HowItWorksPage() {
               <ul className="list-disc list-inside space-y-2">
                 <li>Recorded stays as colored bars</li>
                 <li>Proposed trips as dashed bars</li>
-                <li>The rolling 180-day window as a blue border</li>
+                <li>The rolling 180-day window as a shaded region</li>
                 <li>Current compliance status (days used / days remaining)</li>
               </ul>
               <div className="bg-muted p-4 rounded-lg space-y-2">
