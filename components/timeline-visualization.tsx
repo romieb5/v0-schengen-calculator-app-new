@@ -209,9 +209,9 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
 
       const steps: Array<{ time: number; fn: () => void }> = [
         { time: 600, fn: () => setExampleStep(1) },                                    // +stay 3
-        { time: 2600, fn: () => setExampleStep(2) },                                   // +stay 4
-        { time: 5000, fn: () => setExampleStep(3) },                                   // +stay 5
-        { time: 8400, fn: () => { setExampleStep(4); setShowProposedTrips(true) } },   // +proposed trip
+        { time: 2800, fn: () => setExampleStep(2) },                                   // +stay 4  (+2200)
+        { time: 5000, fn: () => setExampleStep(3) },                                   // +stay 5  (+2200)
+        { time: 7200, fn: () => { setExampleStep(4); setShowProposedTrips(true) } },   // +proposed (+2200)
         { time: FADE_OUT_TIME, fn: () => setExampleFade(0) },                          // fade out
         { time: 13200, fn: () => { setExampleStep(0); setShowProposedTrips(false) } }, // reset while faded
         { time: 15400, fn: () => setExampleFade(1) },                                  // fade in
