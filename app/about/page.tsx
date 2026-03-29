@@ -6,9 +6,9 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">About</h1>
-          <p className="text-lg text-muted-foreground">
+          <h2 className="text-2xl font-bold">
             Why I built Schengen Monitor, and who it&apos;s for.
-          </p>
+          </h2>
         </div>
 
         <div className="space-y-6 text-base leading-relaxed">
