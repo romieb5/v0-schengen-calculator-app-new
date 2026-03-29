@@ -52,7 +52,9 @@ export function Navigation() {
                 )
               })}
               {authLoading ? (
-                <div className="ml-2 w-[70px] h-9 rounded-md bg-muted animate-pulse" />
+                <Button variant="outline" className="ml-2 invisible">
+                  Log In
+                </Button>
               ) : isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
