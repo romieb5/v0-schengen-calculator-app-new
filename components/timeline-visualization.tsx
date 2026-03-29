@@ -14,6 +14,7 @@ import {
   min,
   max,
 } from "date-fns"
+import { Pause, Play } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
@@ -148,7 +149,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   // Steps: 0 = 2 stays, 1 = +stay 3, 2 = +stay 4, 3 = +stay 5, 4 = +proposed trip
   const [exampleStep, setExampleStep] = useState(0)
   const [exampleFade, setExampleFade] = useState(1)
+  const [examplePaused, setExamplePaused] = useState(false)
   const loopTimers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const startLoopRef = useRef<() => void>(() => {})
+  const loopStarted = useRef(false)
 
   const displayStays = isEmptyState
     ? EXAMPLE_LOOP_STAYS.slice(0, Math.min(exampleStep + 2, 5))
@@ -203,9 +207,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       schedule(() => startLoop(), 9600)                    // restart
     }
 
+    startLoopRef.current = startLoop
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !loopStarted.current) {
+          loopStarted.current = true
           observer.disconnect()
           setTimeout(() => startLoop(), 600)
         }
@@ -219,6 +226,21 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       clearTimers()
     }
   }, [isEmptyState])
+
+  // Pause/resume: clear timers on pause, restart loop on resume
+  const toggleExamplePause = () => {
+    if (examplePaused) {
+      // Resume: restart the loop from the beginning
+      startLoopRef.current()
+      setExamplePaused(false)
+    } else {
+      // Pause: freeze at current state
+      loopTimers.current.forEach(clearTimeout)
+      loopTimers.current = []
+      setExampleFade(1) // ensure visible if mid-fade
+      setExamplePaused(true)
+    }
+  }
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
@@ -335,7 +357,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     return (
       <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
         <div className="flex flex-col items-start gap-3">
-          <div className={`flex items-center gap-2 transition-opacity duration-500 ${displayProposedTrips.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
             <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
               Show Proposed Trips
@@ -361,6 +383,15 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
         </div>
 
         <div className="relative bg-card border rounded-lg p-4 py-8 overflow-y-auto max-h-[600px]">
+          {isEmptyState && (
+            <button
+              onClick={toggleExamplePause}
+              className="absolute top-2 right-2 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title={examplePaused ? "Resume animation" : "Pause animation"}
+            >
+              {examplePaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+            </button>
+          )}
           <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
             <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
 
@@ -488,7 +519,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     <div ref={containerRef} className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <div className={`flex items-center gap-2 transition-opacity duration-500 ${displayProposedTrips.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
             <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
               Show Proposed Trips
@@ -515,6 +546,15 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       </div>
 
       <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-hidden ${isEmptyState ? "opacity-85" : ""}`}>
+        {isEmptyState && (
+          <button
+            onClick={toggleExamplePause}
+            className="absolute top-2 right-2 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title={examplePaused ? "Resume animation" : "Pause animation"}
+          >
+            {examplePaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+          </button>
+        )}
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {displayMarkers.map(({ item: marker, key, opacity }) => {
