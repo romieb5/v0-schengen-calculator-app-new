@@ -84,6 +84,76 @@ const EXAMPLE_COLOR_MAP = new Map<string, string>([
   ["example-5", "bg-orange-500"],
 ])
 
+// Reusable hook: keeps exiting items in the DOM so CSS transitions can animate them out
+function useAnimatedSet<T>(
+  items: T[],
+  getKey: (item: T) => string,
+): Array<{ item: T; key: string; opacity: number }> {
+  const allSeenRef = useRef<Map<string, T>>(new Map())
+  const prevKeysRef = useRef<Set<string>>(new Set())
+  const enteringRef = useRef<Set<string>>(new Set())
+  const isFirstRef = useRef(true)
+  const latestKeysRef = useRef<Set<string>>(new Set())
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const [, tick] = useState(0)
+
+  // Always update seen items with latest data
+  for (const item of items) {
+    allSeenRef.current.set(getKey(item), item)
+  }
+
+  const currentKeys = new Set(items.map(getKey))
+  latestKeysRef.current = currentKeys
+
+  // Track entering items (skip first render so everything appears immediately)
+  if (isFirstRef.current) {
+    isFirstRef.current = false
+    enteringRef.current = new Set()
+  } else {
+    const entering = new Set<string>()
+    for (const key of currentKeys) {
+      if (!prevKeysRef.current.has(key)) entering.add(key)
+    }
+    enteringRef.current = entering
+  }
+  prevKeysRef.current = currentKeys
+
+  const keyStr = items.map(getKey).join(',')
+
+  useEffect(() => {
+    if (enteringRef.current.size > 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          enteringRef.current = new Set()
+          tick(n => n + 1)
+        })
+      })
+    }
+
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => {
+      const latest = latestKeysRef.current
+      let cleaned = false
+      for (const key of allSeenRef.current.keys()) {
+        if (!latest.has(key)) {
+          allSeenRef.current.delete(key)
+          cleaned = true
+        }
+      }
+      if (cleaned) tick(n => n + 1)
+    }, 1200)
+
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyStr])
+
+  return [...allSeenRef.current.entries()].map(([key, item]) => ({
+    item,
+    key,
+    opacity: enteringRef.current.has(key) ? 0 : currentKeys.has(key) ? 1 : 0,
+  }))
+}
+
 export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -181,73 +251,8 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   const monthMarkers = generateMonthMarkers()
 
-  // --- Animated month markers: keep leaving markers in DOM so they slide + fade out ---
-  const allSeenMarkersRef = useRef<Map<string, Date>>(new Map())
-  const prevMarkerKeysRef = useRef<Set<string>>(new Set())
-  const enteringKeysRef = useRef<Set<string>>(new Set())
-  const isFirstMarkerRender = useRef(true)
-  const latestMarkerKeysRef = useRef<Set<string>>(new Set())
-  const cleanupTimerRef = useRef<ReturnType<typeof setTimeout>>()
-  const [, forceMarkerRender] = useState(0)
-
-  // Persist all markers (current + recently-left) so CSS transitions have stable DOM elements
-  for (const marker of monthMarkers) {
-    allSeenMarkersRef.current.set(marker.toISOString(), marker)
-  }
-
-  const currentMarkerKeys = new Set(monthMarkers.map(m => m.toISOString()))
-  latestMarkerKeysRef.current = currentMarkerKeys
-
-  // Detect entering markers (skip on first render so all appear at full opacity)
-  if (isFirstMarkerRender.current) {
-    isFirstMarkerRender.current = false
-    enteringKeysRef.current = new Set()
-  } else {
-    const newEntering = new Set<string>()
-    for (const key of currentMarkerKeys) {
-      if (!prevMarkerKeysRef.current.has(key)) {
-        newEntering.add(key)
-      }
-    }
-    enteringKeysRef.current = newEntering
-  }
-  prevMarkerKeysRef.current = currentMarkerKeys
-
-  const currentMarkerKeyStr = monthMarkers.map(m => m.toISOString()).join(',')
-
-  // Fade in entering markers after browser paints them at opacity 0, then clean up exited ones
-  useEffect(() => {
-    if (enteringKeysRef.current.size > 0) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          enteringKeysRef.current = new Set()
-          forceMarkerRender(n => n + 1)
-        })
-      })
-    }
-
-    if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current)
-    cleanupTimerRef.current = setTimeout(() => {
-      const latest = latestMarkerKeysRef.current
-      let cleaned = false
-      for (const key of allSeenMarkersRef.current.keys()) {
-        if (!latest.has(key)) {
-          allSeenMarkersRef.current.delete(key)
-          cleaned = true
-        }
-      }
-      if (cleaned) forceMarkerRender(n => n + 1)
-    }, 1200)
-
-    return () => { if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMarkerKeyStr])
-
-  const displayMarkers = [...allSeenMarkersRef.current.entries()].map(([key, date]) => ({
-    date,
-    key,
-    opacity: enteringKeysRef.current.has(key) ? 0 : currentMarkerKeys.has(key) ? 1 : 0,
-  }))
+  // Animated month markers, stays, and trips — fade in/out instead of popping
+  const displayMarkers = useAnimatedSet(monthMarkers, m => m.toISOString())
 
   const stayColors = [
     "bg-green-500",
@@ -286,6 +291,16 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   }
 
   const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
+
+  // Animated stays: persist hidden ones in DOM so they fade out
+  const stayItemsForAnimation = displayStays.map(stay => ({
+    ...stay,
+    _color: stayColorMap.get(stay.id) || stayColors[0],
+  }))
+  const animatedStays = useAnimatedSet(stayItemsForAnimation, s => s.id)
+
+  // Animated proposed trips: persist hidden ones in DOM so they fade out
+  const animatedTrips = useAnimatedSet(displayProposedTrips, t => t.id)
 
   const visibleProposedForCalculation = showProposedTrips ? visibleProposedTrips : []
   const calculationResult = calculateDaysUsedForDate(windowEnd, displayStays, visibleProposedForCalculation)
@@ -332,7 +347,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
             <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
 
-            {displayMarkers.map(({ date: marker, key, opacity }) => {
+            {displayMarkers.map(({ item: marker, key, opacity }) => {
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
@@ -355,22 +370,24 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               }}
             />
 
-            {displayStays.map((stay) => {
+            {animatedStays.map(({ item: stay, key, opacity: stayOpacity }) => {
               const top = (differenceInDays(stay.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(stay.exitDate, stay.entryDate) + 1) / totalDays) * 100
-              const color = stayColorMap.get(stay.id) || stayColors[0]
+              const color = stay._color
               const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
               const stayIndex = sortedStays.findIndex((s) => s.id === stay.id) + 1
 
               return (
                 <div
-                  key={stay.id}
+                  key={key}
                   className="absolute transition-all duration-1000 ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
                     left: "90px",
                     right: "10px",
+                    opacity: stayOpacity,
+                    pointerEvents: stayOpacity === 0 ? "none" : "auto",
                   }}
                 >
                   <div
@@ -383,22 +400,23 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               )
             })}
 
-            {displayProposedTrips.map((trip, index) => {
+            {animatedTrips.map(({ item: trip, key, opacity: tripOpacity }, index) => {
               const top = (differenceInDays(trip.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(trip.exitDate, trip.entryDate) + 1) / totalDays) * 100
               const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
+              const finalOpacity = tripOpacity * (showProposedTrips ? 0.9 : 0)
 
               return (
                 <div
-                  key={trip.id}
+                  key={key}
                   className="absolute transition-all duration-1000 ease-in-out"
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
                     left: "90px",
                     right: "10px",
-                    opacity: showProposedTrips ? 0.9 : 0,
-                    pointerEvents: showProposedTrips ? "auto" : "none",
+                    opacity: finalOpacity,
+                    pointerEvents: finalOpacity > 0 ? "auto" : "none",
                   }}
                 >
                   <div
@@ -486,7 +504,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-hidden ${isEmptyState ? "opacity-85" : ""}`}>
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
-          {displayMarkers.map(({ date: marker, key, opacity }) => {
+          {displayMarkers.map(({ item: marker, key, opacity }) => {
             const pos = dateToPosition(marker)
             return (
               <div key={key} className="absolute bottom-0 transition-all duration-1000 ease-in-out" style={{ left: `${pos}%`, opacity }}>
@@ -511,21 +529,23 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             </div>
           </div>
 
-          {displayStays.map((stay) => {
+          {animatedStays.map(({ item: stay, key, opacity: stayOpacity }) => {
             const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
             const startPos = dateToPosition(stay.entryDate)
             const endPos = dateToPosition(stay.exitDate)
-            const color = stayColorMap.get(stay.id) || stayColors[0]
+            const color = stay._color
             const stayIndex = sortedStays.findIndex((s) => s.id === stay.id) + 1
 
             return (
               <div
-                key={stay.id}
+                key={key}
                 className="absolute transition-all duration-1000 ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
                   bottom: "1rem",
+                  opacity: stayOpacity,
+                  pointerEvents: stayOpacity === 0 ? "none" : "auto",
                 }}
               >
                 <div
@@ -538,22 +558,22 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             )
           })}
 
-          {displayProposedTrips.map((trip, index) => {
+          {animatedTrips.map(({ item: trip, key, opacity: tripOpacity }, index) => {
             const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
             const startPos = dateToPosition(trip.entryDate)
             const endPos = dateToPosition(trip.exitDate)
-            const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
+            const finalOpacity = tripOpacity * (showProposedTrips ? 0.9 : 0)
 
             return (
               <div
-                key={trip.id}
+                key={key}
                 className="absolute transition-all duration-1000 ease-in-out"
                 style={{
                   left: `${startPos}%`,
                   width: `${endPos - startPos}%`,
                   bottom: "1rem",
-                  opacity: showProposedTrips ? 0.9 : 0,
-                  pointerEvents: showProposedTrips ? "auto" : "none",
+                  opacity: finalOpacity,
+                  pointerEvents: finalOpacity > 0 ? "auto" : "none",
                 }}
               >
                 <div
