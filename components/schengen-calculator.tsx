@@ -1064,7 +1064,11 @@ export function SchengenCalculator() {
                           timelineRef.current?.togglePause()
                           setExamplePaused(p => !p)
                         }}
-                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        className={`p-1.5 rounded-md border border-border transition-all duration-500 ${
+                          examplePaused
+                            ? "bg-foreground text-background"
+                            : "bg-background text-muted-foreground hover:text-foreground"
+                        }`}
                         title={examplePaused ? "Resume animation" : "Pause animation"}
                       >
                         {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
