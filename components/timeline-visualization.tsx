@@ -335,14 +335,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     return (
       <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
         <div className="flex flex-col items-start gap-3">
-          {displayProposedTrips.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
-              <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
-                Show Proposed Trips
-              </Label>
-            </div>
-          )}
+          <div className={`flex items-center gap-2 transition-opacity duration-500 ${displayProposedTrips.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
+            <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
+              Show Proposed Trips
+            </Label>
+          </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
               {daysUsed} days used
@@ -354,14 +352,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
               <span className="text-xs text-muted-foreground italic">Example data shown</span>
             )}
           </div>
-          {displayProposedTrips.length > 0 && (
-            <div className={`flex flex-col gap-1 transition-opacity duration-200 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-              <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
-              <div className="text-xs text-muted-foreground italic">
-                Reference date based on most recent proposed trip.
-              </div>
+          <div className={`flex flex-col gap-1 transition-opacity duration-500 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+            <div className="text-xs text-muted-foreground italic">
+              Reference date based on most recent proposed trip.
             </div>
-          )}
+          </div>
         </div>
 
         <div className="relative bg-card border rounded-lg p-4 py-8 overflow-y-auto max-h-[600px]">
@@ -492,14 +488,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     <div ref={containerRef} className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          {displayProposedTrips.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
-              <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
-                Show Proposed Trips
-              </Label>
-            </div>
-          )}
+          <div className={`flex items-center gap-2 transition-opacity duration-500 ${displayProposedTrips.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
+            <Label htmlFor="show-proposed" className="text-sm font-medium cursor-pointer">
+              Show Proposed Trips
+            </Label>
+          </div>
           <div className="flex items-center gap-2">
             <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
               {daysUsed} days used
@@ -512,14 +506,12 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
             <span className="text-xs text-muted-foreground italic">Example data shown</span>
           )}
         </div>
-        {displayProposedTrips.length > 0 && (
-          <div className={`flex flex-col items-end gap-1 transition-opacity duration-200 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
-            <div className="text-xs text-muted-foreground italic">
-              Reference date based on most recent proposed trip.
-            </div>
+        <div className={`flex flex-col items-end gap-1 transition-opacity duration-500 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+          <div className="text-xs text-muted-foreground italic">
+            Reference date based on most recent proposed trip.
           </div>
-        )}
+        </div>
       </div>
 
       <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-hidden ${isEmptyState ? "opacity-85" : ""}`}>
