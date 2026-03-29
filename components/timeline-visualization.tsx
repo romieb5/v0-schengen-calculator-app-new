@@ -181,6 +181,71 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   const monthMarkers = generateMonthMarkers()
 
+  // --- Animated month markers: fade entering/leaving markers instead of popping ---
+  const [displayMarkers, setDisplayMarkers] = useState<Array<{ date: Date; key: string; opacity: number }>>(() =>
+    monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 }))
+  )
+  const prevMarkerKeysRef = useRef<Set<string>>(new Set())
+  const cleanupTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const isFirstMarkerRender = useRef(true)
+  const latestMarkerKeysRef = useRef<Set<string>>(new Set())
+
+  const currentMarkerKeyStr = monthMarkers.map(m => m.toISOString()).join(',')
+
+  useEffect(() => {
+    const currentKeys = new Set(monthMarkers.map(m => m.toISOString()))
+    latestMarkerKeysRef.current = currentKeys
+
+    if (isFirstMarkerRender.current) {
+      isFirstMarkerRender.current = false
+      setDisplayMarkers(monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 })))
+      prevMarkerKeysRef.current = currentKeys
+      return
+    }
+
+    const prevKeys = prevMarkerKeysRef.current
+    const entering = monthMarkers.filter(m => !prevKeys.has(m.toISOString()))
+    const leavingKeys = [...prevKeys].filter(k => !currentKeys.has(k))
+
+    if (entering.length === 0 && leavingKeys.length === 0) {
+      setDisplayMarkers(monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 })))
+      prevMarkerKeysRef.current = currentKeys
+      return
+    }
+
+    // Phase 1: render all — entering at opacity 0, leaving still visible
+    setDisplayMarkers([
+      ...monthMarkers.map(m => ({
+        date: m,
+        key: m.toISOString(),
+        opacity: prevKeys.has(m.toISOString()) ? 1 : 0,
+      })),
+      ...leavingKeys.map(k => ({ date: new Date(k), key: k, opacity: 1 })),
+    ])
+
+    // Phase 2: trigger fade transitions after browser paints initial state
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const keys = latestMarkerKeysRef.current
+        setDisplayMarkers(prev =>
+          prev.map(m => ({ ...m, opacity: keys.has(m.key) ? 1 : 0 }))
+        )
+      })
+    })
+
+    // Phase 3: remove fully-exited markers after transition completes
+    if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current)
+    cleanupTimerRef.current = setTimeout(() => {
+      const keys = latestMarkerKeysRef.current
+      setDisplayMarkers(prev => prev.filter(m => keys.has(m.key)))
+    }, 1100)
+
+    prevMarkerKeysRef.current = currentKeys
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMarkerKeyStr])
+
+  useEffect(() => () => { if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current) }, [])
+
   const stayColors = [
     "bg-green-500",
     "bg-blue-500",
@@ -264,11 +329,11 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
           <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
             <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
 
-            {monthMarkers.map((marker) => {
+            {displayMarkers.map(({ date: marker, key, opacity }) => {
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
-                <div key={marker.toISOString()} className="absolute left-0 transition-all duration-1000 ease-in-out" style={{ top: `${top}%`, width: "80px" }}>
+                <div key={key} className="absolute left-0 transition-all duration-1000 ease-in-out" style={{ top: `${top}%`, width: "80px", opacity }}>
                   <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
                     {format(marker, "MMM yyyy")}
                   </div>
@@ -418,10 +483,10 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto ${isEmptyState ? "opacity-85" : ""}`}>
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
-          {monthMarkers.map((marker) => {
+          {displayMarkers.map(({ date: marker, key, opacity }) => {
             const pos = dateToPosition(marker)
             return (
-              <div key={marker.toISOString()} className="absolute bottom-0 transition-all duration-1000 ease-in-out" style={{ left: `${pos}%` }}>
+              <div key={key} className="absolute bottom-0 transition-all duration-1000 ease-in-out" style={{ left: `${pos}%`, opacity }}>
                 <div className="w-px h-3 bg-border" />
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
                   {format(marker, "MMM yyyy")}

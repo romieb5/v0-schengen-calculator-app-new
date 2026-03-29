@@ -51,40 +51,40 @@ export function Navigation() {
                   </Link>
                 )
               })}
-              {!authLoading && (
-                isAuthenticated ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="ml-2 gap-2">
-                        <User className="h-4 w-4" />
-                        {user?.name || user?.email}
-                        <ChevronDown className="h-3 w-3" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="text-muted-foreground text-xs cursor-default">
-                        {user?.email}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/account" className="flex items-center gap-2 cursor-pointer">
-                          <Settings className="h-4 w-4" />
-                          Account Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={signOut} className="cursor-pointer">
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sign Out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Link href="/log-in">
-                    <Button variant="outline" className="ml-2">
-                      Log In
+              {authLoading ? (
+                <div className="ml-2 w-[70px] h-9 rounded-md bg-muted animate-pulse" />
+              ) : isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-2 gap-2">
+                      <User className="h-4 w-4" />
+                      {user?.name || user?.email}
+                      <ChevronDown className="h-3 w-3" />
                     </Button>
-                  </Link>
-                )
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem className="text-muted-foreground text-xs cursor-default">
+                      {user?.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/account" className="flex items-center gap-2 cursor-pointer">
+                        <Settings className="h-4 w-4" />
+                        Account Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link href="/log-in">
+                  <Button variant="outline" className="ml-2">
+                    Log In
+                  </Button>
+                </Link>
               )}
             </div>
 
@@ -110,31 +110,29 @@ export function Navigation() {
                       </DropdownMenuItem>
                     )
                   })}
-                  {!authLoading && (
+                  <DropdownMenuSeparator />
+                  {authLoading ? (
+                    <div className="mx-2 my-1.5 h-8 rounded-md bg-muted animate-pulse" />
+                  ) : isAuthenticated ? (
                     <>
-                      <DropdownMenuSeparator />
-                      {isAuthenticated ? (
-                        <>
-                          <DropdownMenuItem asChild>
-                            <Link href="/account" className="flex items-center gap-2 cursor-pointer">
-                              <Settings className="h-4 w-4" />
-                              Account Settings
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={signOut} className="cursor-pointer">
-                            <LogOut className="h-4 w-4 mr-2" />
-                            Sign Out
-                          </DropdownMenuItem>
-                        </>
-                      ) : (
-                        <DropdownMenuItem asChild>
-                          <Link href="/log-in" className="flex items-center gap-2 cursor-pointer">
-                            <LogIn className="h-4 w-4" />
-                            Log In
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
+                      <DropdownMenuItem asChild>
+                        <Link href="/account" className="flex items-center gap-2 cursor-pointer">
+                          <Settings className="h-4 w-4" />
+                          Account Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </DropdownMenuItem>
                     </>
+                  ) : (
+                    <DropdownMenuItem asChild>
+                      <Link href="/log-in" className="flex items-center gap-2 cursor-pointer">
+                        <LogIn className="h-4 w-4" />
+                        Log In
+                      </Link>
+                    </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
