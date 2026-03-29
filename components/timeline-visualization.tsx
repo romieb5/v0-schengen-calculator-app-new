@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react"
 import {
   format,
   startOfDay,
@@ -14,7 +14,6 @@ import {
   min,
   max,
 } from "date-fns"
-import { Pause, Play } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
@@ -38,6 +37,11 @@ interface TimelineVisualizationProps {
   proposedTrips: ProposedTrip[]
   referenceDate: Date
   stayColorMap?: Map<string, string>
+}
+
+export interface TimelineVisualizationHandle {
+  isPaused: boolean
+  togglePause: () => void
 }
 
 // Example animation: stays revealed progressively in a loop to demonstrate
@@ -137,7 +141,7 @@ function useAnimatedSet<T>(
   }))
 }
 
-export function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }: TimelineVisualizationProps) {
+export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, TimelineVisualizationProps>(function TimelineVisualization({ stays, proposedTrips, referenceDate, stayColorMap: externalColorMap }, ref) {
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -191,9 +195,9 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       setShowProposedTrips(false)
       setExampleFade(1)
 
-      schedule(() => setExampleStep(1), 1200)              // +stay 3 (quick first reveal)
-      schedule(() => setExampleStep(2), 3200)              // +stay 4
-      schedule(() => setExampleStep(3), 5600)              // +stay 5
+      schedule(() => setExampleStep(1), 600)               // +stay 3 (quick first reveal)
+      schedule(() => setExampleStep(2), 2600)              // +stay 4
+      schedule(() => setExampleStep(3), 5000)              // +stay 5
       schedule(() => {                                      // +proposed trip
         setExampleStep(4)
         setShowProposedTrips(true)
@@ -230,17 +234,20 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   // Pause/resume: clear timers on pause, restart loop on resume
   const toggleExamplePause = () => {
     if (examplePaused) {
-      // Resume: restart the loop from the beginning
       startLoopRef.current()
       setExamplePaused(false)
     } else {
-      // Pause: freeze at current state
       loopTimers.current.forEach(clearTimeout)
       loopTimers.current = []
-      setExampleFade(1) // ensure visible if mid-fade
+      setExampleFade(1)
       setExamplePaused(true)
     }
   }
+
+  useImperativeHandle(ref, () => ({
+    isPaused: examplePaused,
+    togglePause: toggleExamplePause,
+  }))
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
 
@@ -355,16 +362,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   if (isMobile) {
     return (
-      <div ref={containerRef} className="relative space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
-        {isEmptyState && (
-          <button
-            onClick={toggleExamplePause}
-            className="absolute top-0 right-0 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            title={examplePaused ? "Resume animation" : "Pause animation"}
-          >
-            {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
-          </button>
-        )}
+      <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
@@ -516,16 +514,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   }
 
   return (
-    <div ref={containerRef} className="relative space-y-4">
-      {isEmptyState && (
-        <button
-          onClick={toggleExamplePause}
-          className="absolute top-0 right-0 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-          title={examplePaused ? "Resume animation" : "Pause animation"}
-        >
-          {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
-        </button>
-      )}
+    <div ref={containerRef} className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="flex items-center gap-2">
@@ -657,4 +646,4 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       </div>
     </div>
   )
-}
+})

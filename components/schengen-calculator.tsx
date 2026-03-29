@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,8 +12,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ThreeMonthCalendar } from "./three-month-calendar"
-import { TimelineVisualization } from "./timeline-visualization"
-import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2 } from "lucide-react"
+import { TimelineVisualization, type TimelineVisualizationHandle } from "./timeline-visualization"
+import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play } from "lucide-react"
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
@@ -61,6 +61,8 @@ export function SchengenCalculator() {
   } = useStays()
 
   const { hasPaid, isAuthenticated, isLoading: paymentLoading, refresh: refreshPayment } = usePaymentStatus()
+  const timelineRef = useRef<TimelineVisualizationHandle>(null)
+  const [examplePaused, setExamplePaused] = useState(false)
   const searchParams = useSearchParams()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showAccountDeletedModal, setShowAccountDeletedModal] = useState(false)
@@ -1050,18 +1052,31 @@ export function SchengenCalculator() {
                 <div className="border-t sm:border-t-0 sm:border-l border-border" />
                 <div className="flex-1 min-w-0 relative max-h-[600px] sm:max-h-none overflow-y-auto sm:overflow-y-visible">
                   <CardHeader className="pt-5 pb-6 px-4 sm:px-6">
-                    <CardTitle className="text-lg sm:text-xl lg:text-2xl flex items-center gap-2">
-                      Timeline Visualization
-                      <span className="h-7 w-7 rounded-full bg-foreground/10 flex items-center justify-center">
-                        <Lock className="h-4 w-4 text-foreground/70" />
-                      </span>
-                    </CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg sm:text-xl lg:text-2xl flex items-center gap-2">
+                        Timeline Visualization
+                        <span className="h-7 w-7 rounded-full bg-foreground/10 flex items-center justify-center">
+                          <Lock className="h-4 w-4 text-foreground/70" />
+                        </span>
+                      </CardTitle>
+                      <button
+                        onClick={() => {
+                          timelineRef.current?.togglePause()
+                          setExamplePaused(p => !p)
+                        }}
+                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        title={examplePaused ? "Resume animation" : "Pause animation"}
+                      >
+                        {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
+                      </button>
+                    </div>
                     <CardDescription className="text-sm sm:text-base">
                       Visual representation of your stays within the rolling 180-day window
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="select-none">
                     <TimelineVisualization
+                      ref={timelineRef}
                       stays={[]}
                       proposedTrips={[]}
                       referenceDate={referenceDate}
