@@ -181,70 +181,73 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   const monthMarkers = generateMonthMarkers()
 
-  // --- Animated month markers: fade entering/leaving markers instead of popping ---
-  const [displayMarkers, setDisplayMarkers] = useState<Array<{ date: Date; key: string; opacity: number }>>(() =>
-    monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 }))
-  )
+  // --- Animated month markers: keep leaving markers in DOM so they slide + fade out ---
+  const allSeenMarkersRef = useRef<Map<string, Date>>(new Map())
   const prevMarkerKeysRef = useRef<Set<string>>(new Set())
-  const cleanupTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const enteringKeysRef = useRef<Set<string>>(new Set())
   const isFirstMarkerRender = useRef(true)
   const latestMarkerKeysRef = useRef<Set<string>>(new Set())
+  const cleanupTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const [, forceMarkerRender] = useState(0)
+
+  // Persist all markers (current + recently-left) so CSS transitions have stable DOM elements
+  for (const marker of monthMarkers) {
+    allSeenMarkersRef.current.set(marker.toISOString(), marker)
+  }
+
+  const currentMarkerKeys = new Set(monthMarkers.map(m => m.toISOString()))
+  latestMarkerKeysRef.current = currentMarkerKeys
+
+  // Detect entering markers (skip on first render so all appear at full opacity)
+  if (isFirstMarkerRender.current) {
+    isFirstMarkerRender.current = false
+    enteringKeysRef.current = new Set()
+  } else {
+    const newEntering = new Set<string>()
+    for (const key of currentMarkerKeys) {
+      if (!prevMarkerKeysRef.current.has(key)) {
+        newEntering.add(key)
+      }
+    }
+    enteringKeysRef.current = newEntering
+  }
+  prevMarkerKeysRef.current = currentMarkerKeys
 
   const currentMarkerKeyStr = monthMarkers.map(m => m.toISOString()).join(',')
 
+  // Fade in entering markers after browser paints them at opacity 0, then clean up exited ones
   useEffect(() => {
-    const currentKeys = new Set(monthMarkers.map(m => m.toISOString()))
-    latestMarkerKeysRef.current = currentKeys
-
-    if (isFirstMarkerRender.current) {
-      isFirstMarkerRender.current = false
-      setDisplayMarkers(monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 })))
-      prevMarkerKeysRef.current = currentKeys
-      return
-    }
-
-    const prevKeys = prevMarkerKeysRef.current
-    const entering = monthMarkers.filter(m => !prevKeys.has(m.toISOString()))
-    const leavingKeys = [...prevKeys].filter(k => !currentKeys.has(k))
-
-    if (entering.length === 0 && leavingKeys.length === 0) {
-      setDisplayMarkers(monthMarkers.map(m => ({ date: m, key: m.toISOString(), opacity: 1 })))
-      prevMarkerKeysRef.current = currentKeys
-      return
-    }
-
-    // Phase 1: render all — entering at opacity 0, leaving still visible
-    setDisplayMarkers([
-      ...monthMarkers.map(m => ({
-        date: m,
-        key: m.toISOString(),
-        opacity: prevKeys.has(m.toISOString()) ? 1 : 0,
-      })),
-      ...leavingKeys.map(k => ({ date: new Date(k), key: k, opacity: 1 })),
-    ])
-
-    // Phase 2: trigger fade transitions after browser paints initial state
-    requestAnimationFrame(() => {
+    if (enteringKeysRef.current.size > 0) {
       requestAnimationFrame(() => {
-        const keys = latestMarkerKeysRef.current
-        setDisplayMarkers(prev =>
-          prev.map(m => ({ ...m, opacity: keys.has(m.key) ? 1 : 0 }))
-        )
+        requestAnimationFrame(() => {
+          enteringKeysRef.current = new Set()
+          forceMarkerRender(n => n + 1)
+        })
       })
-    })
+    }
 
-    // Phase 3: remove fully-exited markers after transition completes
     if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current)
     cleanupTimerRef.current = setTimeout(() => {
-      const keys = latestMarkerKeysRef.current
-      setDisplayMarkers(prev => prev.filter(m => keys.has(m.key)))
-    }, 1100)
+      const latest = latestMarkerKeysRef.current
+      let cleaned = false
+      for (const key of allSeenMarkersRef.current.keys()) {
+        if (!latest.has(key)) {
+          allSeenMarkersRef.current.delete(key)
+          cleaned = true
+        }
+      }
+      if (cleaned) forceMarkerRender(n => n + 1)
+    }, 1200)
 
-    prevMarkerKeysRef.current = currentKeys
+    return () => { if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMarkerKeyStr])
 
-  useEffect(() => () => { if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current) }, [])
+  const displayMarkers = [...allSeenMarkersRef.current.entries()].map(([key, date]) => ({
+    date,
+    key,
+    opacity: enteringKeysRef.current.has(key) ? 0 : currentMarkerKeys.has(key) ? 1 : 0,
+  }))
 
   const stayColors = [
     "bg-green-500",

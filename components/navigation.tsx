@@ -51,11 +51,7 @@ export function Navigation() {
                   </Link>
                 )
               })}
-              {authLoading ? (
-                <Button variant="outline" className="ml-2 invisible">
-                  Log In
-                </Button>
-              ) : isAuthenticated ? (
+              {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="ml-2 gap-2">
@@ -113,9 +109,7 @@ export function Navigation() {
                     )
                   })}
                   <DropdownMenuSeparator />
-                  {authLoading ? (
-                    <div className="mx-2 my-1.5 h-8 rounded-md bg-muted animate-pulse" />
-                  ) : isAuthenticated ? (
+                  {isAuthenticated ? (
                     <>
                       <DropdownMenuItem asChild>
                         <Link href="/account" className="flex items-center gap-2 cursor-pointer">
