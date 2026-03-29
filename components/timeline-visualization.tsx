@@ -39,49 +39,31 @@ interface TimelineVisualizationProps {
   stayColorMap?: Map<string, string>
 }
 
-// Example data for empty state — stays placed in Nov 2025–Mar 2026 so they
-// remain inside the 180-day window regardless of proposed-trip toggle state.
-// This makes the toggle meaningfully *add* days rather than just shifting them.
-const EXAMPLE_STAYS: Stay[] = [
-  {
-    id: "example-1",
-    entryDate: new Date(2025, 10, 15), // Nov 15
-    exitDate: new Date(2025, 10, 24), // Nov 24
-    stayType: "short",
-  },
-  {
-    id: "example-2",
-    entryDate: new Date(2025, 11, 8), // Dec 8
-    exitDate: new Date(2025, 11, 17), // Dec 17
-    stayType: "short",
-  },
-  {
-    id: "example-3",
-    entryDate: new Date(2026, 0, 5), // Jan 5
-    exitDate: new Date(2026, 0, 13), // Jan 13
-    stayType: "short",
-  },
-  {
-    id: "example-4",
-    entryDate: new Date(2026, 1, 2), // Feb 2
-    exitDate: new Date(2026, 1, 9), // Feb 9
-    stayType: "short",
-  },
-  {
-    id: "example-5",
-    entryDate: new Date(2026, 2, 1), // Mar 1
-    exitDate: new Date(2026, 2, 8), // Mar 8
-    stayType: "short",
-  },
+// Example animation: stays revealed progressively in a loop to demonstrate
+// the rolling 180-day window. When the proposed trip is added the window
+// shifts forward, pushing Stay 1 outside — a key educational moment.
+const EXAMPLE_TODAY = startOfDay(new Date())
+
+const EXAMPLE_LOOP_STAYS: Stay[] = [
+  { id: "ex-1", entryDate: subDays(EXAMPLE_TODAY, 170), exitDate: subDays(EXAMPLE_TODAY, 159), stayType: "short" }, // 12 days — falls out when proposed trip shifts window
+  { id: "ex-2", entryDate: subDays(EXAMPLE_TODAY, 130), exitDate: subDays(EXAMPLE_TODAY, 116), stayType: "short" }, // 15 days
+  { id: "ex-3", entryDate: subDays(EXAMPLE_TODAY, 90),  exitDate: subDays(EXAMPLE_TODAY, 71),  stayType: "short" }, // 20 days
+  { id: "ex-4", entryDate: subDays(EXAMPLE_TODAY, 50),  exitDate: subDays(EXAMPLE_TODAY, 39),  stayType: "short" }, // 12 days
+  { id: "ex-5", entryDate: subDays(EXAMPLE_TODAY, 25),  exitDate: subDays(EXAMPLE_TODAY, 8),   stayType: "short" }, // 18 days
 ]
 
-// Hardcoded color map for example stays to guarantee varied colors
+const EXAMPLE_LOOP_TRIP: ProposedTrip = {
+  id: "ex-proposed",
+  entryDate: addDays(EXAMPLE_TODAY, 14),
+  exitDate: addDays(EXAMPLE_TODAY, 33), // 20 days → total reaches 85 (close to 90)
+}
+
 const EXAMPLE_COLOR_MAP = new Map<string, string>([
-  ["example-1", "bg-blue-500"],
-  ["example-2", "bg-green-500"],
-  ["example-3", "bg-yellow-500"],
-  ["example-4", "bg-purple-500"],
-  ["example-5", "bg-orange-500"],
+  ["ex-1", "bg-blue-500"],
+  ["ex-2", "bg-green-500"],
+  ["ex-3", "bg-yellow-500"],
+  ["ex-4", "bg-purple-500"],
+  ["ex-5", "bg-orange-500"],
 ])
 
 // Reusable hook: keeps exiting items in the DOM so CSS transitions can animate them out
@@ -158,17 +140,22 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   const [showProposedTrips, setShowProposedTrips] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const hasAutoToggled = useRef(false)
 
   // Use example data only if absolutely no data exists (no stays AND no proposed trips)
   const isEmptyState = stays.length === 0 && proposedTrips.length === 0
-  const displayStays = isEmptyState ? EXAMPLE_STAYS : stays
-  const exampleProposedTrips: ProposedTrip[] = [{
-    id: "example-proposed-1",
-    entryDate: addDays(startOfDay(new Date()), 14),
-    exitDate: addDays(startOfDay(new Date()), 34),
-  }]
-  const displayProposedTrips = isEmptyState ? exampleProposedTrips : proposedTrips
+
+  // --- Example animation loop: progressively reveal stays, then proposed trip ---
+  // Steps: 0 = 2 stays, 1 = +stay 3, 2 = +stay 4, 3 = +stay 5, 4 = +proposed trip
+  const [exampleStep, setExampleStep] = useState(0)
+  const [exampleFade, setExampleFade] = useState(1)
+  const loopTimers = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const displayStays = isEmptyState
+    ? EXAMPLE_LOOP_STAYS.slice(0, Math.min(exampleStep + 2, 5))
+    : stays
+  const displayProposedTrips = isEmptyState
+    ? (exampleStep >= 4 ? [EXAMPLE_LOOP_TRIP] : [])
+    : proposedTrips
 
   useEffect(() => {
     const checkMobile = () => {
@@ -179,24 +166,58 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  // Auto-toggle proposed trips when the paywalled example scrolls into view
+  // Start the example animation loop when the timeline scrolls into view
   useEffect(() => {
-    if (!isEmptyState || hasAutoToggled.current) return
+    if (!isEmptyState) return
     const el = containerRef.current
     if (!el) return
 
+    const clearTimers = () => {
+      loopTimers.current.forEach(clearTimeout)
+      loopTimers.current = []
+    }
+
+    const schedule = (fn: () => void, delay: number) => {
+      loopTimers.current.push(setTimeout(fn, delay))
+    }
+
+    const startLoop = () => {
+      clearTimers()
+      setExampleStep(0)
+      setShowProposedTrips(false)
+      setExampleFade(1)
+
+      schedule(() => setExampleStep(1), 1200)              // +stay 3
+      schedule(() => setExampleStep(2), 2200)              // +stay 4
+      schedule(() => setExampleStep(3), 3400)              // +stay 5
+      schedule(() => {                                      // +proposed trip
+        setExampleStep(4)
+        setShowProposedTrips(true)
+      }, 4800)
+      schedule(() => setExampleFade(0), 6300)              // fade out
+      schedule(() => {                                      // reset while faded
+        setExampleStep(0)
+        setShowProposedTrips(false)
+      }, 7200)
+      schedule(() => setExampleFade(1), 8300)              // fade in
+      schedule(() => startLoop(), 9600)                    // restart
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAutoToggled.current) {
-          hasAutoToggled.current = true
-          setTimeout(() => setShowProposedTrips(true), 600)
+        if (entry.isIntersecting) {
           observer.disconnect()
+          setTimeout(() => startLoop(), 600)
         }
       },
       { threshold: 0.3 }
     )
     observer.observe(el)
-    return () => observer.disconnect()
+
+    return () => {
+      observer.disconnect()
+      clearTimers()
+    }
   }, [isEmptyState])
 
   const visibleProposedTrips = showProposedTrips ? displayProposedTrips : []
@@ -312,7 +333,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   if (isMobile) {
     return (
-      <div ref={containerRef} className="space-y-4">
+      <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
         <div className="flex flex-col items-start gap-3">
           {displayProposedTrips.length > 0 && (
             <div className="flex items-center gap-2">
