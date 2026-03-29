@@ -208,7 +208,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
         setShowProposedTrips(false)
       }, 13200)
       schedule(() => setExampleFade(1), 15400)             // fade in
-      schedule(() => startLoop(), 18000)                   // restart
+      schedule(() => startLoop(), 16400)                   // restart after fade-in settles
     }
 
     startLoopRef.current = startLoop
