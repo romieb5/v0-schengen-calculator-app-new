@@ -191,20 +191,20 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       setShowProposedTrips(false)
       setExampleFade(1)
 
-      schedule(() => setExampleStep(1), 1200)              // +stay 3
-      schedule(() => setExampleStep(2), 2200)              // +stay 4
-      schedule(() => setExampleStep(3), 3400)              // +stay 5
+      schedule(() => setExampleStep(1), 2400)              // +stay 3
+      schedule(() => setExampleStep(2), 4400)              // +stay 4
+      schedule(() => setExampleStep(3), 6800)              // +stay 5
       schedule(() => {                                      // +proposed trip
         setExampleStep(4)
         setShowProposedTrips(true)
-      }, 4800)
-      schedule(() => setExampleFade(0), 6300)              // fade out
+      }, 9600)
+      schedule(() => setExampleFade(0), 12600)             // fade out
       schedule(() => {                                      // reset while faded
         setExampleStep(0)
         setShowProposedTrips(false)
-      }, 7200)
-      schedule(() => setExampleFade(1), 8300)              // fade in
-      schedule(() => startLoop(), 9600)                    // restart
+      }, 14400)
+      schedule(() => setExampleFade(1), 16600)             // fade in
+      schedule(() => startLoop(), 19200)                   // restart
     }
 
     startLoopRef.current = startLoop
