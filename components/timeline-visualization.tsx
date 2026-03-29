@@ -155,8 +155,13 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   const [exampleFade, setExampleFade] = useState(1)
   const [examplePaused, setExamplePaused] = useState(false)
   const loopTimers = useRef<ReturnType<typeof setTimeout>[]>([])
-  const startLoopRef = useRef<() => void>(() => {})
+  const startLoopRef = useRef<(resumeFrom?: number) => void>(() => {})
   const loopStarted = useRef(false)
+  const loopStartTime = useRef(0)
+  const pausedElapsed = useRef(0)
+
+  // Animation schedule: [elapsed_ms, action]
+  const LOOP_STEPS: Array<{ time: number; fn: () => void }> = []
 
   const displayStays = isEmptyState
     ? EXAMPLE_LOOP_STAYS.slice(0, Math.min(exampleStep + 2, 5))
@@ -189,26 +194,37 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
       loopTimers.current.push(setTimeout(fn, delay))
     }
 
-    const startLoop = () => {
-      clearTimers()
-      setExampleStep(0)
-      setShowProposedTrips(false)
-      setExampleFade(1)
+    const FADE_OUT_TIME = 11400
 
-      schedule(() => setExampleStep(1), 600)               // +stay 3 (quick first reveal)
-      schedule(() => setExampleStep(2), 2600)              // +stay 4
-      schedule(() => setExampleStep(3), 5000)              // +stay 5
-      schedule(() => {                                      // +proposed trip
-        setExampleStep(4)
-        setShowProposedTrips(true)
-      }, 8400)
-      schedule(() => setExampleFade(0), 11400)             // fade out
-      schedule(() => {                                      // reset while faded
+    const startLoop = (resumeFrom = 0) => {
+      clearTimers()
+      loopStartTime.current = Date.now() - resumeFrom
+
+      // On a fresh start, reset state
+      if (resumeFrom === 0) {
         setExampleStep(0)
         setShowProposedTrips(false)
-      }, 13200)
-      schedule(() => setExampleFade(1), 15400)             // fade in
-      schedule(() => startLoop(), 16400)                   // restart after fade-in settles
+        setExampleFade(1)
+      }
+
+      const steps: Array<{ time: number; fn: () => void }> = [
+        { time: 600, fn: () => setExampleStep(1) },                                    // +stay 3
+        { time: 2600, fn: () => setExampleStep(2) },                                   // +stay 4
+        { time: 5000, fn: () => setExampleStep(3) },                                   // +stay 5
+        { time: 8400, fn: () => { setExampleStep(4); setShowProposedTrips(true) } },   // +proposed trip
+        { time: FADE_OUT_TIME, fn: () => setExampleFade(0) },                          // fade out
+        { time: 13200, fn: () => { setExampleStep(0); setShowProposedTrips(false) } }, // reset while faded
+        { time: 15400, fn: () => setExampleFade(1) },                                  // fade in
+        { time: 16400, fn: () => startLoop(0) },                                       // restart
+      ]
+
+      // Only schedule steps that haven't elapsed yet
+      for (const step of steps) {
+        const remaining = step.time - resumeFrom
+        if (remaining > 0) {
+          schedule(step.fn, remaining)
+        }
+      }
     }
 
     startLoopRef.current = startLoop
@@ -218,7 +234,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
         if (entry.isIntersecting && !loopStarted.current) {
           loopStarted.current = true
           observer.disconnect()
-          setTimeout(() => startLoop(), 600)
+          setTimeout(() => startLoop(0), 600)
         }
       },
       { threshold: 0.3 }
@@ -231,12 +247,19 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
     }
   }, [isEmptyState])
 
-  // Pause/resume: clear timers on pause, restart loop on resume
+  // Pause/resume: freeze at current point, resume from where we left off
   const toggleExamplePause = () => {
     if (examplePaused) {
-      startLoopRef.current()
+      const elapsed = pausedElapsed.current
+      // If paused during fade cycle, restart from beginning instead
+      if (elapsed >= 11400) {
+        startLoopRef.current(0)
+      } else {
+        startLoopRef.current(elapsed)
+      }
       setExamplePaused(false)
     } else {
+      pausedElapsed.current = Date.now() - loopStartTime.current
       loopTimers.current.forEach(clearTimeout)
       loopTimers.current = []
       setExampleFade(1)
