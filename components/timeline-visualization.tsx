@@ -191,20 +191,20 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       setShowProposedTrips(false)
       setExampleFade(1)
 
-      schedule(() => setExampleStep(1), 2400)              // +stay 3
-      schedule(() => setExampleStep(2), 4400)              // +stay 4
-      schedule(() => setExampleStep(3), 6800)              // +stay 5
+      schedule(() => setExampleStep(1), 1200)              // +stay 3 (quick first reveal)
+      schedule(() => setExampleStep(2), 3200)              // +stay 4
+      schedule(() => setExampleStep(3), 5600)              // +stay 5
       schedule(() => {                                      // +proposed trip
         setExampleStep(4)
         setShowProposedTrips(true)
-      }, 9600)
-      schedule(() => setExampleFade(0), 12600)             // fade out
+      }, 8400)
+      schedule(() => setExampleFade(0), 11400)             // fade out
       schedule(() => {                                      // reset while faded
         setExampleStep(0)
         setShowProposedTrips(false)
-      }, 14400)
-      schedule(() => setExampleFade(1), 16600)             // fade in
-      schedule(() => startLoop(), 19200)                   // restart
+      }, 13200)
+      schedule(() => setExampleFade(1), 15400)             // fade in
+      schedule(() => startLoop(), 18000)                   // restart
     }
 
     startLoopRef.current = startLoop
@@ -355,7 +355,16 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
 
   if (isMobile) {
     return (
-      <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
+      <div ref={containerRef} className="relative space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
+        {isEmptyState && (
+          <button
+            onClick={toggleExamplePause}
+            className="absolute top-0 right-0 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title={examplePaused ? "Resume animation" : "Pause animation"}
+          >
+            {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
+          </button>
+        )}
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
@@ -383,15 +392,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
         </div>
 
         <div className="relative bg-card border rounded-lg p-4 py-8 overflow-y-auto max-h-[600px]">
-          {isEmptyState && (
-            <button
-              onClick={toggleExamplePause}
-              className="absolute top-2 right-2 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title={examplePaused ? "Resume animation" : "Pause animation"}
-            >
-              {examplePaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
-            </button>
-          )}
           <div className="relative" style={{ height: `${totalDays * 4}px`, paddingLeft: "80px" }}>
             <div className="absolute left-[80px] top-0 bottom-0 w-px bg-border" />
 
@@ -516,7 +516,16 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
   }
 
   return (
-    <div ref={containerRef} className="space-y-4">
+    <div ref={containerRef} className="relative space-y-4">
+      {isEmptyState && (
+        <button
+          onClick={toggleExamplePause}
+          className="absolute top-0 right-0 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          title={examplePaused ? "Resume animation" : "Pause animation"}
+        >
+          {examplePaused ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
+        </button>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="flex items-center gap-2">
@@ -546,15 +555,6 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
       </div>
 
       <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-hidden ${isEmptyState ? "opacity-85" : ""}`}>
-        {isEmptyState && (
-          <button
-            onClick={toggleExamplePause}
-            className="absolute top-2 right-2 z-20 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            title={examplePaused ? "Resume animation" : "Pause animation"}
-          >
-            {examplePaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
-          </button>
-        )}
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {displayMarkers.map(({ item: marker, key, opacity }) => {
