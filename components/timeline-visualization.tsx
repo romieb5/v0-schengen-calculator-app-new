@@ -483,7 +483,7 @@ export function TimelineVisualization({ stays, proposedTrips, referenceDate, sta
         )}
       </div>
 
-      <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-x-auto ${isEmptyState ? "opacity-85" : ""}`}>
+      <div className={`relative bg-card border rounded-lg p-4 sm:p-6 overflow-hidden ${isEmptyState ? "opacity-85" : ""}`}>
         <div className="relative pl-32 pr-4" style={{ minWidth: "500px", height: "160px" }}>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
           {displayMarkers.map(({ date: marker, key, opacity }) => {
