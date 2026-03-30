@@ -393,8 +393,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
   const statsColor = daysLeft < 0 ? "bg-red-50 text-red-700" : "bg-blue-50 text-blue-700"
 
-  // On mobile empty state, no transition animations — everything renders instantly
-  const mobileTransition = mobileStaticExample ? "" : "transition-all duration-1000 ease-in-out"
+  // On mobile empty state, no transitions. Otherwise only transition position/opacity (not size/layout).
+  const mobileTransition = mobileStaticExample ? "" : "transition-[top,height,opacity] duration-1000 ease-in-out"
 
   if (isMobile) {
     return (
