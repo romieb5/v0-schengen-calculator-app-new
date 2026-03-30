@@ -64,32 +64,20 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — timeline visible at top, gradient fade into paywall at bottom
+  // Unpaid — full timeline preview with sticky paywall banner at bottom
   return (
-    <div className="px-4 pb-4">
-      <div className="relative">
-        {/* Timeline renders in full */}
-        <div className="pointer-events-none select-none">
-          <TimelineVisualization
-            stays={[]}
-            proposedTrips={[]}
-            referenceDate={referenceDate}
-          />
-        </div>
+    <div className="px-4 pb-28">
+      {/* Timeline fully visible and scrollable */}
+      <TimelineVisualization
+        stays={[]}
+        proposedTrips={[]}
+        referenceDate={referenceDate}
+      />
 
-        {/* Gradient fade — transparent at top, solid at bottom */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(to bottom, transparent 30%, var(--background) 75%)",
-          }}
-        />
-
-        {/* Paywall card anchored at bottom of the timeline area */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-4">
-          <div className="bg-background border-2 rounded-xl shadow-lg px-6 py-5 max-w-xs w-full">
-            <TimelinePaywall isAuthenticated={isAuthenticated} />
-          </div>
+      {/* Sticky paywall banner at bottom */}
+      <div className="fixed bottom-14 left-0 right-0 z-30 px-4 md:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="bg-background/95 backdrop-blur-sm border-2 rounded-xl shadow-lg px-5 py-4">
+          <TimelinePaywall isAuthenticated={isAuthenticated} />
         </div>
       </div>
     </div>
