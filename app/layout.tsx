@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -12,6 +12,10 @@ const inter = Inter({
   display: "swap",
   preload: true,
 })
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   title: "Schengen 90/180 Calculator | EU Visa Day Counter",

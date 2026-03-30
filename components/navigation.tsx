@@ -2,12 +2,17 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HelpCircle, Info, ChevronDown, LogIn, LogOut, User, Settings } from "lucide-react"
+import { ChevronDown, LogIn, LogOut, User, Settings, Menu } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth-provider"
+import { cn } from "@/lib/utils"
 
-export function Navigation() {
+interface NavigationProps {
+  isVisible?: boolean
+}
+
+export function Navigation({ isVisible = true }: NavigationProps) {
   const pathname = usePathname()
   const { user, isAuthenticated, isLoading: authLoading, signOut } = useAuth()
 
@@ -24,7 +29,14 @@ export function Navigation() {
 
   return (
     <>
-      <nav className="border-b bg-background sticky top-0 z-40">
+      <nav
+        className={cn(
+          "border-b bg-background sticky top-0 z-40",
+          "md:translate-y-0",
+          "transition-transform duration-300 ease-in-out",
+          !isVisible && "-translate-y-full",
+        )}
+      >
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
@@ -86,23 +98,26 @@ export function Navigation() {
               )}
             </div>
 
-            {/* Mobile dropdown - hidden on desktop */}
+            {/* Mobile hamburger menu */}
             <div className="md:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                    {CurrentIcon && <CurrentIcon className="h-4 w-4" />}
-                    {currentPage.label}
-                    <ChevronDown className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                    <Menu className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {otherPages.map((link) => {
-                    const Icon = link.icon
+                  {links.map((link) => {
+                    const isActive = pathname === link.href
                     return (
                       <DropdownMenuItem key={link.href} asChild>
-                        <Link href={link.href} className="flex items-center gap-2 cursor-pointer">
-                          {Icon && <Icon className="h-4 w-4" />}
+                        <Link
+                          href={link.href}
+                          className={cn(
+                            "flex items-center gap-2 cursor-pointer",
+                            isActive && "font-semibold",
+                          )}
+                        >
                           {link.label}
                         </Link>
                       </DropdownMenuItem>
@@ -136,7 +151,6 @@ export function Navigation() {
           </div>
         </div>
       </nav>
-
     </>
   )
 }
