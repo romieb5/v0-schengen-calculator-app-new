@@ -7,6 +7,7 @@ import { CalendarIcon, PlusCircle, Pencil, Trash2, Eye, EyeOff } from "lucide-re
 import { format, differenceInDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
+import { MobileStatusBar } from "@/components/mobile-status-bar"
 
 interface Stay {
   id: string
@@ -34,6 +35,9 @@ interface RecordedStaysViewProps {
   setReferenceDate: (date: Date) => void
   editingId: string | null
   disabledRanges: Array<{ start: Date; end: Date }>
+  daysUsed: number
+  daysRemaining: number
+  isOverstay: boolean
 }
 
 export function RecordedStaysView({
@@ -53,6 +57,9 @@ export function RecordedStaysView({
   setReferenceDate,
   editingId,
   disabledRanges,
+  daysUsed,
+  daysRemaining,
+  isOverstay,
 }: RecordedStaysViewProps) {
   const [addSheetOpen, setAddSheetOpen] = useState(false)
   const [refSheetOpen, setRefSheetOpen] = useState(false)
@@ -75,11 +82,11 @@ export function RecordedStaysView({
 
       {/* Add Stay bottom sheet */}
       <Sheet open={addSheetOpen} onOpenChange={setAddSheetOpen}>
-        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl px-5">
           <SheetHeader className="pb-2">
             <SheetTitle>{editingId ? "Edit Stay" : "Add Stay"}</SheetTitle>
           </SheetHeader>
-          <div className="space-y-4 pb-4">
+          <div className="space-y-4 pb-6">
             <SingleMonthCalendar
               entryDate={entryDate ?? null}
               exitDate={exitDate ?? null}
@@ -129,6 +136,13 @@ export function RecordedStaysView({
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Status bar */}
+      <MobileStatusBar
+        daysUsed={daysUsed}
+        daysRemaining={daysRemaining}
+        isOverstay={isOverstay}
+      />
 
       {/* Recorded stays list */}
       {sortedStays.length > 0 ? (

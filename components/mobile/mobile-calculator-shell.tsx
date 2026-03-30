@@ -2,7 +2,6 @@
 
 import { Loader2 } from "lucide-react"
 import { useMobileTab } from "@/contexts/mobile-tab-context"
-import { MobileStatusBar } from "@/components/mobile-status-bar"
 import { RecordedStaysView } from "./recorded-stays-view"
 import { ProposedTripsView } from "./proposed-trips-view"
 import { TimelineView } from "./timeline-view"
@@ -73,7 +72,7 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
   return (
     <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Page header */}
-      <div className="px-4 pt-4 pb-4 text-center">
+      <div className="px-4 pt-4 pb-6 text-center">
         <h1 className="text-xl font-bold text-foreground tracking-tight">
           Schengen Visit Calculator
         </h1>
@@ -81,20 +80,6 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
           Track your stays and ensure compliance with Schengen visa rules
         </p>
       </div>
-
-      {/* Status bar */}
-      {props.dataLoading ? (
-        <div className="flex items-center justify-center py-3 bg-muted/50">
-          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mr-2" />
-          <span className="text-xs text-muted-foreground">Loading...</span>
-        </div>
-      ) : (
-        <MobileStatusBar
-          daysUsed={props.daysUsed}
-          daysRemaining={props.daysRemaining}
-          isOverstay={props.isOverstay}
-        />
-      )}
 
       {/* My Trips tab content */}
       {activeTab === "my-trips" && (
@@ -151,6 +136,9 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
                   setReferenceDate={props.setReferenceDate}
                   editingId={props.editingId}
                   disabledRanges={props.disabledRanges}
+                  daysUsed={props.daysUsed}
+                  daysRemaining={props.daysRemaining}
+                  isOverstay={props.isOverstay}
                 />
               )}
               {activeSegment === "proposed" && (

@@ -129,7 +129,7 @@ export function SingleMonthCalendar({
 
         {/* Trailing empty cells to keep 6 rows */}
         {trailingEmpty.map((_, index) => (
-          <div key={`trailing-${index}`} />
+          <div key={`trailing-${index}`} className="h-12" />
         ))}
       </div>
 
