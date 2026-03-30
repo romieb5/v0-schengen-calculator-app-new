@@ -394,7 +394,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   const statsColor = daysLeft < 0 ? "bg-red-50 text-red-700" : "bg-blue-50 text-blue-700"
 
   // On mobile, no transition animations — everything renders instantly
-  const mobileTransition = mobileStaticExample ? "" : "transition-all duration-1000 ease-in-out"
+  const mobileTransition = isMobile ? "" : "transition-all duration-1000 ease-in-out"
 
   if (isMobile) {
     return (
@@ -433,7 +433,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
-                <div key={key} className={`absolute left-0 ${mobileTransition}`} style={{ top: `${top}%`, width: "80px", opacity: mobileStaticExample ? 1 : opacity }}>
+                <div key={key} className={`absolute left-0 ${mobileTransition}`} style={{ top: `${top}%`, width: "80px", opacity: isMobile ? 1 : opacity }}>
                   <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
                     {format(marker, "MMM yyyy")}
                   </div>
@@ -468,7 +468,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                     height: `${height}%`,
                     left: "90px",
                     right: "10px",
-                    opacity: mobileStaticExample ? 1 : stayOpacity,
+                    opacity: isMobile ? 1 : stayOpacity,
                   }}
                 >
                   <div
@@ -485,7 +485,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const top = (differenceInDays(trip.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(trip.exitDate, trip.entryDate) + 1) / totalDays) * 100
               const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
-              const finalOpacity = mobileStaticExample
+              const finalOpacity = isMobile
                 ? (showProposedTrips ? 0.9 : 0)
                 : tripOpacity * (showProposedTrips ? 0.9 : 0)
 
