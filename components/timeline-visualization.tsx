@@ -251,8 +251,9 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
     return () => {
       observer.disconnect()
       clearTimers()
+      loopStarted.current = false
     }
-  }, [isEmptyState])
+  }, [isEmptyState, isMobile])
 
   // Pause/resume: freeze at current point, resume from where we left off
   const toggleExamplePause = () => {
