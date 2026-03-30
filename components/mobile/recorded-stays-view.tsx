@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { CalendarIcon, PlusCircle, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
+import { PlusCircle, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
 import { format, differenceInDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
@@ -80,62 +81,66 @@ export function RecordedStaysView({
         Add Stay
       </button>
 
-      {/* Add Stay bottom sheet */}
-      <Sheet open={addSheetOpen} onOpenChange={setAddSheetOpen}>
-        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl px-5">
-          <SheetHeader className="pb-2">
-            <SheetTitle>{editingId ? "Edit Stay" : "Add Stay"}</SheetTitle>
-          </SheetHeader>
-          <div className="space-y-4 pb-6">
-            <SingleMonthCalendar
-              entryDate={entryDate ?? null}
-              exitDate={exitDate ?? null}
-              onDateSelect={(date) => {
-                if (!entryDate || (entryDate && exitDate)) {
-                  setEntryDate(date)
-                  setExitDate(undefined)
-                } else {
-                  if (date < entryDate) {
-                    setExitDate(entryDate)
+      {/* Add Stay full-screen dialog */}
+      <Dialog open={addSheetOpen} onOpenChange={setAddSheetOpen}>
+        <DialogContent className="h-full w-full max-w-none max-h-none m-0 rounded-none border-0 flex flex-col p-0 gap-0 [&>button]:top-4 [&>button]:right-4">
+          <DialogHeader className="px-5 pt-5 pb-2 flex-shrink-0">
+            <DialogTitle>{editingId ? "Edit Stay" : "Add Stay"}</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto px-5 pb-5 flex flex-col">
+            <div className="flex-1">
+              <SingleMonthCalendar
+                entryDate={entryDate ?? null}
+                exitDate={exitDate ?? null}
+                onDateSelect={(date) => {
+                  if (!entryDate || (entryDate && exitDate)) {
                     setEntryDate(date)
+                    setExitDate(undefined)
                   } else {
-                    setExitDate(date)
+                    if (date < entryDate) {
+                      setExitDate(entryDate)
+                      setEntryDate(date)
+                    } else {
+                      setExitDate(date)
+                    }
                   }
-                }
-              }}
-              initialMonth={entryDate || new Date()}
-              disabledRanges={disabledRanges}
-            />
+                }}
+                initialMonth={entryDate || new Date()}
+                disabledRanges={disabledRanges}
+              />
+            </div>
 
-            {entryDate && exitDate && (
-              <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3">
-                  <div>
-                    <span className="font-medium">Entry:</span>{" "}
-                    <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
+            <div className="space-y-3 pt-4 mt-auto">
+              {entryDate && exitDate && (
+                <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <span className="font-medium">Entry:</span>{" "}
+                      <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Exit:</span>{" "}
+                      <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium">Exit:</span>{" "}
-                    <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
-                  </div>
+                  <span className="font-semibold text-primary">
+                    {differenceInDays(exitDate, entryDate) + 1}d
+                  </span>
                 </div>
-                <span className="font-semibold text-primary">
-                  {differenceInDays(exitDate, entryDate) + 1}d
-                </span>
-              </div>
-            )}
+              )}
 
-            <Button
-              onClick={handleAddStay}
-              disabled={!entryDate || !exitDate}
-              className="w-full h-11 font-semibold"
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              {editingId ? "Update Stay" : "Add Stay"}
-            </Button>
+              <Button
+                onClick={handleAddStay}
+                disabled={!entryDate || !exitDate}
+                className="w-full h-11 font-semibold"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                {editingId ? "Update Stay" : "Add Stay"}
+              </Button>
+            </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       {/* Status bar */}
       <MobileStatusBar
