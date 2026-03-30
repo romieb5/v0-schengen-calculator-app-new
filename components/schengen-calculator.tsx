@@ -996,82 +996,81 @@ export function SchengenCalculator() {
 
     {/* Dialogs render on both mobile and desktop */}
     <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-      <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-        <DialogHeader>
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">Edit Stay</DialogTitle>
           <DialogDescription className="text-sm">Update the details of your recorded stay</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
-          <div className="space-y-4">
-            <SingleMonthCalendar
-              entryDate={editDialogEntry}
-              exitDate={editDialogExit}
-              onDateSelect={(date) => {
-                if (!editDialogEntry || (editDialogEntry && editDialogExit)) {
+        <div className="flex-1 flex flex-col justify-between py-2 sm:py-4 gap-3">
+          <SingleMonthCalendar
+            entryDate={editDialogEntry}
+            exitDate={editDialogExit}
+            onDateSelect={(date) => {
+              if (!editDialogEntry || (editDialogEntry && editDialogExit)) {
+                setEditDialogEntry(date)
+                setEditDialogExit(null)
+              } else {
+                if (date < editDialogEntry) {
+                  setEditDialogExit(editDialogEntry)
                   setEditDialogEntry(date)
-                  setEditDialogExit(null)
                 } else {
-                  if (date < editDialogEntry) {
-                    setEditDialogExit(editDialogEntry)
-                    setEditDialogEntry(date)
-                  } else {
-                    setEditDialogExit(date)
-                  }
+                  setEditDialogExit(date)
                 }
-              }}
-              initialMonth={editDialogEntry ?? undefined}
-              disabledRanges={getDisabledDateRanges(stays, proposedTrips, editDialogId)}
-            />
+              }
+            }}
+            initialMonth={editDialogEntry ?? undefined}
+            disabledRanges={getDisabledDateRanges(stays, proposedTrips, editDialogId)}
+          />
 
+          <div className="mt-auto space-y-3">
             {editDialogEntry && editDialogExit && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Entry:</span>
-                  <span className="text-muted-foreground">{format(editDialogEntry, "MMM d, yyyy")}</span>
+              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <span className="font-medium">Entry:</span>{" "}
+                    <span className="text-muted-foreground">{format(editDialogEntry, "MMM d, yyyy")}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium">Exit:</span>{" "}
+                    <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Exit:</span>
-                  <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">Duration:</span>
-                  <span className="font-semibold text-primary">
-                    {differenceInDays(editDialogExit, editDialogEntry) + 1} day(s)
-                  </span>
-                </div>
+                <span className="font-semibold text-primary">
+                  {differenceInDays(editDialogExit, editDialogEntry) + 1}d
+                </span>
               </div>
             )}
-          </div>
 
-          <div className="flex gap-3 justify-end pt-2 sm:pt-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEditDialogOpen(false)
-                setEditDialogEntry(null)
-                setEditDialogExit(null)
-                setEditDialogStayType("short")
-                setEditDialogCountryCode("")
-                setEditDialogId(null)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={saveEditedStay}
-              disabled={!editDialogEntry || !editDialogExit}
-              className="font-semibold shadow-md hover:shadow-lg transition-shadow"
-            >
-              Update Stay
-            </Button>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditDialogOpen(false)
+                  setEditDialogEntry(null)
+                  setEditDialogExit(null)
+                  setEditDialogStayType("short")
+                  setEditDialogCountryCode("")
+                  setEditDialogId(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={saveEditedStay}
+                disabled={!editDialogEntry || !editDialogExit}
+                className="font-semibold shadow-md hover:shadow-lg transition-shadow"
+              >
+                Update Stay
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
     </Dialog>
 
     <Dialog open={editProposedDialogOpen} onOpenChange={setEditProposedDialogOpen}>
-      <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-        <DialogHeader>
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">
             {editProposedDialogId ? "Edit Proposed Trip" : "Add Proposed Trip"}
           </DialogTitle>
@@ -1079,44 +1078,43 @@ export function SchengenCalculator() {
             {editProposedDialogId ? "Update the dates of your proposed trip" : "Select entry and exit dates for your proposed trip"}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
-          <div className="space-y-4">
-            <SingleMonthCalendar
-              entryDate={editProposedDialogEntry}
-              exitDate={editProposedDialogExit}
-              onDateSelect={(date) => {
-                if (!editProposedDialogEntry || (editProposedDialogEntry && editProposedDialogExit)) {
+        <div className="flex-1 flex flex-col justify-between py-2 sm:py-4 gap-3">
+          <SingleMonthCalendar
+            entryDate={editProposedDialogEntry}
+            exitDate={editProposedDialogExit}
+            onDateSelect={(date) => {
+              if (!editProposedDialogEntry || (editProposedDialogEntry && editProposedDialogExit)) {
+                setEditProposedDialogEntry(date)
+                setEditProposedDialogExit(null)
+              } else {
+                if (date < editProposedDialogEntry) {
+                  setEditProposedDialogExit(editProposedDialogEntry)
                   setEditProposedDialogEntry(date)
-                  setEditProposedDialogExit(null)
                 } else {
-                  if (date < editProposedDialogEntry) {
-                    setEditProposedDialogExit(editProposedDialogEntry)
-                    setEditProposedDialogEntry(date)
-                  } else {
-                    setEditProposedDialogExit(date)
-                  }
+                  setEditProposedDialogExit(date)
                 }
-              }}
-              initialMonth={editProposedDialogEntry ?? undefined}
-              disabledRanges={getDisabledDateRanges(stays, proposedTrips, editProposedDialogId)}
-            />
+              }
+            }}
+            initialMonth={editProposedDialogEntry ?? undefined}
+            disabledRanges={getDisabledDateRanges(stays, proposedTrips, editProposedDialogId)}
+          />
 
+          <div className="mt-auto space-y-3">
             {editProposedDialogEntry && editProposedDialogExit && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Entry:</span>
-                  <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
+              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <span className="font-medium">Entry:</span>{" "}
+                    <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium">Exit:</span>{" "}
+                    <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Exit:</span>
-                  <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">Duration:</span>
-                  <span className="font-semibold text-primary">
-                    {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1} day(s)
-                  </span>
-                </div>
+                <span className="font-semibold text-primary">
+                  {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
+                </span>
               </div>
             )}
 
@@ -1147,27 +1145,27 @@ export function SchengenCalculator() {
                 </AlertDescription>
               </Alert>
             )}
-          </div>
 
-          <div className="flex gap-3 justify-end pt-2 sm:pt-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEditProposedDialogOpen(false)
-                setEditProposedDialogEntry(null)
-                setEditProposedDialogExit(null)
-                setEditProposedDialogId(null)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={saveProposedTrip}
-              disabled={!editProposedDialogEntry || !editProposedDialogExit}
-              className="font-semibold shadow-md hover:shadow-lg transition-shadow"
-            >
-              {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
-            </Button>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditProposedDialogOpen(false)
+                  setEditProposedDialogEntry(null)
+                  setEditProposedDialogExit(null)
+                  setEditProposedDialogId(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={saveProposedTrip}
+                disabled={!editProposedDialogEntry || !editProposedDialogExit}
+                className="font-semibold shadow-md hover:shadow-lg transition-shadow"
+              >
+                {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
