@@ -12,7 +12,7 @@ export function MobileStatusBar({ daysUsed, daysRemaining, isOverstay }: MobileS
   return (
     <div
       className={cn(
-        "md:hidden flex items-center justify-between px-4 py-2 text-sm font-semibold",
+        "md:hidden flex items-center justify-between px-4 py-4 text-sm font-semibold",
         isOverstay
           ? "bg-destructive/10 text-destructive"
           : daysRemaining <= 10

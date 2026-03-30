@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { Loader2 } from "lucide-react"
 import { useMobileTab } from "@/contexts/mobile-tab-context"
 import { MobileStatusBar } from "@/components/mobile-status-bar"
@@ -74,7 +73,7 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
   return (
     <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Page header */}
-      <div className="px-4 pt-4 pb-2 text-center">
+      <div className="px-4 pt-4 pb-4 text-center">
         <h1 className="text-xl font-bold text-foreground tracking-tight">
           Schengen Visit Calculator
         </h1>
@@ -95,19 +94,6 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
           daysRemaining={props.daysRemaining}
           isOverstay={props.isOverstay}
         />
-      )}
-
-      {/* Login prompt for unauthenticated users */}
-      {!props.paymentLoading && !props.isAuthenticated && (
-        <div className="px-4 py-2 bg-muted/30 border-b text-center">
-          <p className="text-[12px] text-muted-foreground">
-            Have an account?{" "}
-            <Link href="/log-in" className="text-foreground font-semibold hover:underline">
-              Log in
-            </Link>{" "}
-            to sync your data
-          </p>
-        </div>
       )}
 
       {/* My Trips tab content */}
