@@ -188,7 +188,9 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
 
   // Start the example animation loop when the timeline scrolls into view (skip on mobile — static view)
   useEffect(() => {
-    if (!isEmptyState || isMobile) return
+    if (!isEmptyState) return
+    // Check mobile directly to avoid race with isMobile state
+    if (typeof window !== "undefined" && window.innerWidth < 768) return
     const el = containerRef.current
     if (!el) return
 
