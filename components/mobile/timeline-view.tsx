@@ -64,10 +64,15 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — show paywall only, no preview/animation
+  // Unpaid — show paywall + static timeline preview
   return (
-    <div className="px-4 pb-4">
+    <div className="px-4 pb-4 space-y-4">
       <TimelinePaywall isAuthenticated={isAuthenticated} />
+      <TimelineVisualization
+        stays={[]}
+        proposedTrips={[]}
+        referenceDate={referenceDate}
+      />
     </div>
   )
 }

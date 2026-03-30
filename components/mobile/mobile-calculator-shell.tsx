@@ -71,15 +71,17 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
 
   return (
     <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      {/* Page header */}
-      <div className="px-4 pt-4 pb-6 text-center">
-        <h1 className="text-xl font-bold text-foreground tracking-tight">
-          Schengen Visit Calculator
-        </h1>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Track your stays and ensure compliance with Schengen visa rules
-        </p>
-      </div>
+      {/* Page header — only on My Trips tab */}
+      {activeTab === "my-trips" && (
+        <div className="px-4 pt-4 pb-6 text-center">
+          <h1 className="text-xl font-bold text-foreground tracking-tight">
+            Schengen Visit Calculator
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Track your stays and ensure compliance with Schengen visa rules
+          </p>
+        </div>
+      )}
 
       {/* My Trips tab content */}
       {activeTab === "my-trips" && (
