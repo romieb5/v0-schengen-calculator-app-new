@@ -68,7 +68,7 @@ export function TimelineView({
   return (
     <div className="px-4 pb-4">
       <TimelinePaywall isAuthenticated={isAuthenticated} />
-      <div className="border-t my-4" />
+      <hr className="border-border my-6" />
       <TimelineVisualization
         stays={[]}
         proposedTrips={[]}
