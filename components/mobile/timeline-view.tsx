@@ -64,22 +64,16 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — full timeline preview with sticky paywall banner at bottom
+  // Unpaid — paywall at top, separator, then static timeline
   return (
-    <div className="px-4 pb-28">
-      {/* Timeline fully visible and scrollable */}
+    <div className="px-4 pb-4">
+      <TimelinePaywall isAuthenticated={isAuthenticated} />
+      <hr className="border-border my-6" />
       <TimelineVisualization
         stays={[]}
         proposedTrips={[]}
         referenceDate={referenceDate}
       />
-
-      {/* Sticky paywall banner at bottom */}
-      <div className="fixed bottom-14 left-0 right-0 z-30 px-4 md:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-        <div className="bg-background/95 backdrop-blur-sm border-2 rounded-xl shadow-lg px-5 py-4">
-          <TimelinePaywall isAuthenticated={isAuthenticated} />
-        </div>
-      </div>
     </div>
   )
 }
