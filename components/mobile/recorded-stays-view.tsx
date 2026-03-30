@@ -139,22 +139,25 @@ export function RecordedStaysView({
         </DialogContent>
       </Dialog>
 
-      {/* Status bar */}
-      <MobileStatusBar
-        daysUsed={daysUsed}
-        daysRemaining={daysRemaining}
-        isOverstay={isOverstay}
-      />
+      {/* Sticky status + reference date */}
+      <div className="sticky top-0 z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1">
+        {/* Status bar */}
+        <MobileStatusBar
+          daysUsed={daysUsed}
+          daysRemaining={daysRemaining}
+          isOverstay={isOverstay}
+        />
 
-      {/* Reference date */}
-      <div className="bg-card border rounded-lg p-3 flex items-center justify-between">
-        <div>
-          <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
-          <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
+        {/* Reference date */}
+        <div className="bg-card border rounded-lg p-3 flex items-center justify-between">
+          <div>
+            <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
+            <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
+          </div>
+          <Button variant="outline" size="sm" className="text-xs" onClick={() => setRefSheetOpen(true)}>
+            Change
+          </Button>
         </div>
-        <Button variant="outline" size="sm" className="text-xs" onClick={() => setRefSheetOpen(true)}>
-          Change
-        </Button>
       </div>
 
       {/* Recorded stays list */}
