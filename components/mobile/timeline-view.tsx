@@ -64,11 +64,11 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — timeline with paywall overlay
+  // Unpaid — timeline visible at top, gradient fade into paywall at bottom
   return (
     <div className="px-4 pb-4">
       <div className="relative">
-        {/* Timeline renders behind */}
+        {/* Timeline renders in full */}
         <div className="pointer-events-none select-none">
           <TimelineVisualization
             stays={[]}
@@ -77,10 +77,17 @@ export function TimelineView({
           />
         </div>
 
-        {/* Frosted overlay with paywall */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px]" />
-          <div className="relative z-10 bg-background/95 border-2 rounded-xl shadow-lg px-6 py-5 mx-4 max-w-xs w-full">
+        {/* Gradient fade — transparent at top, solid at bottom */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, transparent 30%, var(--background) 75%)",
+          }}
+        />
+
+        {/* Paywall card anchored at bottom of the timeline area */}
+        <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-4">
+          <div className="bg-background border-2 rounded-xl shadow-lg px-6 py-5 max-w-xs w-full">
             <TimelinePaywall isAuthenticated={isAuthenticated} />
           </div>
         </div>
