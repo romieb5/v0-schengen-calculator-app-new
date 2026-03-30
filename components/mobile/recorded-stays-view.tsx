@@ -65,13 +65,13 @@ export function RecordedStaysView({
   return (
     <div className="space-y-3 px-4">
       {/* Add Stay button */}
-      <Button
+      <button
         onClick={() => setAddSheetOpen(true)}
-        className="w-full h-11 font-semibold shadow-md"
+        className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
       >
-        <PlusCircle className="h-4 w-4 mr-2" />
+        <PlusCircle className="h-4.5 w-4.5" />
         Add Stay
-      </Button>
+      </button>
 
       {/* Add Stay bottom sheet */}
       <Sheet open={addSheetOpen} onOpenChange={setAddSheetOpen}>

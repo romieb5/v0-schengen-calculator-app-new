@@ -45,6 +45,11 @@ export function SingleMonthCalendar({
   const paddingDays = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1
   const emptyDays = Array(paddingDays).fill(null)
 
+  // Always render 6 rows (42 cells) so the calendar height stays constant
+  const totalCells = paddingDays + daysInMonth.length
+  const trailingDays = (42 - totalCells) % 42
+  const trailingEmpty = Array(trailingDays).fill(null)
+
   const isInRange = (day: Date) => {
     if (!entryDate || !exitDate) return false
     return day >= entryDate && day <= exitDate
@@ -121,6 +126,11 @@ export function SingleMonthCalendar({
             </button>
           )
         })}
+
+        {/* Trailing empty cells to keep 6 rows */}
+        {trailingEmpty.map((_, index) => (
+          <div key={`trailing-${index}`} />
+        ))}
       </div>
 
       {/* Clear button — only show when a date is selected */}
