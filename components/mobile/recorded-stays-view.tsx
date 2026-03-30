@@ -149,6 +149,17 @@ export function RecordedStaysView({
         isOverstay={isOverstay}
       />
 
+      {/* Reference date */}
+      <div className="bg-card border rounded-lg p-3 flex items-center justify-between">
+        <div>
+          <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
+          <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
+        </div>
+        <Button variant="outline" size="sm" className="text-xs" onClick={() => setRefSheetOpen(true)}>
+          Change
+        </Button>
+      </div>
+
       {/* Recorded stays list */}
       {sortedStays.length > 0 ? (
         <div className="space-y-2">
@@ -220,17 +231,6 @@ export function RecordedStaysView({
           No stays recorded yet. Tap "Add Stay" to get started.
         </div>
       )}
-
-      {/* Reference date */}
-      <div className="flex items-center justify-between px-1 py-2 border-t">
-        <div>
-          <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
-          <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
-        </div>
-        <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={() => setRefSheetOpen(true)}>
-          Change
-        </Button>
-      </div>
 
       {/* Reference date bottom sheet */}
       <Sheet open={refSheetOpen} onOpenChange={setRefSheetOpen}>
