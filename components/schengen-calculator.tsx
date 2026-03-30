@@ -96,15 +96,9 @@ export function SchengenCalculator() {
   const [referenceDate, setReferenceDate] = useState<Date>(new Date())
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const [proposedEntry, setProposedEntry] = useState<Date>()
-  const [proposedExit, setProposedExit] = useState<Date>()
-  const [editingProposedId, setEditingProposedId] = useState<string | null>(null)
-
   const [entryPopoverOpen, setEntryPopoverOpen] = useState(false)
   const [exitPopoverOpen, setExitPopoverOpen] = useState(false)
   const [referencePopoverOpen, setReferencePopoverOpen] = useState(false)
-  const [proposedEntryPopoverOpen, setProposedEntryPopoverOpen] = useState(false)
-  const [proposedExitPopoverOpen, setProposedExitPopoverOpen] = useState(false)
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [editDialogEntry, setEditDialogEntry] = useState<Date | null>(null)
@@ -340,34 +334,43 @@ export function SchengenCalculator() {
     }
   }
 
-  const addProposedTrip = () => {
-    if (!proposedEntry || !proposedExit) {
+  const openAddProposedDialog = () => {
+    setEditProposedDialogEntry(null)
+    setEditProposedDialogExit(null)
+    setEditProposedDialogId(null)
+    setEditProposedDialogOpen(true)
+  }
+
+  const saveProposedTrip = () => {
+    if (!editProposedDialogEntry || !editProposedDialogExit) return
+
+    if (isAfter(editProposedDialogEntry, editProposedDialogExit)) {
+      alert("Entry date must be before exit date")
       return
     }
 
-    if (isAfter(proposedEntry, proposedExit)) {
-      return
-    }
-
-    if (editingProposedId) {
-      const trip = proposedTrips.find((t) => t.id === editingProposedId)
+    if (editProposedDialogId) {
+      // Edit mode
+      const trip = proposedTrips.find((t) => t.id === editProposedDialogId)
       if (trip) {
-        updateProposedTripInDb({ ...trip, entryDate: proposedEntry, exitDate: proposedExit })
+        updateProposedTripInDb({ ...trip, entryDate: editProposedDialogEntry, exitDate: editProposedDialogExit })
       }
-      setEditingProposedId(null)
     } else {
+      // Add mode
       const newTrip: Stay = {
         id: Date.now().toString(),
-        entryDate: proposedEntry,
-        exitDate: proposedExit,
+        entryDate: editProposedDialogEntry,
+        exitDate: editProposedDialogExit,
         stayType: "short",
         countryCode: "",
       }
       addProposedTripToDb(newTrip)
     }
 
-    setProposedEntry(undefined)
-    setProposedExit(undefined)
+    setEditProposedDialogOpen(false)
+    setEditProposedDialogEntry(null)
+    setEditProposedDialogExit(null)
+    setEditProposedDialogId(null)
   }
 
   const editProposedTrip = (id: string) => {
@@ -380,25 +383,6 @@ export function SchengenCalculator() {
     }
   }
 
-  const saveEditedProposedTrip = () => {
-    if (!editProposedDialogEntry || !editProposedDialogExit || !editProposedDialogId) return
-
-    if (isAfter(editProposedDialogEntry, editProposedDialogExit)) {
-      alert("Entry date must be before exit date")
-      return
-    }
-
-    const trip = proposedTrips.find((t) => t.id === editProposedDialogId)
-    if (trip) {
-      updateProposedTripInDb({ ...trip, entryDate: editProposedDialogEntry, exitDate: editProposedDialogExit })
-    }
-
-    // Reset dialog state
-    setEditProposedDialogOpen(false)
-    setEditProposedDialogEntry(null)
-    setEditProposedDialogExit(null)
-    setEditProposedDialogId(null)
-  }
 
   const deleteProposedTrip = (id: string) => {
     deleteProposedTripFromDb(id)
@@ -415,9 +399,9 @@ export function SchengenCalculator() {
       result: checkProposedTrip(trip.entryDate, trip.exitDate, trip.id),
     }))
 
-  const currentProposedResult =
-    proposedEntry && proposedExit
-      ? checkProposedTrip(proposedEntry, proposedExit, editingProposedId || undefined)
+  const currentDialogProposedResult =
+    editProposedDialogEntry && editProposedDialogExit
+      ? checkProposedTrip(editProposedDialogEntry, editProposedDialogExit, editProposedDialogId || undefined)
       : null
 
   const stayColors = [
@@ -479,16 +463,10 @@ export function SchengenCalculator() {
       editingId={editingId}
       referenceDate={referenceDate}
       setReferenceDate={setReferenceDate}
-      proposedEntry={proposedEntry}
-      proposedExit={proposedExit}
-      setProposedEntry={setProposedEntry}
-      setProposedExit={setProposedExit}
-      addProposedTrip={addProposedTrip}
+      openAddProposedDialog={openAddProposedDialog}
       editProposedTrip={editProposedTrip}
       deleteProposedTrip={deleteProposedTrip}
       toggleProposedTripVisibility={toggleProposedTripVisibility}
-      editingProposedId={editingProposedId}
-      currentProposedResult={currentProposedResult}
       proposedTripResults={proposedTripResults}
       visibleStays={visibleStays}
       visibleProposedTrips={visibleProposedTrips}
@@ -712,116 +690,13 @@ export function SchengenCalculator() {
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : (<>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="proposed-entry" className="text-sm sm:text-base">
-                      Proposed Entry Date
-                    </Label>
-                    <Popover open={proposedEntryPopoverOpen} onOpenChange={setProposedEntryPopoverOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="proposed-entry"
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal h-10 sm:h-11 text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow bg-transparent"
-                        >
-                          <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-                          <span className="truncate">
-                            {proposedEntry ? format(proposedEntry, "PPP") : "Pick a date"}
-                          </span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={proposedEntry}
-                          onSelect={(date) => {
-                            setProposedEntry(date)
-                            setProposedEntryPopoverOpen(false)
-                          }}
-                          disabled={(date) => {
-                            const disabledRanges = getDisabledDateRanges(stays, proposedTrips)
-                            return disabledRanges.some((range) => {
-                              return date >= range.start && date <= range.end
-                            })
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="proposed-exit" className="text-sm sm:text-base">
-                      Proposed Exit Date
-                    </Label>
-                    <Popover open={proposedExitPopoverOpen} onOpenChange={setProposedExitPopoverOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="proposed-exit"
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal h-10 sm:h-11 text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow bg-transparent"
-                        >
-                          <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-                          <span className="truncate">{proposedExit ? format(proposedExit, "PPP") : "Pick a date"}</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={proposedExit}
-                          onSelect={(date) => {
-                            setProposedExit(date)
-                            setProposedExitPopoverOpen(false)
-                          }}
-                          disabled={(date) => {
-                            const disabledRanges = getDisabledDateRanges(stays, proposedTrips)
-                            return disabledRanges.some((range) => {
-                              return date >= range.start && date <= range.end
-                            })
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
-
                 <Button
-                  onClick={addProposedTrip}
-                  disabled={!proposedEntry || !proposedExit}
-                  className="w-full h-10 sm:h-11 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
+                  onClick={openAddProposedDialog}
+                  className="w-full h-10 sm:h-11 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-shadow bg-foreground text-background hover:bg-foreground/90"
                 >
                   <PlusCircle className="mr-2 h-3 w-3 sm:h-4 w-4 flex-shrink-0" />
-                  {editingProposedId ? "Update Proposed Trip" : "Add Proposed Trip"}
+                  Add Proposed Trip
                 </Button>
-
-                {currentProposedResult && (
-                  <Alert
-                    className={cn(
-                      "border-2",
-                      currentProposedResult.isLegal
-                        ? "border-success bg-success/10"
-                        : "border-destructive bg-destructive/10",
-                    )}
-                  >
-                    {currentProposedResult.isLegal ? (
-                      <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-                    )}
-                    {!currentProposedResult.isLegal && (
-                      <AlertTitle className={cn("font-bold text-foreground")}>Trip Exceeds Limit</AlertTitle>
-                    )}
-                    <AlertDescription className={cn("font-medium text-foreground")}>
-                      {currentProposedResult.message.split(". ").map((sentence, idx) => (
-                        <div key={idx}>
-                          {sentence}
-                          {idx < currentProposedResult.message.split(". ").length - 1 ? "." : ""}
-                        </div>
-                      ))}
-                    </AlertDescription>
-                  </Alert>
-                )}
 
                 {proposedTripResults.length > 0 && (
                   <div className="space-y-3 pt-4 border-t">
@@ -1197,8 +1072,12 @@ export function SchengenCalculator() {
     <Dialog open={editProposedDialogOpen} onOpenChange={setEditProposedDialogOpen}>
       <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-2xl">Edit Proposed Trip</DialogTitle>
-          <DialogDescription className="text-sm">Update the dates of your proposed trip</DialogDescription>
+          <DialogTitle className="text-lg sm:text-2xl">
+            {editProposedDialogId ? "Edit Proposed Trip" : "Add Proposed Trip"}
+          </DialogTitle>
+          <DialogDescription className="text-sm">
+            {editProposedDialogId ? "Update the dates of your proposed trip" : "Select entry and exit dates for your proposed trip"}
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
           <div className="space-y-4">
@@ -1240,6 +1119,34 @@ export function SchengenCalculator() {
                 </div>
               </div>
             )}
+
+            {currentDialogProposedResult && (
+              <Alert
+                className={cn(
+                  "border-2",
+                  currentDialogProposedResult.isLegal
+                    ? "border-success bg-success/10"
+                    : "border-destructive bg-destructive/10",
+                )}
+              >
+                {currentDialogProposedResult.isLegal ? (
+                  <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+                )}
+                {!currentDialogProposedResult.isLegal && (
+                  <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
+                )}
+                <AlertDescription className="font-medium text-foreground">
+                  {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
+                    <div key={idx}>
+                      {sentence}
+                      {idx < arr.length - 1 ? "." : ""}
+                    </div>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
 
           <div className="flex gap-3 justify-end pt-2 sm:pt-4">
@@ -1255,11 +1162,11 @@ export function SchengenCalculator() {
               Cancel
             </Button>
             <Button
-              onClick={saveEditedProposedTrip}
+              onClick={saveProposedTrip}
               disabled={!editProposedDialogEntry || !editProposedDialogExit}
               className="font-semibold shadow-md hover:shadow-lg transition-shadow"
             >
-              Update Proposed Trip
+              {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
             </Button>
           </div>
         </div>

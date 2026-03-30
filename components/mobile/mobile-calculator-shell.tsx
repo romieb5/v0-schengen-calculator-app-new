@@ -45,16 +45,10 @@ interface MobileCalculatorShellProps {
   referenceDate: Date
   setReferenceDate: (date: Date) => void
   // Proposed trips
-  proposedEntry: Date | undefined
-  proposedExit: Date | undefined
-  setProposedEntry: (date: Date | undefined) => void
-  setProposedExit: (date: Date | undefined) => void
-  addProposedTrip: () => void
+  openAddProposedDialog: () => void
   editProposedTrip: (id: string) => void
   deleteProposedTrip: (id: string) => void
   toggleProposedTripVisibility: (id: string) => void
-  editingProposedId: string | null
-  currentProposedResult: { isLegal: boolean; message: string } | null
   proposedTripResults: ProposedTripResult[]
   // Timeline
   visibleStays: Stay[]
@@ -145,18 +139,11 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
               )}
               {activeSegment === "proposed" && (
                 <ProposedTripsView
-                  proposedEntry={props.proposedEntry}
-                  proposedExit={props.proposedExit}
-                  setProposedEntry={props.setProposedEntry}
-                  setProposedExit={props.setProposedExit}
-                  addProposedTrip={props.addProposedTrip}
+                  openAddProposedDialog={props.openAddProposedDialog}
                   editProposedTrip={props.editProposedTrip}
                   deleteProposedTrip={props.deleteProposedTrip}
                   toggleProposedTripVisibility={props.toggleProposedTripVisibility}
-                  editingProposedId={props.editingProposedId}
-                  currentProposedResult={props.currentProposedResult}
                   proposedTripResults={props.proposedTripResults}
-                  disabledRanges={props.disabledRanges}
                 />
               )}
             </>
