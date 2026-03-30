@@ -73,7 +73,7 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
     <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Page header — only on My Trips tab */}
       {activeTab === "my-trips" && (
-        <div className="px-4 pt-4 pb-6 text-center">
+        <div className="px-4 pt-6 pb-6 text-center">
           <h1 className="text-xl font-bold text-foreground tracking-tight">
             Schengen Visit Calculator
           </h1>
