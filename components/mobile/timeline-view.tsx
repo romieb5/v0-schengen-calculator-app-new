@@ -1,8 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react"
 import { Loader2 } from "lucide-react"
-import { TimelineVisualization, type TimelineVisualizationHandle } from "@/components/timeline-visualization"
+import { TimelineVisualization } from "@/components/timeline-visualization"
 import { TimelinePaywall } from "@/components/timeline-paywall"
 
 interface Stay {
@@ -35,8 +34,6 @@ export function TimelineView({
   paymentLoading,
   dataLoading,
 }: TimelineViewProps) {
-  const timelineRef = useRef<TimelineVisualizationHandle>(null)
-
   if (paymentLoading || (hasPaid && dataLoading)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4">
@@ -67,23 +64,10 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — show paywall + example timeline
+  // Unpaid — show paywall only, no preview/animation
   return (
-    <div className="px-4 pb-4 space-y-4">
+    <div className="px-4 pb-4">
       <TimelinePaywall isAuthenticated={isAuthenticated} />
-      <div className="border rounded-lg overflow-hidden">
-        <div className="px-4 pt-4 pb-2">
-          <div className="text-sm font-semibold text-muted-foreground">Preview</div>
-        </div>
-        <div className="px-4 pb-4 select-none">
-          <TimelineVisualization
-            ref={timelineRef}
-            stays={[]}
-            proposedTrips={[]}
-            referenceDate={referenceDate}
-          />
-        </div>
-      </div>
     </div>
   )
 }
