@@ -67,13 +67,13 @@ export function TimelineView({
   // Unpaid — show paywall + static timeline preview
   return (
     <div className="px-4 pb-4">
-      <TimelinePaywall isAuthenticated={isAuthenticated} />
-      <hr className="border-border my-6" />
       <TimelineVisualization
         stays={[]}
         proposedTrips={[]}
         referenceDate={referenceDate}
       />
+      <hr className="border-border my-6" />
+      <TimelinePaywall isAuthenticated={isAuthenticated} />
     </div>
   )
 }
