@@ -81,63 +81,60 @@ export function RecordedStaysView({
         Add Stay
       </button>
 
-      {/* Add Stay full-screen dialog */}
+      {/* Add Stay dialog */}
       <Dialog open={addSheetOpen} onOpenChange={setAddSheetOpen}>
-        <DialogContent className="h-full w-full max-w-none max-h-none m-0 rounded-none border-0 flex flex-col p-0 gap-0 [&>button]:top-4 [&>button]:right-4">
-          <DialogHeader className="px-5 pt-5 pb-2 flex-shrink-0">
-            <DialogTitle>{editingId ? "Edit Stay" : "Add Stay"}</DialogTitle>
+        <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto px-5 pb-5 flex flex-col">
-            <div className="flex-1">
-              <SingleMonthCalendar
-                entryDate={entryDate ?? null}
-                exitDate={exitDate ?? null}
-                onDateSelect={(date) => {
-                  if (!entryDate || (entryDate && exitDate)) {
+          <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
+            <SingleMonthCalendar
+              entryDate={entryDate ?? null}
+              exitDate={exitDate ?? null}
+              onDateSelect={(date) => {
+                if (!entryDate || (entryDate && exitDate)) {
+                  setEntryDate(date)
+                  setExitDate(undefined)
+                } else {
+                  if (date < entryDate) {
+                    setExitDate(entryDate)
                     setEntryDate(date)
-                    setExitDate(undefined)
                   } else {
-                    if (date < entryDate) {
-                      setExitDate(entryDate)
-                      setEntryDate(date)
-                    } else {
-                      setExitDate(date)
-                    }
+                    setExitDate(date)
                   }
-                }}
-                initialMonth={entryDate || new Date()}
-                disabledRanges={disabledRanges}
-              />
-            </div>
+                }
+              }}
+              initialMonth={entryDate || new Date()}
+              disabledRanges={disabledRanges}
+            />
 
-            <div className="space-y-3 pt-4 mt-auto">
-              {entryDate && exitDate && (
-                <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <span className="font-medium">Entry:</span>{" "}
-                      <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Exit:</span>{" "}
-                      <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
-                    </div>
-                  </div>
+            {entryDate && exitDate && (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">Entry:</span>
+                  <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">Exit:</span>
+                  <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-foreground">Duration:</span>
                   <span className="font-semibold text-primary">
-                    {differenceInDays(exitDate, entryDate) + 1}d
+                    {differenceInDays(exitDate, entryDate) + 1} day(s)
                   </span>
                 </div>
-              )}
+              </div>
+            )}
 
-              <Button
-                onClick={handleAddStay}
-                disabled={!entryDate || !exitDate}
-                className="w-full h-11 font-semibold"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                {editingId ? "Update Stay" : "Add Stay"}
-              </Button>
-            </div>
+            <Button
+              onClick={handleAddStay}
+              disabled={!entryDate || !exitDate}
+              className="w-full h-10 sm:h-11 font-semibold shadow-md hover:shadow-lg transition-shadow"
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              {editingId ? "Update Stay" : "Add Stay"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
