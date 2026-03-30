@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { PlusCircle, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
 import { format, differenceInDays } from "date-fns"
 import { cn } from "@/lib/utils"
@@ -229,26 +228,28 @@ export function RecordedStaysView({
         </div>
       )}
 
-      {/* Reference date bottom sheet */}
-      <Sheet open={refSheetOpen} onOpenChange={setRefSheetOpen}>
-        <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto rounded-t-2xl">
-          <SheetHeader className="pb-2">
-            <SheetTitle>Reference Date</SheetTitle>
-          </SheetHeader>
-          <p className="text-xs text-muted-foreground mb-3">
-            Change this date to adjust the 180-day window and see your status at different points in time.
-          </p>
-          <SingleMonthCalendar
-            entryDate={referenceDate}
-            exitDate={null}
-            onDateSelect={(date) => {
-              setReferenceDate(date)
-              setRefSheetOpen(false)
-            }}
-            initialMonth={referenceDate}
-          />
-        </SheetContent>
-      </Sheet>
+      {/* Reference date dialog */}
+      <Dialog open={refSheetOpen} onOpenChange={setRefSheetOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-2xl">Reference Date</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2 sm:py-4">
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Change this date to adjust the 180-day window and see your status at different points in time.
+            </p>
+            <SingleMonthCalendar
+              entryDate={referenceDate}
+              exitDate={null}
+              onDateSelect={(date) => {
+                setReferenceDate(date)
+                setRefSheetOpen(false)
+              }}
+              initialMonth={referenceDate}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
