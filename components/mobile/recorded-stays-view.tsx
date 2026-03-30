@@ -8,6 +8,7 @@ import { format, differenceInDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
 import { MobileStatusBar } from "@/components/mobile-status-bar"
+import { useMobileTab } from "@/contexts/mobile-tab-context"
 
 interface Stay {
   id: string
@@ -63,6 +64,7 @@ export function RecordedStaysView({
 }: RecordedStaysViewProps) {
   const [addSheetOpen, setAddSheetOpen] = useState(false)
   const [refSheetOpen, setRefSheetOpen] = useState(false)
+  const { barsVisible } = useMobileTab()
 
   const handleAddStay = () => {
     addOrUpdateStay()
@@ -140,7 +142,10 @@ export function RecordedStaysView({
       </Dialog>
 
       {/* Sticky status + reference date */}
-      <div className="sticky top-0 z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1">
+      <div className={cn(
+        "sticky z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1 transition-[top] duration-300 ease-in-out",
+        barsVisible ? "top-16" : "top-0",
+      )}>
         {/* Status bar */}
         <MobileStatusBar
           daysUsed={daysUsed}

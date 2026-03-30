@@ -10,16 +10,17 @@ interface MobileTabContextValue {
   setActiveTab: (tab: MobileTab) => void
   activeSegment: MobileSegment
   setActiveSegment: (segment: MobileSegment) => void
+  barsVisible: boolean
 }
 
 const MobileTabContext = createContext<MobileTabContextValue | null>(null)
 
-export function MobileTabProvider({ children }: { children: ReactNode }) {
+export function MobileTabProvider({ children, barsVisible = true }: { children: ReactNode; barsVisible?: boolean }) {
   const [activeTab, setActiveTab] = useState<MobileTab>("my-trips")
   const [activeSegment, setActiveSegment] = useState<MobileSegment>("recorded")
 
   return (
-    <MobileTabContext.Provider value={{ activeTab, setActiveTab, activeSegment, setActiveSegment }}>
+    <MobileTabContext.Provider value={{ activeTab, setActiveTab, activeSegment, setActiveSegment, barsVisible }}>
       {children}
     </MobileTabContext.Provider>
   )

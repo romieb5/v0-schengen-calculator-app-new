@@ -20,7 +20,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <MobileTabProvider>
+    <MobileTabProvider barsVisible={barsVisible}>
       <Navigation isVisible={barsVisible} />
       {children}
       {/* Footer: hide on mobile when on calculator page (tab bar replaces it) */}
