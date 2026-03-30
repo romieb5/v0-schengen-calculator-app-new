@@ -511,7 +511,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             })}
 
             <div
-              className={`absolute left-0 pointer-events-none z-10 ${mobileTransition}`}
+              className="absolute left-0 pointer-events-none z-10 transition-[top] duration-1000 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 marginLeft: "80px",
@@ -521,7 +521,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             </div>
 
             <div
-              className={`absolute left-0 h-0.5 bg-primary pointer-events-none ${mobileTransition}`}
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-[top] duration-1000 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -533,7 +533,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               </div>
             </div>
             <div
-              className={`absolute left-0 h-0.5 bg-primary pointer-events-none ${mobileTransition}`}
+              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-[top] duration-1000 ease-in-out"
               style={{
                 top: `${(differenceInDays(windowEnd, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
