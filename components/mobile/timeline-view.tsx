@@ -64,16 +64,27 @@ export function TimelineView({
     )
   }
 
-  // Unpaid — show paywall + static timeline preview
+  // Unpaid — timeline with paywall overlay
   return (
     <div className="px-4 pb-4">
-      <TimelineVisualization
-        stays={[]}
-        proposedTrips={[]}
-        referenceDate={referenceDate}
-      />
-      <hr className="border-border my-6" />
-      <TimelinePaywall isAuthenticated={isAuthenticated} />
+      <div className="relative">
+        {/* Timeline renders behind */}
+        <div className="pointer-events-none select-none">
+          <TimelineVisualization
+            stays={[]}
+            proposedTrips={[]}
+            referenceDate={referenceDate}
+          />
+        </div>
+
+        {/* Frosted overlay with paywall */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px]" />
+          <div className="relative z-10 bg-background/95 border-2 rounded-xl shadow-lg px-6 py-5 mx-4 max-w-xs w-full">
+            <TimelinePaywall isAuthenticated={isAuthenticated} />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
