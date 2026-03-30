@@ -1064,7 +1064,7 @@ export function SchengenCalculator() {
                           timelineRef.current?.togglePause()
                           setExamplePaused(p => !p)
                         }}
-                        className={`p-1.5 rounded-md border border-border transition-all duration-500 ${
+                        className={`hidden sm:flex p-1.5 rounded-md border border-border transition-all duration-500 ${
                           examplePaused
                             ? "bg-foreground text-background"
                             : "bg-background text-muted-foreground hover:text-foreground"

@@ -163,25 +163,32 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   // Animation schedule: [elapsed_ms, action]
   const LOOP_STEPS: Array<{ time: number; fn: () => void }> = []
 
+  // On mobile empty state, show everything statically (no animation)
+  const mobileStaticExample = isMobile && isEmptyState
   const displayStays = isEmptyState
-    ? EXAMPLE_LOOP_STAYS.slice(0, Math.min(exampleStep + 2, 5))
+    ? (mobileStaticExample ? EXAMPLE_LOOP_STAYS : EXAMPLE_LOOP_STAYS.slice(0, Math.min(exampleStep + 2, 5)))
     : stays
   const displayProposedTrips = isEmptyState
-    ? (exampleStep >= 4 ? [EXAMPLE_LOOP_TRIP] : [])
+    ? (mobileStaticExample ? [EXAMPLE_LOOP_TRIP] : (exampleStep >= 4 ? [EXAMPLE_LOOP_TRIP] : []))
     : proposedTrips
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      // On mobile empty state, default proposed trips to visible (static view)
+      if (mobile && isEmptyState) {
+        setShowProposedTrips(true)
+      }
     }
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+  }, [isEmptyState])
 
-  // Start the example animation loop when the timeline scrolls into view
+  // Start the example animation loop when the timeline scrolls into view (skip on mobile — static view)
   useEffect(() => {
-    if (!isEmptyState) return
+    if (!isEmptyState || isMobile) return
     const el = containerRef.current
     if (!el) return
 
@@ -385,7 +392,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
 
   if (isMobile) {
     return (
-      <div ref={containerRef} className="space-y-4" style={isEmptyState ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
+      <div ref={containerRef} className="space-y-4" style={isEmptyState && !mobileStaticExample ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
