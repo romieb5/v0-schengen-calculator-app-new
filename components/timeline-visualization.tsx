@@ -393,9 +393,12 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
   const statsColor = daysLeft < 0 ? "bg-red-50 text-red-700" : "bg-blue-50 text-blue-700"
 
+  // On mobile, no transition animations — everything renders instantly
+  const mobileTransition = mobileStaticExample ? "" : "transition-all duration-1000 ease-in-out"
+
   if (isMobile) {
     return (
-      <div ref={containerRef} className="space-y-4" style={isEmptyState && !mobileStaticExample ? { opacity: exampleFade, transition: 'opacity 800ms ease-in-out' } : undefined}>
+      <div ref={containerRef} className="space-y-4">
         <div className="flex flex-col items-start gap-3">
           <div className="flex items-center gap-2">
             <Switch id="show-proposed" checked={showProposedTrips} onCheckedChange={setShowProposedTrips} className="data-[state=checked]:bg-emerald-600" />
@@ -414,7 +417,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               <span className="text-xs text-muted-foreground italic">Example data shown</span>
             )}
           </div>
-          <div className={`flex flex-col gap-1 transition-opacity duration-500 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`flex flex-col gap-1 ${mobileStaticExample ? '' : 'transition-opacity duration-500'} ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
             <div className="text-xs text-muted-foreground italic">
               Reference date based on most recent proposed trip.
@@ -430,7 +433,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const daysSinceStart = differenceInDays(marker, timelineStart)
               const top = (daysSinceStart / totalDays) * 100
               return (
-                <div key={key} className="absolute left-0 transition-all duration-1000 ease-in-out" style={{ top: `${top}%`, width: "80px", opacity }}>
+                <div key={key} className={`absolute left-0 ${mobileTransition}`} style={{ top: `${top}%`, width: "80px", opacity: mobileStaticExample ? 1 : opacity }}>
                   <div className="text-xs text-muted-foreground text-right pr-2 whitespace-nowrap">
                     {format(marker, "MMM yyyy")}
                   </div>
@@ -440,7 +443,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             })}
 
             <div
-              className="absolute left-0 bg-primary/5 pointer-events-none transition-all duration-1000 ease-in-out"
+              className={`absolute left-0 bg-primary/5 pointer-events-none ${mobileTransition}`}
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 height: `${(180 / totalDays) * 100}%`,
@@ -459,18 +462,17 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               return (
                 <div
                   key={key}
-                  className="absolute transition-all duration-1000 ease-in-out"
+                  className={`absolute ${mobileTransition}`}
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
                     left: "90px",
                     right: "10px",
-                    opacity: stayOpacity,
-                    pointerEvents: stayOpacity === 0 ? "none" : "auto",
+                    opacity: mobileStaticExample ? 1 : stayOpacity,
                   }}
                 >
                   <div
-                    className={`h-full ${color} rounded opacity-90 hover:opacity-100 transition-opacity cursor-pointer shadow-sm ${
+                    className={`h-full ${color} rounded opacity-90 cursor-pointer shadow-sm ${
                       isEmptyState ? "opacity-75" : ""
                     }`}
                     title={`Stay ${stayIndex}: ${format(stay.entryDate, "MMM d, yyyy")} - ${format(stay.exitDate, "MMM d, yyyy")} (${duration} days)`}
@@ -483,12 +485,14 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const top = (differenceInDays(trip.entryDate, timelineStart) / totalDays) * 100
               const height = ((differenceInDays(trip.exitDate, trip.entryDate) + 1) / totalDays) * 100
               const duration = differenceInDays(trip.exitDate, trip.entryDate) + 1
-              const finalOpacity = tripOpacity * (showProposedTrips ? 0.9 : 0)
+              const finalOpacity = mobileStaticExample
+                ? (showProposedTrips ? 0.9 : 0)
+                : tripOpacity * (showProposedTrips ? 0.9 : 0)
 
               return (
                 <div
                   key={key}
-                  className="absolute transition-all duration-1000 ease-in-out"
+                  className={`absolute ${mobileTransition}`}
                   style={{
                     top: `${top}%`,
                     height: `${height}%`,
@@ -499,7 +503,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                   }}
                 >
                   <div
-                    className={`h-full ${proposedTripColor} rounded hover:opacity-100 cursor-pointer shadow-sm`}
+                    className={`h-full ${proposedTripColor} rounded cursor-pointer shadow-sm`}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   />
                 </div>
@@ -507,7 +511,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             })}
 
             <div
-              className="absolute left-0 pointer-events-none z-10 transition-all duration-1000 ease-in-out"
+              className={`absolute left-0 pointer-events-none z-10 ${mobileTransition}`}
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 marginLeft: "80px",
@@ -517,7 +521,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             </div>
 
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-1000 ease-in-out"
+              className={`absolute left-0 h-0.5 bg-primary pointer-events-none ${mobileTransition}`}
               style={{
                 top: `${(differenceInDays(windowStart, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
@@ -529,7 +533,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               </div>
             </div>
             <div
-              className="absolute left-0 h-0.5 bg-primary pointer-events-none transition-all duration-1000 ease-in-out"
+              className={`absolute left-0 h-0.5 bg-primary pointer-events-none ${mobileTransition}`}
               style={{
                 top: `${(differenceInDays(windowEnd, timelineStart) / totalDays) * 100}%`,
                 width: "calc(100% - 80px)",
