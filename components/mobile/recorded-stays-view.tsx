@@ -80,13 +80,13 @@ export function RecordedStaysView({
         Add Stay
       </button>
 
-      {/* Add Stay dialog */}
+      {/* Add Stay dialog — full screen on mobile, centered modal on desktop */}
       <Dialog open={addSheetOpen} onOpenChange={setAddSheetOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-lg sm:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
+          <div className="flex-1 flex flex-col justify-between py-2 sm:py-4 gap-3">
             <SingleMonthCalendar
               entryDate={entryDate ?? null}
               exitDate={exitDate ?? null}
@@ -107,33 +107,34 @@ export function RecordedStaysView({
               disabledRanges={disabledRanges}
             />
 
-            {entryDate && exitDate && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-6 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Entry:</span>
-                  <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Exit:</span>
-                  <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">Duration:</span>
+            <div className="mt-auto space-y-3">
+              {entryDate && exitDate && (
+                <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <span className="font-medium">Entry:</span>{" "}
+                      <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Exit:</span>{" "}
+                      <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
+                    </div>
+                  </div>
                   <span className="font-semibold text-primary">
-                    {differenceInDays(exitDate, entryDate) + 1} day(s)
+                    {differenceInDays(exitDate, entryDate) + 1}d
                   </span>
                 </div>
-              </div>
-            )}
+              )}
 
-            <Button
-              onClick={handleAddStay}
-              disabled={!entryDate || !exitDate}
-              className="w-full h-10 sm:h-11 font-semibold shadow-md hover:shadow-lg transition-shadow"
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              {editingId ? "Update Stay" : "Add Stay"}
-            </Button>
+              <Button
+                onClick={handleAddStay}
+                disabled={!entryDate || !exitDate}
+                className="w-full h-11 font-semibold shadow-md hover:shadow-lg transition-shadow"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                {editingId ? "Update Stay" : "Add Stay"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -228,25 +229,27 @@ export function RecordedStaysView({
         </div>
       )}
 
-      {/* Reference date dialog */}
+      {/* Reference date dialog — full screen on mobile */}
       <Dialog open={refSheetOpen} onOpenChange={setRefSheetOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-lg sm:text-2xl">Reference Date</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2 sm:py-4">
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Change this date to adjust the 180-day window and see your status at different points in time.
-            </p>
-            <SingleMonthCalendar
-              entryDate={referenceDate}
-              exitDate={null}
-              onDateSelect={(date) => {
-                setReferenceDate(date)
-                setRefSheetOpen(false)
-              }}
-              initialMonth={referenceDate}
-            />
+          <div className="flex-1 flex flex-col justify-between py-2 sm:py-4 gap-3">
+            <div>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                Change this date to adjust the 180-day window and see your status at different points in time.
+              </p>
+              <SingleMonthCalendar
+                entryDate={referenceDate}
+                exitDate={null}
+                onDateSelect={(date) => {
+                  setReferenceDate(date)
+                  setRefSheetOpen(false)
+                }}
+                initialMonth={referenceDate}
+              />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
