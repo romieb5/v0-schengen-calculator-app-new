@@ -128,6 +128,36 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@keyframes calendar-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes calendar-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.calendar-slide-left {
+  animation: calendar-slide-left 0.25s ease-out;
+}
+
+.calendar-slide-right {
+  animation: calendar-slide-right 0.25s ease-out;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

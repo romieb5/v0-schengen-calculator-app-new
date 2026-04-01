@@ -44,6 +44,8 @@ export function ThreeMonthCalendar({
   })
 
   const [isMobile, setIsMobile] = useState(false)
+  const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null)
+  const [animationKey, setAnimationKey] = useState(0)
 
   useEffect(() => {
     // Check if screen is mobile size
@@ -59,6 +61,12 @@ export function ThreeMonthCalendar({
 
   const touchStartX = useRef<number | null>(null)
 
+  const navigateMonth = useCallback((direction: "left" | "right", amount: number) => {
+    setSlideDirection(direction)
+    setAnimationKey(prev => prev + 1)
+    setCurrentMonth(prev => direction === "right" ? subMonths(prev, amount) : addMonths(prev, amount))
+  }, [])
+
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
   }, [])
@@ -68,23 +76,19 @@ export function ThreeMonthCalendar({
     const deltaX = e.changedTouches[0].clientX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(deltaX) < 50) return
-    if (deltaX > 0) {
-      setCurrentMonth(prev => subMonths(prev, 1))
-    } else {
-      setCurrentMonth(prev => addMonths(prev, 1))
-    }
-  }, [])
+    navigateMonth(deltaX > 0 ? "right" : "left", 1)
+  }, [navigateMonth])
 
   const month1 = currentMonth
   const month2 = addMonths(currentMonth, 1)
   const month3 = addMonths(currentMonth, 2)
 
   const handlePrevious = () => {
-    setCurrentMonth(subMonths(currentMonth, isMobile ? 1 : 3))
+    navigateMonth("right", isMobile ? 1 : 3)
   }
 
   const handleNext = () => {
-    setCurrentMonth(addMonths(currentMonth, isMobile ? 1 : 3))
+    navigateMonth("left", isMobile ? 1 : 3)
   }
 
   const isDateDisabled = (date: Date) => {
@@ -220,9 +224,18 @@ export function ThreeMonthCalendar({
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
-        <div className={cn("flex-1 flex gap-6", isMobile ? "px-2" : "px-8 lg:px-8")}>
+        <div className={cn("flex-1 flex gap-6 overflow-hidden", isMobile ? "px-2" : "px-8 lg:px-8")}>
           {isMobile ? (
-            renderMonth(month1)
+            <div
+              key={animationKey}
+              className={cn(
+                "flex-1 min-w-0",
+                slideDirection === "left" && "calendar-slide-left",
+                slideDirection === "right" && "calendar-slide-right",
+              )}
+            >
+              {renderMonth(month1)}
+            </div>
           ) : (
             <>
               {renderMonth(month1)}

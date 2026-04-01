@@ -68,8 +68,17 @@ export function SingleMonthCalendar({
     })
   }
 
-  const handlePreviousMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
-  const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
+  const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null)
+  const [animationKey, setAnimationKey] = useState(0)
+
+  const navigateMonth = useCallback((direction: "left" | "right") => {
+    setSlideDirection(direction)
+    setAnimationKey(prev => prev + 1)
+    setCurrentMonth(prev => direction === "right" ? subMonths(prev, 1) : addMonths(prev, 1))
+  }, [])
+
+  const handlePreviousMonth = () => navigateMonth("right")
+  const handleNextMonth = () => navigateMonth("left")
 
   const touchStartX = useRef<number | null>(null)
 
@@ -82,12 +91,8 @@ export function SingleMonthCalendar({
     const deltaX = e.changedTouches[0].clientX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(deltaX) < 50) return
-    if (deltaX > 0) {
-      setCurrentMonth(prev => subMonths(prev, 1))
-    } else {
-      setCurrentMonth(prev => addMonths(prev, 1))
-    }
-  }, [])
+    navigateMonth(deltaX > 0 ? "right" : "left")
+  }, [navigateMonth])
 
   return (
     <div className="w-full max-w-md mx-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -103,7 +108,13 @@ export function SingleMonthCalendar({
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-3">
+      <div
+        key={animationKey}
+        className={`grid grid-cols-7 gap-3 ${
+          slideDirection === "left" ? "calendar-slide-left" :
+          slideDirection === "right" ? "calendar-slide-right" : ""
+        }`}
+      >
         {/* Day headers */}
         {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
           <div
