@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   format,
   addMonths,
@@ -55,6 +55,24 @@ export function ThreeMonthCalendar({
     window.addEventListener("resize", checkMobile)
 
     return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  const touchStartX = useRef<number | null>(null)
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(deltaX) < 50) return
+    if (deltaX > 0) {
+      setCurrentMonth(prev => subMonths(prev, 1))
+    } else {
+      setCurrentMonth(prev => addMonths(prev, 1))
+    }
   }, [])
 
   const month1 = currentMonth
@@ -188,7 +206,11 @@ export function ThreeMonthCalendar({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-6 p-4 lg:p-6 bg-muted/30 rounded-xl border-2 relative">
+      <div
+        className="flex gap-6 p-4 lg:p-6 bg-muted/30 rounded-xl border-2 relative"
+        onTouchStart={isMobile ? handleTouchStart : undefined}
+        onTouchEnd={isMobile ? handleTouchEnd : undefined}
+      >
         <Button
           variant="outline"
           size="icon"

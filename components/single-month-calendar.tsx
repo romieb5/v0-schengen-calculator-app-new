@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   format,
   startOfMonth,
@@ -71,8 +71,26 @@ export function SingleMonthCalendar({
   const handlePreviousMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
   const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
 
+  const touchStartX = useRef<number | null>(null)
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(deltaX) < 50) return
+    if (deltaX > 0) {
+      setCurrentMonth(prev => subMonths(prev, 1))
+    } else {
+      setCurrentMonth(prev => addMonths(prev, 1))
+    }
+  }, [])
+
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Month header with navigation */}
       <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 mb-4">
         <Button variant="ghost" size="sm" onClick={handlePreviousMonth} className="h-8 w-8 p-0">
