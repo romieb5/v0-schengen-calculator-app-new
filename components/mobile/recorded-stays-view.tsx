@@ -143,8 +143,7 @@ export function RecordedStaysView({
 
       {/* Sticky status + reference date */}
       <div className={cn(
-        "sticky z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1 transition-[top] duration-300 ease-in-out",
-        barsVisible ? "top-16" : "top-0",
+        "sticky top-16 z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1",
       )}>
         {/* Status bar */}
         <MobileStatusBar

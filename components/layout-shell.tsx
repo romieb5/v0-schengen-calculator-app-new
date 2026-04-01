@@ -21,7 +21,8 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
 
   return (
     <MobileTabProvider barsVisible={barsVisible}>
-      <Navigation isVisible={barsVisible} />
+      <Navigation />
+      <div className="h-16" /> {/* Spacer for fixed nav */}
       {children}
       {/* Footer: hide on mobile when on calculator page (tab bar replaces it) */}
       <div className={isCalculatorPage ? "hidden md:block" : undefined}>

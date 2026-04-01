@@ -8,11 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth-provider"
 import { cn } from "@/lib/utils"
 
-interface NavigationProps {
-  isVisible?: boolean
-}
-
-export function Navigation({ isVisible = true }: NavigationProps) {
+export function Navigation() {
   const pathname = usePathname()
   const { user, isAuthenticated, isLoading: authLoading, signOut } = useAuth()
 
@@ -30,12 +26,7 @@ export function Navigation({ isVisible = true }: NavigationProps) {
   return (
     <>
       <nav
-        className={cn(
-          "border-b bg-background sticky top-0 z-40",
-          "md:translate-y-0",
-          "transition-transform duration-300 ease-in-out",
-          !isVisible && "-translate-y-full",
-        )}
+        className="border-b bg-background fixed top-0 left-0 right-0 z-40"
       >
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">

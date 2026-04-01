@@ -390,8 +390,15 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
   const daysUsed = calculationResult.daysUsed
   const daysLeft = calculationResult.daysLeft
 
-  const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} days over limit` : `${daysLeft} days left`
-  const statsColor = daysLeft < 0 ? "bg-red-50 text-red-700" : "bg-blue-50 text-blue-700"
+  const daysRemainingText = daysLeft < 0 ? `${Math.abs(daysLeft)} over limit` : `${daysLeft} left`
+  const isOverstay = daysLeft < 0
+  const isCaution = !isOverstay && daysLeft <= 10
+  const pillColor = isOverstay
+    ? "bg-destructive/10 text-destructive border-destructive/20"
+    : isCaution
+      ? "bg-warning/10 text-warning border-warning/20"
+      : "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
+  const dotColor = isOverstay ? "bg-destructive" : isCaution ? "bg-warning" : "bg-blue-500"
 
   // On mobile empty state, no transitions. Otherwise only transition position/opacity (not size/layout).
   const mobileTransition = mobileStaticExample ? "" : "transition-[top,height,opacity] duration-1000 ease-in-out"
@@ -407,11 +414,11 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             </Label>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
-              {daysUsed} days used
-            </div>
-            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
-              {daysRemainingText}
+            <div className={`inline-flex items-center gap-2 text-sm font-semibold pl-3 pr-4 py-1.5 rounded-full border min-w-[260px] justify-center tabular-nums transition-colors duration-700 ${pillColor}`}>
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors duration-700 ${dotColor}`} />
+              <span key={`${daysUsed}-${daysLeft}`} className="pill-number-roll">
+                {daysUsed} used, {daysRemainingText}
+              </span>
             </div>
             {isEmptyState && (
               <span className="text-xs text-muted-foreground italic">Example data shown</span>
@@ -560,13 +567,11 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               Show Proposed Trips
             </Label>
           </div>
-          <div className="flex items-center gap-2">
-            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
-              {daysUsed} days used
-            </div>
-            <div className={`text-sm font-semibold px-3 py-1 rounded ${statsColor}`}>
-              {daysRemainingText}
-            </div>
+          <div className={`inline-flex items-center gap-2 text-sm font-semibold pl-3 pr-4 py-1.5 rounded-full border min-w-[260px] justify-center tabular-nums transition-colors duration-700 ${pillColor}`}>
+            <span className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors duration-700 ${dotColor}`} />
+            <span key={`${daysUsed}-${daysLeft}`} className="pill-number-roll">
+              {daysUsed} used, {daysRemainingText}
+            </span>
           </div>
           {isEmptyState && (
             <span className="text-xs text-muted-foreground italic">Example data shown</span>
