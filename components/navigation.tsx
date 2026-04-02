@@ -31,13 +31,13 @@ export function Navigation() {
       >
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:min-w-[180px]">
               <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
                 <span>Schengen Monitor</span>
               </Link>
             </div>
 
-            {/* Desktop tabs - right aligned */}
+            {/* Desktop tabs - centered */}
             <div className="hidden md:flex items-center gap-1">
               {links.map((link) => {
                 const Icon = link.icon
@@ -55,10 +55,14 @@ export function Navigation() {
                   </Link>
                 )
               })}
+            </div>
+
+            {/* Desktop user/login - right aligned */}
+            <div className="hidden md:flex items-center justify-end md:min-w-[180px]">
               {isAuthenticated ? (
-                <DropdownMenu>
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="ml-2 gap-2">
+                    <Button variant="outline" className="gap-2">
                       <User className="h-4 w-4" />
                       {user?.name || user?.email}
                       <ChevronDown className="h-3 w-3" />
@@ -83,7 +87,7 @@ export function Navigation() {
                 </DropdownMenu>
               ) : (
                 <Link href="/log-in">
-                  <Button variant="outline" className="ml-2">
+                  <Button variant="outline">
                     Log In
                   </Button>
                 </Link>
@@ -92,7 +96,7 @@ export function Navigation() {
 
             {/* Mobile hamburger menu */}
             <div className="md:hidden">
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
                     <Menu className="h-5 w-5" />
