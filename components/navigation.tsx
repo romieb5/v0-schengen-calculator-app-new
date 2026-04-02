@@ -16,6 +16,7 @@ export function Navigation() {
     { href: "/", label: "Calculator", icon: null },
     { href: "/how-it-works", label: "How It Works", icon: null },
     { href: "/faq", label: "FAQ", icon: null },
+    { href: "/blog", label: "Blog", icon: null },
     { href: "/about", label: "About", icon: null },
   ]
 
