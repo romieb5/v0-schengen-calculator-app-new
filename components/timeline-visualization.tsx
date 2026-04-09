@@ -397,8 +397,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
     ? "bg-destructive/10 text-destructive border-destructive/20"
     : isCaution
       ? "bg-warning/10 text-warning border-warning/20"
-      : "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
-  const dotColor = isOverstay ? "bg-destructive" : isCaution ? "bg-warning" : "bg-blue-500"
+      : "bg-success/10 text-success border-success/20"
+  const dotColor = isOverstay ? "bg-destructive" : isCaution ? "bg-warning" : "bg-success"
 
   // On mobile empty state, no transitions. Otherwise only transition position/opacity (not size/layout).
   const mobileTransition = mobileStaticExample ? "" : "transition-[top,height,opacity] duration-1000 ease-in-out"
