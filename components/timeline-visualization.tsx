@@ -549,7 +549,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                     style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   >
-                    <div className="absolute inset-0 rounded" style={{ backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${tripStyle.stripeColor} 50%, transparent) 4px, color-mix(in oklch, ${tripStyle.stripeColor} 50%, transparent) 8px)` }} />
+                    <div className="absolute inset-0 rounded" style={{ backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${tripStyle.stripeColor} 30%, transparent) 4px, color-mix(in oklch, ${tripStyle.stripeColor} 30%, transparent) 8px)` }} />
                   </div>
                 </div>
               )
@@ -705,7 +705,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                   style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 >
-                  <div className="absolute inset-0 rounded" style={{ backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${tripStyle.stripeColor} 50%, transparent) 4px, color-mix(in oklch, ${tripStyle.stripeColor} 50%, transparent) 8px)` }} />
+                  <div className="absolute inset-0 rounded" style={{ backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${tripStyle.stripeColor} 30%, transparent) 4px, color-mix(in oklch, ${tripStyle.stripeColor} 30%, transparent) 8px)` }} />
                 </div>
               </div>
             )
