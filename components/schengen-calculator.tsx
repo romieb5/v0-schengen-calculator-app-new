@@ -721,11 +721,11 @@ export function SchengenCalculator() {
                             <div className="flex items-start justify-between gap-3">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 {!result.isLegal ? (
-                                  <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+                                  <AlertTriangle className={cn("h-4 w-4 flex-shrink-0", trip.hidden ? "text-muted-foreground" : "text-destructive")} />
                                 ) : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? (
-                                  <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0" />
+                                  <AlertTriangle className={cn("h-4 w-4 flex-shrink-0", trip.hidden ? "text-muted-foreground" : "text-warning")} />
                                 ) : (
-                                  <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
+                                  <CheckCircle2 className={cn("h-4 w-4 flex-shrink-0", trip.hidden ? "text-muted-foreground" : "text-success")} />
                                 )}
                                 <div className="text-xs sm:text-sm font-medium sm:truncate break-words">
                                   {format(trip.entryDate, "MMM d, yyyy")} → {format(trip.exitDate, "MMM d, yyyy")}
@@ -765,7 +765,7 @@ export function SchengenCalculator() {
                             <div
                               className={cn(
                                 "text-xs font-medium sm:pl-6",
-                                !result.isLegal ? "text-destructive" : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? "text-warning" : "text-success",
+                                trip.hidden ? "text-muted-foreground" : !result.isLegal ? "text-destructive" : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? "text-warning" : "text-success",
                               )}
                             >
                               {(() => {
