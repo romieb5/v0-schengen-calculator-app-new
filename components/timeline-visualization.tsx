@@ -546,7 +546,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                 >
                   <div
                     className={`h-full ${tripStyle.className} rounded cursor-pointer shadow-sm relative overflow-hidden`}
-                    style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
+                    style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 35%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   >
                     <div className="absolute inset-0 rounded" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)" }} />
@@ -702,7 +702,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               >
                 <div
                   className={`h-20 ${tripStyle.className} rounded hover:opacity-100 cursor-pointer shadow-sm relative overflow-hidden`}
-                  style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
+                  style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 35%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 >
                   <div className="absolute inset-0 rounded" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)" }} />
