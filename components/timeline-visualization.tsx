@@ -373,7 +373,15 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
     })
   }
 
-  const getProposedTripStyle = (trip: { entryDate: Date; exitDate: Date }) => {
+  const tripStyleCacheRef = useRef<Map<string, { className: string; stripeColor: string }>>(new Map())
+
+  const getProposedTripStyle = (trip: { id: string; entryDate: Date; exitDate: Date }, isFadingOut: boolean) => {
+    // When fading out, return the cached style so colour doesn't shift mid-animation
+    if (isFadingOut) {
+      const cached = tripStyleCacheRef.current.get(trip.id)
+      if (cached) return cached
+    }
+
     const tripResult = calculateDaysUsedForDate(trip.exitDate, displayStays, visibleProposedForCalculation)
     const tripDaysLeft = tripResult.daysLeft
     const isOver = tripDaysLeft < 0
@@ -391,12 +399,13 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
         ? "var(--color-warning)"
         : "var(--color-success)"
 
-    return {
-      className: `border-2 border-dashed ${borderColor}`,
-      style: {
-        background: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${stripeColor} 25%, transparent) 4px, color-mix(in oklch, ${stripeColor} 25%, transparent) 8px)`,
-      },
+    const style = {
+      className: `border-2 border-dashed ${borderColor} transition-colors duration-700`,
+      stripeColor,
     }
+
+    tripStyleCacheRef.current.set(trip.id, style)
+    return style
   }
 
   // Animated stays: persist hidden ones in DOM so they fade out
@@ -519,7 +528,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const finalOpacity = mobileStaticExample
                 ? (showProposedTrips ? 0.9 : 0)
                 : tripOpacity * (showProposedTrips ? 0.9 : 0)
-              const tripStyle = getProposedTripStyle(trip)
+              const isFadingOut = !showProposedTrips || !displayProposedTrips.some(t => t.id === trip.id)
+              const tripStyle = getProposedTripStyle(trip, isFadingOut)
 
               return (
                 <div
@@ -535,10 +545,12 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                   }}
                 >
                   <div
-                    className={`h-full ${tripStyle.className} rounded cursor-pointer shadow-sm`}
-                    style={tripStyle.style}
+                    className={`h-full ${tripStyle.className} rounded cursor-pointer shadow-sm relative overflow-hidden`}
+                    style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
-                  />
+                  >
+                    <div className="absolute inset-0 rounded" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)" }} />
+                  </div>
                 </div>
               )
             })}
@@ -673,7 +685,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             const startPos = dateToPosition(trip.entryDate)
             const endPos = dateToPosition(trip.exitDate)
             const finalOpacity = tripOpacity * (showProposedTrips ? 0.9 : 0)
-            const tripStyle = getProposedTripStyle(trip)
+            const isFadingOut = !showProposedTrips || !displayProposedTrips.some(t => t.id === trip.id)
+            const tripStyle = getProposedTripStyle(trip, isFadingOut)
 
             return (
               <div
@@ -688,10 +701,12 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                 }}
               >
                 <div
-                  className={`h-20 ${tripStyle.className} rounded hover:opacity-100 cursor-pointer shadow-sm`}
-                  style={tripStyle.style}
+                  className={`h-20 ${tripStyle.className} rounded hover:opacity-100 cursor-pointer shadow-sm relative overflow-hidden`}
+                  style={{ backgroundColor: `color-mix(in oklch, ${tripStyle.stripeColor} 15%, transparent)`, transition: "border-color 700ms, background-color 700ms" }}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
-                />
+                >
+                  <div className="absolute inset-0 rounded" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)" }} />
+                </div>
               </div>
             )
           })}
