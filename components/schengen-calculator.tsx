@@ -709,19 +709,23 @@ export function SchengenCalculator() {
                             "p-4 rounded-lg border-2 transition-colors",
                             trip.hidden
                               ? "bg-muted/50 border-muted-foreground/20 opacity-60"
-                              : result.isLegal
-                                ? "bg-success/5 border-success/30"
-                                : "bg-destructive/5 border-destructive/30",
+                              : !result.isLegal
+                                ? "bg-destructive/5 border-destructive/30"
+                                : result.daysRemaining !== undefined && result.daysRemaining <= 10
+                                  ? "bg-warning/5 border-warning/30"
+                                  : "bg-success/5 border-success/30",
                           )}
                         >
                           <div className="space-y-2 sm:space-y-1">
                             {/* Date row with icons and buttons */}
                             <div className="flex items-start justify-between gap-3">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                {result.isLegal ? (
-                                  <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
-                                ) : (
+                                {!result.isLegal ? (
                                   <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+                                ) : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? (
+                                  <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0" />
+                                ) : (
+                                  <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
                                 )}
                                 <div className="text-xs sm:text-sm font-medium sm:truncate break-words">
                                   {format(trip.entryDate, "MMM d, yyyy")} → {format(trip.exitDate, "MMM d, yyyy")}
@@ -761,7 +765,7 @@ export function SchengenCalculator() {
                             <div
                               className={cn(
                                 "text-xs font-medium sm:pl-6",
-                                result.isLegal ? "text-success" : "text-destructive",
+                                !result.isLegal ? "text-destructive" : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? "text-warning" : "text-success",
                               )}
                             >
                               {(() => {
@@ -1122,15 +1126,19 @@ export function SchengenCalculator() {
               <Alert
                 className={cn(
                   "border-2",
-                  currentDialogProposedResult.isLegal
-                    ? "border-success bg-success/10"
-                    : "border-destructive bg-destructive/10",
+                  !currentDialogProposedResult.isLegal
+                    ? "border-destructive bg-destructive/10"
+                    : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
+                      ? "border-warning bg-warning/10"
+                      : "border-success bg-success/10",
                 )}
               >
-                {currentDialogProposedResult.isLegal ? (
-                  <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                ) : (
+                {!currentDialogProposedResult.isLegal ? (
                   <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+                ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
+                  <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
+                ) : (
+                  <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
                 )}
                 {!currentDialogProposedResult.isLegal && (
                   <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>

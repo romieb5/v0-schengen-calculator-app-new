@@ -56,17 +56,21 @@ export function ProposedTripsView({
                 "p-3 rounded-lg border-2 transition-colors",
                 trip.hidden
                   ? "bg-muted/50 border-muted-foreground/20 opacity-60"
-                  : result.isLegal
-                    ? "bg-success/5 border-success/30"
-                    : "bg-destructive/5 border-destructive/30",
+                  : !result.isLegal
+                    ? "bg-destructive/5 border-destructive/30"
+                    : result.daysRemaining !== undefined && result.daysRemaining <= 10
+                      ? "bg-warning/5 border-warning/30"
+                      : "bg-success/5 border-success/30",
               )}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                  {result.isLegal ? (
-                    <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
-                  ) : (
+                  {!result.isLegal ? (
                     <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+                  ) : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? (
+                    <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
                   )}
                   <div className="text-xs font-medium break-words">
                     {format(trip.entryDate, "MMM d, yyyy")} → {format(trip.exitDate, "MMM d, yyyy")}
@@ -102,7 +106,7 @@ export function ProposedTripsView({
               <div
                 className={cn(
                   "text-xs font-medium mt-1",
-                  result.isLegal ? "text-success" : "text-destructive",
+                  !result.isLegal ? "text-destructive" : result.daysRemaining !== undefined && result.daysRemaining <= 10 ? "text-warning" : "text-success",
                 )}
               >
                 {(() => {
