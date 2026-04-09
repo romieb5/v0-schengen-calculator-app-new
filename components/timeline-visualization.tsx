@@ -373,7 +373,31 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
     })
   }
 
-  const proposedTripColor = "bg-red-400 border-2 border-red-600 border-dashed"
+  const getProposedTripStyle = (trip: { entryDate: Date; exitDate: Date }) => {
+    const tripResult = calculateDaysUsedForDate(trip.exitDate, displayStays, visibleProposedForCalculation)
+    const tripDaysLeft = tripResult.daysLeft
+    const isOver = tripDaysLeft < 0
+    const isTripCaution = !isOver && tripDaysLeft <= 10
+
+    const borderColor = isOver
+      ? "border-destructive"
+      : isTripCaution
+        ? "border-warning"
+        : "border-success"
+
+    const stripeColor = isOver
+      ? "var(--color-destructive)"
+      : isTripCaution
+        ? "var(--color-warning)"
+        : "var(--color-success)"
+
+    return {
+      className: `border-2 border-dashed ${borderColor}`,
+      style: {
+        background: `repeating-linear-gradient(-45deg, transparent, transparent 4px, color-mix(in oklch, ${stripeColor} 25%, transparent) 4px, color-mix(in oklch, ${stripeColor} 25%, transparent) 8px)`,
+      },
+    }
+  }
 
   // Animated stays: persist hidden ones in DOM so they fade out
   const stayItemsForAnimation = displayStays.map(stay => ({
@@ -425,7 +449,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             )}
           </div>
           <div className={`flex flex-col gap-1 ${mobileStaticExample ? '' : 'transition-opacity duration-500'} ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+            <div className="text-xs text-muted-foreground italic">Dashed bars represent proposed trips.</div>
             <div className="text-xs text-muted-foreground italic">
               Reference date based on most recent proposed trip.
             </div>
@@ -495,6 +519,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               const finalOpacity = mobileStaticExample
                 ? (showProposedTrips ? 0.9 : 0)
                 : tripOpacity * (showProposedTrips ? 0.9 : 0)
+              const tripStyle = getProposedTripStyle(trip)
 
               return (
                 <div
@@ -510,7 +535,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                   }}
                 >
                   <div
-                    className={`h-full ${proposedTripColor} rounded cursor-pointer shadow-sm`}
+                    className={`h-full ${tripStyle.className} rounded cursor-pointer shadow-sm`}
+                    style={tripStyle.style}
                     title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                   />
                 </div>
@@ -578,7 +604,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
           )}
         </div>
         <div className={`flex flex-col items-end gap-1 transition-opacity duration-500 ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <div className="text-xs text-muted-foreground italic">Dashed red bars represent proposed trips.</div>
+          <div className="text-xs text-muted-foreground italic">Dashed bars represent proposed trips.</div>
           <div className="text-xs text-muted-foreground italic">
             Reference date based on most recent proposed trip.
           </div>
@@ -647,6 +673,7 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
             const startPos = dateToPosition(trip.entryDate)
             const endPos = dateToPosition(trip.exitDate)
             const finalOpacity = tripOpacity * (showProposedTrips ? 0.9 : 0)
+            const tripStyle = getProposedTripStyle(trip)
 
             return (
               <div
@@ -661,7 +688,8 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
                 }}
               >
                 <div
-                  className={`h-20 ${proposedTripColor} rounded hover:opacity-100 cursor-pointer shadow-sm`}
+                  className={`h-20 ${tripStyle.className} rounded hover:opacity-100 cursor-pointer shadow-sm`}
+                  style={tripStyle.style}
                   title={`Proposed Trip ${index + 1}: ${format(trip.entryDate, "MMM d, yyyy")} - ${format(trip.exitDate, "MMM d, yyyy")} (${duration} days)`}
                 />
               </div>
