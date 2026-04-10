@@ -35,7 +35,7 @@ export default function SignInPage() {
 
     try {
       const result = await authClient.signIn.email({
-        email,
+        email: email.trim().toLowerCase(),
         password,
       })
 
@@ -200,6 +200,7 @@ export default function SignInPage() {
                       name="email"
                       type="email"
                       autoComplete="email"
+                      autoCapitalize="none"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -269,6 +270,7 @@ export default function SignInPage() {
                     name="email"
                     type="email"
                     autoComplete="email"
+                    autoCapitalize="none"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"

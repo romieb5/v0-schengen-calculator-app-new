@@ -38,10 +38,11 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
+      const normalizedEmail = email.trim().toLowerCase()
       const result = await authClient.signUp.email({
-        email,
+        email: normalizedEmail,
         password,
-        name: email.split("@")[0],
+        name: normalizedEmail.split("@")[0],
         callbackURL: "/verified",
       })
 
@@ -159,6 +160,7 @@ export default function SignUpPage() {
                       name="email"
                       type="email"
                       autoComplete="email"
+                      autoCapitalize="none"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
