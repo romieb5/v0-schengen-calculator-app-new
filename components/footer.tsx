@@ -20,6 +20,9 @@ export function Footer() {
             <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
               Terms and Conditions
             </Link>
+            <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </Link>
           </div>
         </div>
       </div>
