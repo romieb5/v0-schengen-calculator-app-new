@@ -1000,7 +1000,7 @@ export function SchengenCalculator() {
 
     {/* Dialogs render on both mobile and desktop */}
     <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[520px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">Edit Stay</DialogTitle>
           <DialogDescription className="text-sm">Update the details of your recorded stay</DialogDescription>
@@ -1027,21 +1027,38 @@ export function SchengenCalculator() {
           />
 
           <div className="mt-auto space-y-3">
-            {editDialogEntry && editDialogExit && (
+            {editDialogEntry && (
               <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-3">
                   <div>
                     <span className="font-medium">Entry:</span>{" "}
                     <span className="text-muted-foreground">{format(editDialogEntry, "MMM d, yyyy")}</span>
                   </div>
-                  <div>
-                    <span className="font-medium">Exit:</span>{" "}
-                    <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
-                  </div>
+                  {editDialogExit && (
+                    <div>
+                      <span className="font-medium">Exit:</span>{" "}
+                      <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
+                    </div>
+                  )}
                 </div>
-                <span className="font-semibold text-primary">
-                  {differenceInDays(editDialogExit, editDialogEntry) + 1}d
-                </span>
+                <div className="flex items-center gap-2">
+                  {editDialogExit && (
+                    <span className="font-semibold text-primary">
+                      {differenceInDays(editDialogExit, editDialogEntry) + 1}d
+                    </span>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                    onClick={() => {
+                      setEditDialogEntry(null)
+                      setEditDialogExit(null)
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </div>
               </div>
             )}
 
@@ -1073,7 +1090,7 @@ export function SchengenCalculator() {
     </Dialog>
 
     <Dialog open={editProposedDialogOpen} onOpenChange={setEditProposedDialogOpen}>
-      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[520px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">
             {editProposedDialogId ? "Edit Proposed Trip" : "Add Proposed Trip"}
@@ -1104,21 +1121,38 @@ export function SchengenCalculator() {
           />
 
           <div className="mt-auto space-y-3">
-            {editProposedDialogEntry && editProposedDialogExit && (
+            {editProposedDialogEntry && (
               <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-3">
                   <div>
                     <span className="font-medium">Entry:</span>{" "}
                     <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
                   </div>
-                  <div>
-                    <span className="font-medium">Exit:</span>{" "}
-                    <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
-                  </div>
+                  {editProposedDialogExit && (
+                    <div>
+                      <span className="font-medium">Exit:</span>{" "}
+                      <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
+                    </div>
+                  )}
                 </div>
-                <span className="font-semibold text-primary">
-                  {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
-                </span>
+                <div className="flex items-center gap-2">
+                  {editProposedDialogExit && (
+                    <span className="font-semibold text-primary">
+                      {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
+                    </span>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                    onClick={() => {
+                      setEditProposedDialogEntry(null)
+                      setEditProposedDialogExit(null)
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </div>
               </div>
             )}
 

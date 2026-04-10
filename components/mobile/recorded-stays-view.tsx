@@ -84,7 +84,7 @@ export function RecordedStaysView({
 
       {/* Add Stay dialog — full screen on mobile, centered modal on desktop */}
       <Dialog open={addSheetOpen} onOpenChange={setAddSheetOpen}>
-        <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+        <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[520px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-lg sm:text-2xl">{editingId ? "Edit Stay" : "Add Stay"}</DialogTitle>
           </DialogHeader>
@@ -110,21 +110,38 @@ export function RecordedStaysView({
             />
 
             <div className="mt-auto space-y-3">
-              {entryDate && exitDate && (
+              {entryDate && (
                 <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
                   <div className="flex items-center gap-3">
                     <div>
                       <span className="font-medium">Entry:</span>{" "}
                       <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
                     </div>
-                    <div>
-                      <span className="font-medium">Exit:</span>{" "}
-                      <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
-                    </div>
+                    {exitDate && (
+                      <div>
+                        <span className="font-medium">Exit:</span>{" "}
+                        <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
+                      </div>
+                    )}
                   </div>
-                  <span className="font-semibold text-primary">
-                    {differenceInDays(exitDate, entryDate) + 1}d
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {exitDate && (
+                      <span className="font-semibold text-primary">
+                        {differenceInDays(exitDate, entryDate) + 1}d
+                      </span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-primary h-auto py-0.5 px-2 text-xs"
+                      onClick={() => {
+                        setEntryDate(undefined)
+                        setExitDate(undefined)
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  </div>
                 </div>
               )}
 
