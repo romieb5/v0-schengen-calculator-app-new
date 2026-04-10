@@ -11,6 +11,9 @@ export function Footer() {
             © {currentYear} Schengen Monitor. All rights reserved.
           </div>
           <div className="flex gap-6 text-sm">
+            <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </Link>
             <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
               About
             </Link>
@@ -19,9 +22,6 @@ export function Footer() {
             </Link>
             <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
               Terms and Conditions
-            </Link>
-            <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-              Contact
             </Link>
           </div>
         </div>
