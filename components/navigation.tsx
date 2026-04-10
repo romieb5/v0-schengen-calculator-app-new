@@ -141,6 +141,22 @@ export function Navigation() {
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/contact" className="text-muted-foreground text-xs cursor-pointer">
+                      Contact
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/privacy" className="text-muted-foreground text-xs cursor-pointer">
+                      Privacy Policy
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/terms" className="text-muted-foreground text-xs cursor-pointer">
+                      Terms
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
