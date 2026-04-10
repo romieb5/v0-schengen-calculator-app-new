@@ -130,6 +130,7 @@ export function RecordedStaysView({
                         {differenceInDays(exitDate, entryDate) + 1}d
                       </span>
                     )}
+                    <div className="w-px h-4 bg-border" />
                     <Button
                       variant="ghost"
                       size="sm"
