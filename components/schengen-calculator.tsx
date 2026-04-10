@@ -1026,10 +1026,10 @@ export function SchengenCalculator() {
             disabledRanges={getDisabledDateRanges(stays, proposedTrips, editDialogId)}
           />
 
-          <div className="mt-auto space-y-3">
+          <div className="space-y-3">
             {editDialogEntry && (
-              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
+                <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
                   <div>
                     <span className="font-medium">Entry:</span>{" "}
                     <span className="text-muted-foreground">{format(editDialogEntry, "MMM d, yyyy")}</span>
@@ -1040,26 +1040,23 @@ export function SchengenCalculator() {
                       <span className="text-muted-foreground">{format(editDialogExit, "MMM d, yyyy")}</span>
                     </div>
                   )}
-                </div>
-                <div className="flex items-center gap-2">
                   {editDialogExit && (
                     <span className="font-semibold text-primary">
                       {differenceInDays(editDialogExit, editDialogEntry) + 1}d
                     </span>
                   )}
-                  <div className="w-px h-4 bg-border" />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
-                    onClick={() => {
-                      setEditDialogEntry(null)
-                      setEditDialogExit(null)
-                    }}
-                  >
-                    Clear
-                  </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                  onClick={() => {
+                    setEditDialogEntry(null)
+                    setEditDialogExit(null)
+                  }}
+                >
+                  Clear
+                </Button>
               </div>
             )}
 
@@ -1121,10 +1118,10 @@ export function SchengenCalculator() {
             disabledRanges={getDisabledDateRanges(stays, proposedTrips, editProposedDialogId)}
           />
 
-          <div className="mt-auto space-y-3">
+          <div className="space-y-3">
             {editProposedDialogEntry && (
-              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm bg-muted/50 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
+                <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
                   <div>
                     <span className="font-medium">Entry:</span>{" "}
                     <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
@@ -1135,26 +1132,23 @@ export function SchengenCalculator() {
                       <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
                     </div>
                   )}
-                </div>
-                <div className="flex items-center gap-2">
                   {editProposedDialogExit && (
                     <span className="font-semibold text-primary">
                       {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
                     </span>
                   )}
-                  <div className="w-px h-4 bg-border" />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
-                    onClick={() => {
-                      setEditProposedDialogEntry(null)
-                      setEditProposedDialogExit(null)
-                    }}
-                  >
-                    Clear
-                  </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                  onClick={() => {
+                    setEditProposedDialogEntry(null)
+                    setEditProposedDialogExit(null)
+                  }}
+                >
+                  Clear
+                </Button>
               </div>
             )}
 

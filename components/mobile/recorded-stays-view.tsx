@@ -109,10 +109,10 @@ export function RecordedStaysView({
               disabledRanges={disabledRanges}
             />
 
-            <div className="mt-auto space-y-3">
+            <div className="space-y-3">
               {entryDate && (
-                <div className="flex items-center justify-between gap-2 text-xs bg-muted/50 rounded-lg px-3 py-2">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
                     <div>
                       <span className="font-medium">Entry:</span>{" "}
                       <span className="text-muted-foreground">{format(entryDate, "MMM d, yyyy")}</span>
@@ -123,26 +123,23 @@ export function RecordedStaysView({
                         <span className="text-muted-foreground">{format(exitDate, "MMM d, yyyy")}</span>
                       </div>
                     )}
-                  </div>
-                  <div className="flex items-center gap-2">
                     {exitDate && (
                       <span className="font-semibold text-primary">
                         {differenceInDays(exitDate, entryDate) + 1}d
                       </span>
                     )}
-                    <div className="w-px h-4 bg-border" />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary h-auto py-0.5 px-2 text-xs"
-                      onClick={() => {
-                        setEntryDate(undefined)
-                        setExitDate(undefined)
-                      }}
-                    >
-                      Clear
-                    </Button>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-primary h-auto py-0.5 px-2 text-xs"
+                    onClick={() => {
+                      setEntryDate(undefined)
+                      setExitDate(undefined)
+                    }}
+                  >
+                    Clear
+                  </Button>
                 </div>
               )}
 
