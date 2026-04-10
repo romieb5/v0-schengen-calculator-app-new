@@ -132,7 +132,7 @@ export function RecordedStaysView({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-primary h-auto py-0.5 px-2 text-xs"
+                    className="text-primary h-auto py-0.5 px-2 text-xs border border-border"
                     onClick={() => {
                       setEntryDate(undefined)
                       setExitDate(undefined)

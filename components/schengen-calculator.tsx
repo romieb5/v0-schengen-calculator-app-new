@@ -1075,7 +1075,7 @@ export function SchengenCalculator() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm border border-border"
                   onClick={() => {
                     setEditDialogEntry(null)
                     setEditDialogExit(null)
@@ -1167,7 +1167,7 @@ export function SchengenCalculator() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm"
+                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm border border-border"
                   onClick={() => {
                     setEditProposedDialogEntry(null)
                     setEditProposedDialogExit(null)
