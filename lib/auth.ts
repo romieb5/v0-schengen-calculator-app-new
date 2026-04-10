@@ -42,6 +42,9 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    // Accept both www and non-www
+    "https://www.schengenmonitor.com",
+    "https://schengenmonitor.com",
     // Allow Vercel preview deployments
     ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
     ...(process.env.VERCEL_BRANCH_URL ? [`https://${process.env.VERCEL_BRANCH_URL}`] : []),

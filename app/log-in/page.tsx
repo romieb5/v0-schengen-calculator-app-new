@@ -52,7 +52,7 @@ export default function SignInPage() {
           } else if (code === "EMAIL_NOT_VERIFIED" || code === "FORBIDDEN") {
             setError("Please verify your email before logging in. Check your inbox for a verification link.")
           } else {
-            setError(`Invalid email or password (debug: ${code || "no code"}, ${result.error.message || "no message"}, origin: ${window.location.origin})`)
+            setError("Invalid email or password")
           }
           setIsLoading(false)
           return
