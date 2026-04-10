@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ThreeMonthCalendar } from "./three-month-calendar"
 import { TimelineVisualization, type TimelineVisualizationHandle } from "./timeline-visualization"
-import { CalendarIcon, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play } from "lucide-react"
+import { CalendarIcon, CalendarCheck, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play, Hash, ShieldCheck, Check } from "lucide-react"
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
@@ -697,6 +697,32 @@ export function SchengenCalculator() {
                   <PlusCircle className="mr-2 h-3 w-3 sm:h-4 w-4 flex-shrink-0" />
                   Add Proposed Trip
                 </Button>
+
+                {proposedTripResults.length === 0 && (
+                  <div className="border-[1.5px] border-dashed border-border rounded-lg bg-muted/30 p-5 flex flex-col items-center gap-4">
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <CalendarCheck className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm text-muted-foreground">
+                        No proposed trips yet.<br />Add one to verify compliance before you book.
+                      </p>
+                    </div>
+                    <div className="w-full h-px bg-border" />
+                    <ul className="flex flex-col gap-3 self-start">
+                      <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <Check className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+                        <span>Check compliance before booking flights</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <Hash className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+                        <span>See exactly how many days you can stay</span>
+                      </li>
+                      <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <ShieldCheck className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+                        <span>Avoid overstay penalties at the border</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
 
                 {proposedTripResults.length > 0 && (
                   <div className="space-y-3 pt-4 border-t">
