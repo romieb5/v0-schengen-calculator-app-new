@@ -1145,25 +1145,36 @@ export function SchengenCalculator() {
           />
 
           <div className="space-y-3">
-            {editProposedDialogEntry && (
-              <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
-                <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
-                  <div>
-                    <span className="font-medium">Entry:</span>{" "}
-                    <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
-                  </div>
-                  {editProposedDialogExit && (
+            <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
+              <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
+                {editProposedDialogEntry ? (
+                  <>
                     <div>
-                      <span className="font-medium">Exit:</span>{" "}
-                      <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
+                      <span className="font-medium">Entry:</span>{" "}
+                      <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
                     </div>
-                  )}
-                  {editProposedDialogExit && (
-                    <span className="font-semibold text-primary">
-                      {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
-                    </span>
-                  )}
-                </div>
+                    {editProposedDialogExit ? (
+                      <div>
+                        <span className="font-medium">Exit:</span>{" "}
+                        <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="font-medium">Exit:</span>{" "}
+                        <span className="text-muted-foreground/50">Select date</span>
+                      </div>
+                    )}
+                    {editProposedDialogExit && (
+                      <span className="font-semibold text-primary">
+                        {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-muted-foreground/50">Select entry and exit dates</span>
+                )}
+              </div>
+              {editProposedDialogEntry && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -1175,40 +1186,42 @@ export function SchengenCalculator() {
                 >
                   Clear
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
 
-            {currentDialogProposedResult && (
-              <Alert
-                className={cn(
-                  "border-2",
-                  !currentDialogProposedResult.isLegal
-                    ? "border-destructive bg-destructive/10"
-                    : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
-                      ? "border-warning bg-warning/10"
-                      : "border-success bg-success/10",
-                )}
-              >
-                {!currentDialogProposedResult.isLegal ? (
-                  <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-                ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
-                  <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
-                ) : (
-                  <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                )}
-                {!currentDialogProposedResult.isLegal && (
-                  <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
-                )}
-                <AlertDescription className="font-medium text-foreground">
-                  {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
-                    <div key={idx}>
-                      {sentence}
-                      {idx < arr.length - 1 ? "." : ""}
-                    </div>
-                  ))}
-                </AlertDescription>
-              </Alert>
-            )}
+            <div className="min-h-[60px]">
+              {currentDialogProposedResult && (
+                <Alert
+                  className={cn(
+                    "border-2",
+                    !currentDialogProposedResult.isLegal
+                      ? "border-destructive bg-destructive/10"
+                      : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
+                        ? "border-warning bg-warning/10"
+                        : "border-success bg-success/10",
+                  )}
+                >
+                  {!currentDialogProposedResult.isLegal ? (
+                    <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+                  ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
+                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
+                  ) : (
+                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
+                  )}
+                  {!currentDialogProposedResult.isLegal && (
+                    <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
+                  )}
+                  <AlertDescription className="font-medium text-foreground">
+                    {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
+                      <div key={idx}>
+                        {sentence}
+                        {idx < arr.length - 1 ? "." : ""}
+                      </div>
+                    ))}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
 
             <div className="flex gap-3 justify-end">
               <Button
