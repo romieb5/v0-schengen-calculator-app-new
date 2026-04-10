@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { PlusCircle, CheckCircle2, AlertTriangle, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
+import { PlusCircle, CheckCircle2, AlertTriangle, Pencil, Trash2, Eye, EyeOff, CalendarCheck, Check, Hash, ShieldCheck } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
@@ -44,6 +44,33 @@ export function ProposedTripsView({
         <PlusCircle className="h-4 w-4 mr-2" />
         Add Proposed Trip
       </Button>
+
+      {/* Empty state */}
+      {proposedTripResults.length === 0 && (
+        <div className="border-[1.5px] border-dashed border-border rounded-lg bg-muted/30 p-5 flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center text-center gap-2">
+            <CalendarCheck className="h-7 w-7 text-muted-foreground/40" />
+            <p className="text-sm text-muted-foreground">
+              No proposed trips yet.<br />Add one to verify compliance before you book.
+            </p>
+          </div>
+          <div className="w-full h-px bg-border" />
+          <ul className="flex flex-col gap-3">
+            <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+              <Check className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+              <span>Check compliance before booking flights</span>
+            </li>
+            <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+              <Hash className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+              <span>See exactly how many days you can stay</span>
+            </li>
+            <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
+              <span>Avoid overstay penalties at the border</span>
+            </li>
+          </ul>
+        </div>
+      )}
 
       {/* Saved proposed trips */}
       {proposedTripResults.length > 0 && (

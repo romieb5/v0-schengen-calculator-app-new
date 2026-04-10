@@ -707,7 +707,7 @@ export function SchengenCalculator() {
                       </p>
                     </div>
                     <div className="w-full h-px bg-border" />
-                    <ul className="flex flex-col gap-3 self-start">
+                    <ul className="flex flex-col gap-3">
                       <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
                         <Check className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary" />
                         <span>Check compliance before booking flights</span>
