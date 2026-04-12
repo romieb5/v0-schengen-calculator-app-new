@@ -8,10 +8,12 @@ import { posts, getPostBySlug, getRelatedPosts } from "@/lib/blog"
 // Import post content components
 import { Content as DigitalNomadContent } from "@/lib/blog/posts/digital-nomad-schengen-compliance"
 import { Content as OverstayContent } from "@/lib/blog/posts/schengen-overstay-consequences"
+import { Content as EesContent } from "@/lib/blog/posts/ees-entry-exit-system"
 
 const contentMap: Record<string, React.ComponentType> = {
   "digital-nomad-schengen-compliance": DigitalNomadContent,
   "schengen-overstay-consequences": OverstayContent,
+  "ees-entry-exit-system": EesContent,
 }
 
 // Table of contents per post
@@ -23,6 +25,15 @@ const tocMap: Record<string, { id: string; label: string }[]> = {
     { id: "planning-your-exit", label: "Planning Your Exit" },
     { id: "where-to-reset", label: "Where to Reset" },
     { id: "getting-started", label: "Getting Started" },
+  ],
+  "ees-entry-exit-system": [
+    { id: "what-is-ees", label: "What Exactly Is EES?" },
+    { id: "what-happens-at-the-border", label: "At the Border Now" },
+    { id: "no-more-passport-stamps", label: "Passport Stamps" },
+    { id: "why-this-matters", label: "Why This Matters" },
+    { id: "the-rocky-start", label: "The Rocky Start" },
+    { id: "what-about-etias", label: "What About ETIAS?" },
+    { id: "how-to-prepare", label: "The Bottom Line" },
   ],
   "schengen-overstay-consequences": [
     { id: "what-counts-as-overstaying", label: "What Counts as Overstaying?" },

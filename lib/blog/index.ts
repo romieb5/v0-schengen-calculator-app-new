@@ -23,6 +23,18 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "ees-entry-exit-system",
+    title: "The EU's New Entry/Exit System (EES) Is Live. Here's What Changed.",
+    excerpt:
+      "After years of delays, Europe's digital border system went live on April 10, 2026. No more passport stamps, and every entry and exit is now tracked automatically.",
+    category: "Border Control",
+    date: "2026-04-12",
+    readTime: "5 min read",
+    featured: true,
+    heroImage: "/blog/ees-system-hero.jpg",
+    author: authors.romie,
+  },
+  {
     slug: "schengen-overstay-consequences",
     title: "What Happens If You Overstay in the Schengen Area (And How to Make Sure You Don't)",
     excerpt:
@@ -30,7 +42,7 @@ export const posts: BlogPost[] = [
     category: "Compliance",
     date: "2026-04-03",
     readTime: "5 min read",
-    featured: true,
+    featured: false,
     heroImage: "/blog/overstay-consequences-hero.jpg",
     author: authors.romie,
   },
