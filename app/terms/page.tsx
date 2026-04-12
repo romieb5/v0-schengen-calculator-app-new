@@ -60,10 +60,9 @@ export default function TermsPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">3. Disclaimer of Warranties and Limitation of Liability</h2>
 
-          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-3 text-destructive">IMPORTANT LEGAL DISCLAIMER</h3>
-            <p className="font-semibold mb-3">THIS SERVICE IS PROVIDED "AS IS" WITHOUT ANY WARRANTIES OF ANY KIND.</p>
-          </div>
+          <p className="mb-6 text-muted-foreground">
+            This service is provided &ldquo;as is&rdquo; without any warranties of any kind.
+          </p>
 
           <h3 className="text-xl font-semibold mb-3">3.1 No Legal Advice</h3>
           <p className="mb-4">
