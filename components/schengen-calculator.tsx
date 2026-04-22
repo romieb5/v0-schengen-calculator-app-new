@@ -1189,59 +1189,72 @@ export function SchengenCalculator() {
               )}
             </div>
 
-            <div className="min-h-[60px]">
-              {currentDialogProposedResult && (
-                <Alert
-                  className={cn(
-                    "border-2",
-                    !currentDialogProposedResult.isLegal
-                      ? "border-destructive bg-destructive/10"
-                      : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
-                        ? "border-warning bg-warning/10"
-                        : "border-success bg-success/10",
-                  )}
-                >
-                  {!currentDialogProposedResult.isLegal ? (
-                    <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-                  ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
-                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
-                  ) : (
-                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                  )}
-                  {!currentDialogProposedResult.isLegal && (
-                    <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
-                  )}
-                  <AlertDescription className="font-medium text-foreground">
-                    {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
-                      <div key={idx}>
-                        {sentence}
-                        {idx < arr.length - 1 ? "." : ""}
-                      </div>
-                    ))}
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex-1 min-w-0">
+                {currentDialogProposedResult ? (
+                  <Alert
+                    className={cn(
+                      "border-2 py-2",
+                      !currentDialogProposedResult.isLegal
+                        ? "border-destructive bg-destructive/10"
+                        : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
+                          ? "border-warning bg-warning/10"
+                          : "border-success bg-success/10",
+                    )}
+                  >
+                    {!currentDialogProposedResult.isLegal ? (
+                      <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+                    ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
+                      <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
+                    ) : (
+                      <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
+                    )}
+                    {!currentDialogProposedResult.isLegal && (
+                      <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
+                    )}
+                    <AlertDescription className="font-medium text-foreground">
+                      {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
+                        <div key={idx}>
+                          {sentence}
+                          {idx < arr.length - 1 ? "." : ""}
+                        </div>
+                      ))}
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <Alert
+                    aria-hidden="true"
+                    className="border-2 border-dashed border-border bg-muted/30 py-2"
+                  >
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/40 flex-shrink-0" />
+                    <AlertDescription className="font-medium text-muted-foreground/60">
+                      <div>Maximum days used during trip: —/90</div>
+                      <div>Days remaining after trip: —</div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
 
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEditProposedDialogOpen(false)
-                  setEditProposedDialogEntry(null)
-                  setEditProposedDialogExit(null)
-                  setEditProposedDialogId(null)
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={saveProposedTrip}
-                disabled={!editProposedDialogEntry || !editProposedDialogExit}
-                className="font-semibold shadow-md hover:shadow-lg transition-shadow"
-              >
-                {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
-              </Button>
+              <div className="flex gap-3 justify-end sm:flex-shrink-0">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEditProposedDialogOpen(false)
+                    setEditProposedDialogEntry(null)
+                    setEditProposedDialogExit(null)
+                    setEditProposedDialogId(null)
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={saveProposedTrip}
+                  disabled={!editProposedDialogEntry || !editProposedDialogExit}
+                  className="font-semibold shadow-md hover:shadow-lg transition-shadow"
+                >
+                  {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
