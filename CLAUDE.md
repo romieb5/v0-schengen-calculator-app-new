@@ -139,10 +139,27 @@ See `.env.example` for the full list. Key groups:
 - **Stripe:** `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
 - **Rate limiting (production):** `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 
+## Image Handling
+
+All images committed to `public/` (especially `public/blog/`) must be WebP. Convert before committing — never commit raw JPG/PNG from the user.
+
+Use `cwebp` (already installed). Pick settings by image role:
+
+- **Hero / photographic blog images:** `cwebp -q 85 -sharp_yuv -resize 1800 0 input.jpg -o output.webp`. Width capped at 1800px covers the largest render size (post hero at ~900px display × 2x DPR) while keeping file sizes small. Do not resize if the source is already smaller.
+- **UI screenshots (dashboards, calculator captures):** `cwebp -lossless -m 6 input.png -o output.webp`. Lossless keeps text crisp and typically still beats PNG by 5–8x.
+- **Avatars / small icons under 300px:** `cwebp -q 90 -sharp_yuv input.jpg -o output.webp`. No resize needed.
+
+After converting:
+1. Delete the original JPG/PNG so the repo only carries the WebP.
+2. Update every code reference (image manifests like `lib/blog/index.ts`, inline `<Image src>` props) to point at the new `.webp` path.
+3. Verify with `grep -rn "\.jpg\|\.png" lib/blog app/blog components` — should return nothing for the migrated files.
+
+Next.js's `<Image>` component serves WebP directly, so no `<picture>` fallback or dual-format is needed.
+
 ## Notes
 
 - No test framework configured
 - Origin: initially built with v0.app, now maintained in this repo
 - Images are unoptimized (configured in next.config.mjs)
 - TypeScript build errors are ignored in next.config.mjs
-- 5 pre-existing TS errors in schengen-calculator.tsx (type mismatches — not from our changes)
+- 5 pre-existing TS errors in schengen-calculator.tsx (type mismatches, not from our changes)
