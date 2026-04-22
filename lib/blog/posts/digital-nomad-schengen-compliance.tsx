@@ -56,7 +56,7 @@ export function Content() {
 
       <div className="my-8">
         <Image
-          src="/blog/timeline-screenshot.png"
+          src="/blog/timeline-screenshot.webp"
           alt="Schengen Monitor timeline visualization showing stays across a 180-day rolling window with 86 days used and 4 days left"
           width={1200}
           height={400}
