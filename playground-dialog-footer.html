@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dialog Footer Variants — Schengen Monitor Playground</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #0a0a0a;
+    --muted: #f5f5f5;
+    --muted-fg: #737373;
+    --border: #e5e5e5;
+    --card: #ffffff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --success-border: rgba(22, 163, 74, 0.35);
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --warning-border: rgba(217, 119, 6, 0.35);
+    --destructive: #dc2626;
+    --destructive-bg: #fef2f2;
+    --destructive-border: rgba(220, 38, 38, 0.35);
+    --ring: #0a0a0a;
+  }
+  [data-theme="dark"] {
+    --bg: #0a0a0a;
+    --fg: #fafafa;
+    --muted: #171717;
+    --muted-fg: #a3a3a3;
+    --border: #262626;
+    --card: #0f0f0f;
+    --success: #22c55e;
+    --success-bg: rgba(34, 197, 94, 0.08);
+    --success-border: rgba(34, 197, 94, 0.4);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.08);
+    --warning-border: rgba(245, 158, 11, 0.4);
+    --destructive: #ef4444;
+    --destructive-bg: rgba(239, 68, 68, 0.08);
+    --destructive-border: rgba(239, 68, 68, 0.4);
+    --ring: #fafafa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: background 0.2s, color 0.2s;
+  }
+  .app {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 28px 48px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    gap: 24px;
+  }
+  .header-left { flex: 1; max-width: 780px; }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--muted-fg);
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 13px;
+  }
+  .legend-item {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .legend-item strong {
+    font-weight: 700;
+    color: var(--fg);
+    min-width: 14px;
+  }
+  .legend-item span { color: var(--muted-fg); }
+
+  .theme-toggle {
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .theme-toggle:hover { background: var(--muted); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 84px repeat(3, minmax(300px, 1fr));
+    gap: 14px 16px;
+    margin-bottom: 40px;
+  }
+  .col-header {
+    font-weight: 600;
+    padding: 4px 0 10px;
+    color: var(--muted-fg);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .col-header strong {
+    color: var(--fg);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .row-label {
+    font-size: 11px;
+    color: var(--muted-fg);
+    padding-top: 18px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .cell { display: flex; flex-direction: column; }
+  .mini-dialog {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    transition: outline 0.15s, box-shadow 0.2s;
+  }
+  .calendar-placeholder {
+    background: var(--muted);
+    color: var(--muted-fg);
+    font-size: 10.5px;
+    padding: 7px 14px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .mini-body {
+    padding: 14px;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12.5px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--muted); }
+  .btn-primary {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .btn-primary:hover { opacity: 0.9; background: var(--fg); }
+  .btn-icon {
+    height: 24px;
+    width: 24px;
+    padding: 0;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--muted-fg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .btn-icon:hover { color: var(--fg); background: var(--muted); }
+  .btn-link {
+    background: transparent;
+    border: none;
+    color: var(--muted-fg);
+    font-size: 12px;
+    padding: 0;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .btn-link:hover { color: var(--fg); }
+
+  /* ===== Variant A: Unified card + accent bar ===== */
+  .va-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+  }
+  .va-card.kind-success { border-color: var(--success-border); }
+  .va-card.kind-warning { border-color: var(--warning-border); }
+  .va-card.kind-destructive { border-color: var(--destructive-border); }
+  .va-accent {
+    width: 3px;
+    flex-shrink: 0;
+    background: var(--border);
+  }
+  .va-card.kind-success .va-accent { background: var(--success); }
+  .va-card.kind-warning .va-accent { background: var(--warning); }
+  .va-card.kind-destructive .va-accent { background: var(--destructive); }
+  .va-content { flex: 1; display: flex; flex-direction: column; }
+  .va-row {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+  }
+  .va-row + .va-row { border-top: 1px solid var(--border); }
+  .va-row-dates { justify-content: space-between; min-height: 40px; }
+  .va-dates-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .va-dates-inline .lbl { font-weight: 500; }
+  .va-dates-inline .val { color: var(--muted-fg); }
+  .va-dates-inline .days {
+    font-weight: 700;
+    color: var(--fg);
+    margin-left: 2px;
+  }
+  .va-placeholder { color: var(--muted-fg); font-style: italic; }
+  .va-row-feedback { align-items: flex-start; }
+  .va-row-feedback.kind-success { background: var(--success-bg); }
+  .va-row-feedback.kind-warning { background: var(--warning-bg); }
+  .va-row-feedback.kind-destructive { background: var(--destructive-bg); }
+  .va-row-feedback.kind-empty { background: var(--muted); }
+  .va-feedback-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+  .va-row-feedback.kind-empty .va-feedback-text { color: var(--muted-fg); }
+  .va-feedback-title { font-weight: 700; }
+
+  .va-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ===== Variant B: Flattened ===== */
+  .vb-dates {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 2px 4px;
+    gap: 10px;
+    min-height: 28px;
+    margin-bottom: 10px;
+  }
+  .vb-dates .dates-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted-fg);
+    font-size: 12.5px;
+    flex-wrap: wrap;
+  }
+  .vb-dates .lbl { font-weight: 600; color: var(--fg); }
+  .vb-dates .sep { opacity: 0.4; margin: 0 2px; }
+  .vb-dates .days { color: var(--fg); font-weight: 700; }
+  .vb-placeholder { color: var(--muted-fg); font-style: italic; font-size: 12.5px; }
+
+  .vb-alert {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+  .vb-alert.kind-empty {
+    border-style: dashed;
+    border-color: var(--border);
+    background: var(--muted);
+    color: var(--muted-fg);
+  }
+  .vb-alert.kind-success { border-color: var(--success-border); background: var(--success-bg); }
+  .vb-alert.kind-warning { border-color: var(--warning-border); background: var(--warning-bg); }
+  .vb-alert.kind-destructive { border-color: var(--destructive-border); background: var(--destructive-bg); }
+  .vb-alert .body {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .vb-alert .title { font-weight: 700; }
+
+  .vb-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ===== Variant C: Compact status bar ===== */
+  .vc-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    font-size: 12.5px;
+    line-height: 1.4;
+    min-height: 42px;
+  }
+  .vc-bar.kind-empty {
+    border-style: dashed;
+    border-color: var(--border);
+    background: var(--muted);
+    color: var(--muted-fg);
+  }
+  .vc-bar.kind-success { border-color: var(--success-border); background: var(--success-bg); }
+  .vc-bar.kind-warning { border-color: var(--warning-border); background: var(--warning-bg); }
+  .vc-bar.kind-destructive { border-color: var(--destructive-border); background: var(--destructive-bg); }
+  .vc-bar .content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    font-weight: 500;
+  }
+  .vc-bar .dates { font-weight: 700; }
+  .vc-bar .meta { color: var(--muted-fg); }
+  .vc-bar.kind-destructive .meta { color: inherit; }
+  .vc-bar .dot { opacity: 0.4; }
+  .vc-bar .lbl-destructive { font-weight: 700; color: var(--destructive); }
+
+  .vc-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Icon colors */
+  .icon { display: inline-flex; flex-shrink: 0; }
+  .icon-success { color: var(--success); }
+  .icon-warning { color: var(--warning); }
+  .icon-destructive { color: var(--destructive); }
+  .icon-muted { color: var(--muted-fg); opacity: 0.5; }
+
+  /* Highlighted cell */
+  .cell.highlighted .mini-dialog {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* Variant picker + prompt footer */
+  .footer-section {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .footer-section h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .variant-picker {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .picker-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .picker-btn:hover { background: var(--muted); }
+  .picker-btn.selected {
+    border-color: var(--ring);
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .prompt-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-family: ui-monospace, "SF Mono", Monaco, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--fg);
+    margin-bottom: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { opacity: 0.9; }
+  .copy-btn.copied { background: var(--success); color: white; }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .col-header { display: none; }
+    .row-label { padding-top: 24px; padding-bottom: 4px; }
+    .cell::before {
+      content: attr(data-variant-label);
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-fg);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-left">
+      <h1>Proposed Trip Dialog — Footer Variants</h1>
+      <p class="subtitle">Three ways to unify the date summary, compliance feedback, and action buttons below the calendar.</p>
+      <div class="legend">
+        <div class="legend-item"><strong>A</strong><span>Unified summary card with a colored left accent bar + dedicated footer row below</span></div>
+        <div class="legend-item"><strong>B</strong><span>Flattened — plain inline Entry/Exit text, only the compliance Alert stays a container</span></div>
+        <div class="legend-item"><strong>C</strong><span>Compact single-line status bar merging dates + feedback, footer below</span></div>
+      </div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="footer-section">
+    <h2>Pick a variant to generate an implementation prompt</h2>
+    <div class="variant-picker">
+      <button class="picker-btn" data-variant="A" onclick="selectVariant('A')">Choose A — Unified card</button>
+      <button class="picker-btn" data-variant="B" onclick="selectVariant('B')">Choose B — Flattened</button>
+      <button class="picker-btn" data-variant="C" onclick="selectVariant('C')">Choose C — Status bar</button>
+    </div>
+    <pre class="prompt-box" id="prompt">Select a variant above to generate an instruction for Claude Code.</pre>
+    <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">Copy Prompt</button>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  warn: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  dot: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 3"><circle cx="12" cy="12" r="10"/></svg>',
+  x: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+};
+
+const STATES = [
+  { id: 'empty',      label: 'Empty',      kind: 'empty',       data: null },
+  { id: 'compliant',  label: 'Compliant',  kind: 'success',     data: { max: 5,  rem: 85, days: 5 } },
+  { id: 'warning',    label: 'Warning',    kind: 'warning',     data: { max: 85, rem: 5,  days: 9 } },
+  { id: 'over',       label: 'Over limit', kind: 'destructive', data: { max: 95, rem: -5, days: 12, illegal: true } },
+];
+
+let selected = null;
+
+function iconFor(kind) {
+  if (kind === 'success')     return `<span class="icon icon-success">${ICONS.check}</span>`;
+  if (kind === 'warning')     return `<span class="icon icon-warning">${ICONS.warn}</span>`;
+  if (kind === 'destructive') return `<span class="icon icon-destructive">${ICONS.warn}</span>`;
+  return `<span class="icon icon-muted">${ICONS.dot}</span>`;
+}
+
+function renderVariantA(state) {
+  const { kind, data } = state;
+  const datesHtml = data
+    ? `<div class="va-dates-inline">
+         <span><span class="lbl">Entry:</span> <span class="val">Apr 16, 2026</span></span>
+         <span><span class="lbl">Exit:</span> <span class="val">Apr 20, 2026</span></span>
+         <span class="days">${data.days}d</span>
+       </div>
+       <button class="btn-icon" title="Clear dates">${ICONS.x}</button>`
+    : `<span class="va-placeholder">Select entry and exit dates</span>`;
+
+  const feedbackHtml = data
+    ? `${iconFor(kind)}
+       <div class="va-feedback-text">
+         ${kind === 'destructive' ? '<span class="va-feedback-title">Trip Exceeds Limit</span>' : ''}
+         <div>Maximum days used during trip: ${data.max}/90</div>
+         <div>Days remaining after trip: ${data.rem}</div>
+       </div>`
+    : `${iconFor('empty')}
+       <div class="va-feedback-text">
+         <div>Maximum days used during trip: —/90</div>
+         <div>Days remaining after trip: —</div>
+       </div>`;
+
+  return `
+    <div class="va-card kind-${kind}">
+      <div class="va-accent"></div>
+      <div class="va-content">
+        <div class="va-row va-row-dates">${datesHtml}</div>
+        <div class="va-row va-row-feedback kind-${kind}">${feedbackHtml}</div>
+      </div>
+    </div>
+    <div class="va-footer">
+      <button class="btn">Cancel</button>
+      <button class="btn btn-primary">Add Proposed Trip</button>
+    </div>
+  `;
+}
+
+function renderVariantB(state) {
+  const { kind, data } = state;
+  const datesHtml = data
+    ? `<div class="dates-text">
+         <span class="lbl">Entry:</span><span>Apr 16</span>
+         <span class="sep">·</span>
+         <span class="lbl">Exit:</span><span>Apr 20</span>
+         <span class="sep">·</span>
+         <span class="days">${data.days}d</span>
+       </div>
+       <button class="btn-link">Clear</button>`
+    : `<span class="vb-placeholder">Select entry and exit dates</span>`;
+
+  const alertHtml = data
+    ? `<div class="vb-alert kind-${kind}">
+         ${iconFor(kind)}
+         <div class="body">
+           ${kind === 'destructive' ? '<span class="title">Trip Exceeds Limit</span>' : ''}
+           <div>Maximum days used during trip: ${data.max}/90</div>
+           <div>Days remaining after trip: ${data.rem}</div>
+         </div>
+       </div>`
+    : `<div class="vb-alert kind-empty">
+         ${iconFor('empty')}
+         <div class="body">
+           <div>Maximum days used during trip: —/90</div>
+           <div>Days remaining after trip: —</div>
+         </div>
+       </div>`;
+
+  return `
+    <div class="vb-dates">${datesHtml}</div>
+    ${alertHtml}
+    <div class="vb-footer">
+      <button class="btn">Cancel</button>
+      <button class="btn btn-primary">Add Proposed Trip</button>
+    </div>
+  `;
+}
+
+function renderVariantC(state) {
+  const { kind, data } = state;
+  const content = data
+    ? `${iconFor(kind)}
+       <div class="content">
+         ${kind === 'destructive' ? '<span class="lbl-destructive">Exceeds limit:</span>' : ''}
+         <span class="dates">Apr 16 → Apr 20</span>
+         <span class="dot">·</span>
+         <span>${data.days}d</span>
+         <span class="dot">·</span>
+         <span class="meta">${data.max}/90 used</span>
+         <span class="dot">·</span>
+         <span class="meta">${data.rem} remaining</span>
+       </div>
+       <button class="btn-icon" title="Clear dates">${ICONS.x}</button>`
+    : `${iconFor('empty')}
+       <div class="content"><span>Select entry and exit dates to check compliance</span></div>`;
+
+  return `
+    <div class="vc-bar kind-${kind}">${content}</div>
+    <div class="vc-footer">
+      <button class="btn">Cancel</button>
+      <button class="btn btn-primary">Add Proposed Trip</button>
+    </div>
+  `;
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  let html = '';
+  html += '<div></div>';
+  html += '<div class="col-header"><strong>A</strong> Unified card</div>';
+  html += '<div class="col-header"><strong>B</strong> Flattened</div>';
+  html += '<div class="col-header"><strong>C</strong> Status bar</div>';
+
+  for (const state of STATES) {
+    html += `<div class="row-label">${state.label}</div>`;
+    const variants = [
+      { letter: 'A', label: 'Variant A · Unified card', render: renderVariantA },
+      { letter: 'B', label: 'Variant B · Flattened', render: renderVariantB },
+      { letter: 'C', label: 'Variant C · Status bar', render: renderVariantC },
+    ];
+    for (const v of variants) {
+      html += `<div class="cell" data-variant="${v.letter}" data-variant-label="${v.label}">
+        <div class="mini-dialog">
+          <div class="calendar-placeholder">↑ calendar renders above</div>
+          <div class="mini-body">${v.render(state)}</div>
+        </div>
+      </div>`;
+    }
+  }
+  grid.innerHTML = html;
+}
+
+const DESCRIPTIONS = {
+  A: `Refactor the footer area of the "Add Proposed Trip" dialog (components/schengen-calculator.tsx, around lines 1145–1260) to use **Variant A — Unified summary card + dedicated footer**:
+
+1. Replace the current muted Entry/Exit pill + Alert + button row with a single card:
+   - Outer card: \`border rounded-lg overflow-hidden flex\` with a 3px left accent bar that changes color by state (border/muted for empty, success/warning/destructive otherwise).
+   - Top row inside the card: Entry/Exit/day-count on the left, replace the "Clear" outline button with a small icon-only X button (\`h-6 w-6\`, ghost) on the right. Empty state shows "Select entry and exit dates" in muted italic.
+   - Divider (\`border-t\`) then the feedback row with the status icon, tinted bg (\`bg-success-bg\` / \`bg-warning-bg\` / \`bg-destructive-bg\` / \`bg-muted\` for empty), two-line copy, and a "Trip Exceeds Limit" bold title only when illegal. Use em-dashes in the empty state.
+2. Below the card, render a dedicated footer: \`mt-3 pt-3 border-t flex justify-end gap-2\` with Cancel + Add Proposed Trip both at a uniform \`h-10\`.
+3. Apply the same pattern to the Edit Stay dialog's footer if it has matching rows — the goal is a consistent footer language across dialogs.
+4. Preserve all existing behavior: disabled state on Add while dates are incomplete, same onClick handlers, same labels (Edit vs Add).`,
+
+  B: `Refactor the footer area of the "Add Proposed Trip" dialog (components/schengen-calculator.tsx, around lines 1145–1260) to use **Variant B — Flattened / minimalist**:
+
+1. Remove the muted Entry/Exit pill entirely. Replace with a plain inline row:
+   \`Entry: Apr 16  ·  Exit: Apr 20  ·  5d\`
+   using subtle separators (\`opacity-40\`) and default text weight. Labels bolded, values in muted-fg, day count in fg-bold.
+2. Replace the "Clear" outline button with a small underlined text link (\`text-muted-foreground hover:text-foreground text-xs underline underline-offset-4\`) aligned to the right of the same row.
+3. Empty state: show "Select entry and exit dates" in muted italic in place of the inline row.
+4. Keep the compliance feedback as the ONLY container — a 1.5px bordered Alert with tinted background, status icon, two-line copy. Dashed border for the empty state with em-dashes. Bold "Trip Exceeds Limit" title only when illegal.
+5. Below, a footer row with \`mt-3 pt-3 border-t flex justify-end gap-2\` and uniform \`h-10\` Cancel + Add Proposed Trip buttons.
+6. Preserve all existing behavior and handlers.`,
+
+  C: `Refactor the footer area of the "Add Proposed Trip" dialog (components/schengen-calculator.tsx, around lines 1145–1260) to use **Variant C — Compact status bar**:
+
+1. Collapse the Entry/Exit summary AND compliance feedback into a SINGLE horizontal status bar:
+   \`[icon] Apr 16 → Apr 20 · 5d · 5/90 used · 85 remaining [×]\`
+   with a 1.5px status-colored border and tinted background (success/warning/destructive). Icon on the left (CheckCircle2 or AlertTriangle), inline \`h-6 w-6\` ghost X button on the right that clears the selection.
+2. When the trip is illegal, prefix the bar with a bold "Exceeds limit:" label but keep the bar single-line where possible (wrap gracefully on narrow widths).
+3. Empty state: same bar with a dashed border, muted background, and text "Select entry and exit dates to check compliance" — no trailing X button.
+4. Below, a footer row: \`mt-3 pt-3 border-t flex justify-end gap-2\` with uniform \`h-10\` Cancel + Add Proposed Trip.
+5. This is the most vertically compact option — good if reducing modal height is the top priority. Expect the modal to be ~60–80px shorter than today.
+6. Preserve all existing behavior and handlers.`,
+};
+
+function selectVariant(v) {
+  selected = v;
+  document.querySelectorAll('.picker-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.variant === v);
+  });
+  document.querySelectorAll('.cell').forEach(cell => {
+    cell.classList.toggle('highlighted', cell.dataset.variant === v);
+  });
+  document.getElementById('prompt').textContent = DESCRIPTIONS[v];
+}
+
+function copyPrompt() {
+  const btn = document.getElementById('copyBtn');
+  const text = document.getElementById('prompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy Prompt';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+
+buildGrid();
+</script>
+</body>
+</html>

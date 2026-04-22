@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ThreeMonthCalendar } from "./three-month-calendar"
 import { TimelineVisualization, type TimelineVisualizationHandle } from "./timeline-visualization"
-import { CalendarIcon, CalendarCheck, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play, Hash, ShieldCheck, Check } from "lucide-react"
+import { CalendarIcon, CalendarCheck, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play, Hash, ShieldCheck, Check, X } from "lucide-react"
 import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
@@ -1148,116 +1148,117 @@ export function SchengenCalculator() {
           />
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
-              <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2">
-                {editProposedDialogEntry ? (
-                  <>
-                    <div>
-                      <span className="font-medium">Entry:</span>{" "}
-                      <span className="text-muted-foreground">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
-                    </div>
-                    {editProposedDialogExit ? (
-                      <div>
-                        <span className="font-medium">Exit:</span>{" "}
-                        <span className="text-muted-foreground">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
-                      </div>
-                    ) : (
-                      <div>
-                        <span className="font-medium">Exit:</span>{" "}
-                        <span className="text-muted-foreground/50">Select date</span>
-                      </div>
-                    )}
-                    {editProposedDialogExit && (
-                      <span className="font-semibold text-primary">
-                        {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-muted-foreground/50">Select entry and exit dates</span>
-                )}
-              </div>
-              {editProposedDialogEntry && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-primary h-auto py-0.5 px-2 text-xs sm:text-sm border border-border"
-                  onClick={() => {
-                    setEditProposedDialogEntry(null)
-                    setEditProposedDialogExit(null)
-                  }}
-                >
-                  Clear
-                </Button>
-              )}
-            </div>
+            {(() => {
+              const hasDates = !!editProposedDialogEntry && !!editProposedDialogExit
+              const kind =
+                !currentDialogProposedResult
+                  ? "empty"
+                  : !currentDialogProposedResult.isLegal
+                    ? "destructive"
+                    : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
+                      ? "warning"
+                      : "success"
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                {currentDialogProposedResult ? (
-                  <Alert
-                    className={cn(
-                      "border-2 py-2",
-                      !currentDialogProposedResult.isLegal
-                        ? "border-destructive bg-destructive/10"
-                        : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10
-                          ? "border-warning bg-warning/10"
-                          : "border-success bg-success/10",
+              const barClass = cn(
+                "flex items-start gap-3 rounded-lg border-[1.5px] px-3 py-2.5 text-xs sm:text-sm",
+                kind === "empty" && "border-dashed border-border bg-muted/30",
+                kind === "success" && "border-success/40 bg-success/10",
+                kind === "warning" && "border-warning/40 bg-warning/10",
+                kind === "destructive" && "border-destructive/40 bg-destructive/10",
+              )
+
+              const usedMatch = currentDialogProposedResult?.message.match(/(\-?\d+)\/90/)
+              const daysUsed = usedMatch ? usedMatch[1] : null
+              const daysRemaining = currentDialogProposedResult?.daysRemaining
+
+              return (
+                <div className={barClass}>
+                  {kind === "destructive" ? (
+                    <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                  ) : kind === "warning" ? (
+                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+                  ) : kind === "success" ? (
+                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/40 flex-shrink-0 mt-0.5" />
+                  )}
+
+                  <div className="flex-1 min-w-0 flex flex-col gap-0.5 font-medium">
+                    {kind === "destructive" && (
+                      <div className="font-bold text-foreground">Trip Exceeds Limit</div>
                     )}
-                  >
-                    {!currentDialogProposedResult.isLegal ? (
-                      <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-                    ) : currentDialogProposedResult.daysRemaining !== undefined && currentDialogProposedResult.daysRemaining <= 10 ? (
-                      <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
-                    ) : (
-                      <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                    )}
-                    {!currentDialogProposedResult.isLegal && (
-                      <AlertTitle className="font-bold text-foreground">Trip Exceeds Limit</AlertTitle>
-                    )}
-                    <AlertDescription className="font-medium text-foreground">
-                      {currentDialogProposedResult.message.split(". ").map((sentence, idx, arr) => (
-                        <div key={idx}>
-                          {sentence}
-                          {idx < arr.length - 1 ? "." : ""}
+                    {hasDates && editProposedDialogEntry && editProposedDialogExit ? (
+                      <>
+                        <div className="text-foreground">
+                          <span className="font-semibold">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
+                          <span className="text-muted-foreground mx-1.5">→</span>
+                          <span className="font-semibold">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
+                          <span className="text-muted-foreground mx-1.5">·</span>
+                          <span className="font-semibold text-primary">
+                            {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
+                          </span>
                         </div>
-                      ))}
-                    </AlertDescription>
-                  </Alert>
-                ) : (
-                  <Alert
-                    aria-hidden="true"
-                    className="border-2 border-dashed border-border bg-muted/30 py-2"
-                  >
-                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/40 flex-shrink-0" />
-                    <AlertDescription className="font-medium text-muted-foreground/60">
-                      <div>Maximum days used during trip: —/90</div>
-                      <div>Days remaining after trip: —</div>
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </div>
+                        <div className="text-foreground">
+                          <span>{daysUsed ?? "—"}/90 used</span>
+                          <span className="text-muted-foreground mx-1.5">·</span>
+                          <span>{daysRemaining ?? "—"} remaining</span>
+                        </div>
+                      </>
+                    ) : editProposedDialogEntry ? (
+                      <>
+                        <div className="text-foreground">
+                          <span className="font-semibold">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
+                          <span className="text-muted-foreground mx-1.5">→</span>
+                          <span className="text-muted-foreground/60">Select exit date</span>
+                        </div>
+                        <div className="text-muted-foreground/60">—/90 used · — remaining</div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-muted-foreground">Select entry and exit dates</div>
+                        <div className="text-muted-foreground/60">—/90 used · — remaining</div>
+                      </>
+                    )}
+                  </div>
 
-              <div className="flex gap-3 justify-end sm:flex-shrink-0">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setEditProposedDialogOpen(false)
-                    setEditProposedDialogEntry(null)
-                    setEditProposedDialogExit(null)
-                    setEditProposedDialogId(null)
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={saveProposedTrip}
-                  disabled={!editProposedDialogEntry || !editProposedDialogExit}
-                  className="font-semibold shadow-md hover:shadow-lg transition-shadow"
-                >
-                  {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
-                </Button>
-              </div>
+                  {editProposedDialogEntry && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 flex-shrink-0 text-muted-foreground hover:text-foreground -mr-1"
+                      onClick={() => {
+                        setEditProposedDialogEntry(null)
+                        setEditProposedDialogExit(null)
+                      }}
+                      aria-label="Clear dates"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              )
+            })()}
+
+            <div className="flex gap-2 justify-end pt-3 border-t">
+              <Button
+                variant="outline"
+                className="h-10"
+                onClick={() => {
+                  setEditProposedDialogOpen(false)
+                  setEditProposedDialogEntry(null)
+                  setEditProposedDialogExit(null)
+                  setEditProposedDialogId(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={saveProposedTrip}
+                disabled={!editProposedDialogEntry || !editProposedDialogExit}
+                className="h-10 font-semibold shadow-md hover:shadow-lg transition-shadow"
+              >
+                {editProposedDialogId ? "Update Proposed Trip" : "Add Proposed Trip"}
+              </Button>
             </div>
           </div>
         </div>
