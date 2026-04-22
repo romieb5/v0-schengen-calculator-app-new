@@ -1193,10 +1193,6 @@ export function SchengenCalculator() {
                           <span className="font-semibold">{format(editProposedDialogEntry, "MMM d, yyyy")}</span>
                           <span className="text-muted-foreground mx-1.5">→</span>
                           <span className="font-semibold">{format(editProposedDialogExit, "MMM d, yyyy")}</span>
-                          <span className="text-muted-foreground mx-1.5">·</span>
-                          <span className="font-semibold text-primary">
-                            {differenceInDays(editProposedDialogExit, editProposedDialogEntry) + 1}d
-                          </span>
                         </div>
                         <div className="text-foreground">
                           <span>{daysUsed ?? "—"}/90 used</span>
@@ -1223,16 +1219,16 @@ export function SchengenCalculator() {
 
                   {editProposedDialogEntry && (
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 flex-shrink-0 text-muted-foreground hover:text-foreground -mr-1"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-2.5 flex-shrink-0 text-xs font-medium gap-1 bg-background/60 hover:bg-background"
                       onClick={() => {
                         setEditProposedDialogEntry(null)
                         setEditProposedDialogExit(null)
                       }}
-                      aria-label="Clear dates"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3.5 w-3.5" />
+                      Clear
                     </Button>
                   )}
                 </div>
