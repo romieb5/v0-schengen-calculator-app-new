@@ -1160,7 +1160,7 @@ export function SchengenCalculator() {
                       : "success"
 
               const barClass = cn(
-                "flex items-start gap-3 rounded-lg border-[1.5px] px-3 py-2.5 text-xs sm:text-sm",
+                "flex items-center gap-3 rounded-lg border-[1.5px] px-3 py-2.5 text-xs sm:text-sm",
                 kind === "empty" && "border-dashed border-border bg-muted/30",
                 kind === "success" && "border-success/40 bg-success/10",
                 kind === "warning" && "border-warning/40 bg-warning/10",
@@ -1174,13 +1174,13 @@ export function SchengenCalculator() {
               return (
                 <div className={barClass}>
                   {kind === "destructive" ? (
-                    <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
                   ) : kind === "warning" ? (
-                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0" />
                   ) : kind === "success" ? (
-                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
                   ) : (
-                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/40 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/40 flex-shrink-0" />
                   )}
 
                   <div className="flex-1 min-w-0 flex flex-col gap-0.5 font-medium">
