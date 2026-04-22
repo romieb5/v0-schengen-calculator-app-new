@@ -1026,7 +1026,8 @@ export function SchengenCalculator() {
 
     {/* Dialogs render on both mobile and desktop */}
     <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[640px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[640px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-hidden p-0 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-0">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">Edit Stay</DialogTitle>
           <DialogDescription className="text-sm">Update the details of your recorded stay</DialogDescription>
@@ -1110,11 +1111,13 @@ export function SchengenCalculator() {
             </div>
           </div>
         </div>
+        </div>
       </DialogContent>
     </Dialog>
 
     <Dialog open={editProposedDialogOpen} onOpenChange={setEditProposedDialogOpen}>
-      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[640px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-y-auto p-4 sm:p-6 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+      <DialogContent className="w-full h-full max-w-none max-h-none sm:max-w-2xl sm:h-auto sm:min-h-[640px] sm:max-h-[90vh] m-0 sm:m-auto rounded-none sm:rounded-lg border-0 sm:border overflow-hidden p-0 flex flex-col gap-0 [&>button]:top-3 [&>button]:right-3">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-0">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-lg sm:text-2xl">
             {editProposedDialogId ? "Edit Proposed Trip" : "Add Proposed Trip"}
@@ -1257,6 +1260,7 @@ export function SchengenCalculator() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </DialogContent>
     </Dialog>
