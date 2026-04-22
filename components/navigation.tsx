@@ -27,8 +27,7 @@ export function Navigation() {
   return (
     <>
       <nav
-        className="border-b bg-background fixed top-0 left-0 z-40"
-        style={{ right: "var(--removed-body-scroll-bar-size, 0px)" }}
+        className="border-b bg-background fixed top-0 left-0 right-0 z-40"
       >
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">

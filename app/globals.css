@@ -222,6 +222,18 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Radix Dialog uses react-remove-scroll, which applies margin-right/padding
+     to the body to compensate for a "removed" scrollbar. Since html has
+     overflow-y: scroll, the scrollbar never actually disappears — so the
+     compensation only causes a visible layout shift. Zero it out. */
+  body[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+    overflow: visible !important;
+  }
   button,
   a,
   [role="button"],
