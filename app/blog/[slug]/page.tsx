@@ -10,12 +10,14 @@ import { Content as DigitalNomadContent } from "@/lib/blog/posts/digital-nomad-s
 import { Content as OverstayContent } from "@/lib/blog/posts/schengen-overstay-consequences"
 import { Content as EesContent } from "@/lib/blog/posts/ees-entry-exit-system"
 import { Content as EtiasEesVisaContent } from "@/lib/blog/posts/etias-ees-schengen-visa-difference"
+import { Content as NomadVisas2026Content } from "@/lib/blog/posts/digital-nomad-visas-europe-2026"
 
 const contentMap: Record<string, React.ComponentType> = {
   "digital-nomad-schengen-compliance": DigitalNomadContent,
   "schengen-overstay-consequences": OverstayContent,
   "ees-entry-exit-system": EesContent,
   "etias-ees-schengen-visa-difference": EtiasEesVisaContent,
+  "digital-nomad-visas-europe-2026": NomadVisas2026Content,
 }
 
 // Table of contents per post
@@ -54,6 +56,21 @@ const tocMap: Record<string, { id: string; label: string }[]> = {
     { id: "who-needs-which", label: "Who Needs Which" },
     { id: "common-mix-ups", label: "Common Mix-Ups" },
     { id: "where-the-rule-fits", label: "Where 90/180 Fits In" },
+    { id: "bottom-line", label: "The Bottom Line" },
+  ],
+  "digital-nomad-visas-europe-2026": [
+    { id: "the-rule-after-ees", label: "After EES" },
+    { id: "how-they-work", label: "How They Work" },
+    { id: "portugal", label: "Portugal" },
+    { id: "spain", label: "Spain" },
+    { id: "italy", label: "Italy" },
+    { id: "greece", label: "Greece" },
+    { id: "croatia", label: "Croatia" },
+    { id: "estonia", label: "Estonia" },
+    { id: "budget-tier", label: "Budget Tier" },
+    { id: "premium-tier", label: "Malta & Cyprus" },
+    { id: "tax-warning", label: "Tax Reality" },
+    { id: "choosing", label: "How to Choose" },
     { id: "bottom-line", label: "The Bottom Line" },
   ],
 }

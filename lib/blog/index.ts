@@ -23,6 +23,18 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "digital-nomad-visas-europe-2026",
+    title: "Digital Nomad Visas in Europe: A 2026 Country-by-Country Comparison",
+    excerpt:
+      "Almost every Schengen country now has a digital nomad visa. Income thresholds, tax treatment, and lifestyle vary wildly. Here's how the main options actually compare in 2026.",
+    category: "Digital Nomads",
+    date: "2026-05-11",
+    readTime: "8 min read",
+    featured: true,
+    heroImage: "/blog/digital-nomad-visas-2026-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "etias-ees-schengen-visa-difference",
     title: "ETIAS, EES, and the Schengen Visa: What Each One Is and Who Actually Needs Which",
     excerpt:
@@ -30,7 +42,7 @@ export const posts: BlogPost[] = [
     category: "Border Control",
     date: "2026-04-22",
     readTime: "7 min read",
-    featured: true,
+    featured: false,
     heroImage: "/blog/etias-ees-schengen-hero.webp",
     author: authors.romie,
   },
