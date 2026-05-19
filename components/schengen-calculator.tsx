@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { ThreeMonthCalendar } from "./three-month-calendar"
 import { TimelineVisualization, type TimelineVisualizationHandle } from "./timeline-visualization"
 import { CalendarIcon, CalendarCheck, Pencil, Trash2, AlertTriangle, CheckCircle2, Info, PlusCircle, AlertCircle, Eye, EyeOff, Lock, Loader2, Pause, Play, Hash, ShieldCheck, Check, X } from "lucide-react"
-import { format, subDays, differenceInDays, isAfter, isBefore, addDays } from "date-fns"
+import { format, subDays, differenceInDays, isAfter, isBefore, addDays, startOfDay } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
 import { calculateDaysUsedForDate } from "@/lib/schengen-calculations"
@@ -93,7 +93,7 @@ export function SchengenCalculator() {
   const [exitDate, setExitDate] = useState<Date>()
   const [stayType, setStayType] = useState<"short" | "residence">("short")
   const [countryCode, setCountryCode] = useState("")
-  const [referenceDate, setReferenceDate] = useState<Date>(new Date())
+  const [referenceDate, setReferenceDate] = useState<Date>(() => startOfDay(new Date()))
   const [editingId, setEditingId] = useState<string | null>(null)
 
   const [entryPopoverOpen, setEntryPopoverOpen] = useState(false)
