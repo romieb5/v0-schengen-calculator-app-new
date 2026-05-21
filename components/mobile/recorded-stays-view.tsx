@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2, Eye, EyeOff } from "lucide-react"
-import { format, differenceInDays } from "date-fns"
+import { format, differenceInDays, subDays } from "date-fns"
 import { cn } from "@/lib/utils"
 import { SingleMonthCalendar } from "@/components/single-month-calendar"
 import { MobileStatusBar } from "@/components/mobile-status-bar"
@@ -172,6 +172,10 @@ export function RecordedStaysView({
           <div>
             <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
             <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              180-day window: {format(subDays(referenceDate, 179), "MMM d, yyyy")} to{" "}
+              {format(referenceDate, "MMM d, yyyy")}
+            </div>
           </div>
           <Button variant="outline" size="sm" className="text-xs" onClick={() => setRefSheetOpen(true)}>
             Change
