@@ -21,10 +21,14 @@ export default function SignUpPage() {
   const [honeypot, setHoneypot] = useState("")
 
   const passwordChecks = [
-    { label: "8+ characters", met: password.length >= 8 },
-    { label: "Capital letter", met: /[A-Z]/.test(password) },
-    { label: "Number", met: /[0-9]/.test(password) },
-    { label: "Special character (!@#$)", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password) },
+    { label: "8+ characters", example: "", met: password.length >= 8 },
+    { label: "Capital letter", example: "", met: /[A-Z]/.test(password) },
+    { label: "Number", example: "", met: /[0-9]/.test(password) },
+    {
+      label: "Special character",
+      example: " (!@#$)",
+      met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
+    },
   ]
 
   const allChecksMet = passwordChecks.every((check) => check.met)
@@ -69,9 +73,9 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left panel — image + overlay text */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+    <div className="relative flex min-h-screen">
+      {/* Background image — full-bleed on mobile, left half on desktop */}
+      <div className="absolute inset-0 overflow-hidden lg:relative lg:inset-auto lg:w-1/2">
         {/* Blurred placeholder – visible instantly while the full image loads */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -82,8 +86,9 @@ export default function SignUpPage() {
           alt="Vintage camera, passport, and travel journal on a world map"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-12 text-white text-center">
+        <div className="absolute inset-0 bg-black/15 lg:bg-black/30" />
+        {/* Desktop-only overlay text */}
+        <div className="relative z-10 hidden h-full w-full flex-col items-center justify-center p-12 text-center text-white lg:flex">
           <h2 className="text-3xl font-bold leading-tight [text-shadow:_0_2px_12px_rgba(0,0,0,0.7)]">
             Never overstay your Schengen visa again
           </h2>
@@ -93,10 +98,10 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* Right panel — form */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-4 sm:px-10">
+      {/* Form side */}
+      <div className="relative z-10 flex min-h-screen flex-1 flex-col">
+        {/* Top bar — desktop only */}
+        <div className="hidden items-center justify-between px-6 py-4 sm:px-10 lg:flex">
           <Link href="/" className="font-semibold text-lg">
             Schengen Monitor
           </Link>
@@ -109,8 +114,15 @@ export default function SignUpPage() {
         </div>
 
         {/* Form area */}
-        <div className="flex-1 flex items-center justify-center px-6 sm:px-10">
-          <div className="w-full max-w-sm space-y-6">
+        <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 lg:px-10 lg:py-0">
+          <div className="w-full max-w-sm rounded-3xl border bg-card p-6 shadow-2xl lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+            {/* Brand — mobile only, centered at the top of the card */}
+            <div className="mb-6 text-center lg:hidden">
+              <Link href="/" className="font-semibold text-lg">
+                Schengen Monitor
+              </Link>
+            </div>
+
             {emailSent ? (
               <div className="text-center space-y-4">
                 <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
@@ -124,75 +136,76 @@ export default function SignUpPage() {
               </div>
             ) : (
               <>
-                <div>
-                  <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
-                  <p className="mt-1 text-muted-foreground">
-                    Sign up to unlock the Timeline Visualization
-                  </p>
-                </div>
-
-                <form onSubmit={handleSubmit} action="/sign-up" method="post" className="space-y-4">
-                  {/* Honeypot — invisible to real users, bots auto-fill it */}
-                  <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden" tabIndex={-1}>
-                    <label htmlFor="website">Website</label>
-                    <input
-                      id="website"
-                      name="website"
-                      type="text"
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                      autoComplete="off"
-                      tabIndex={-1}
-                    />
+                <div className="space-y-6">
+                  <div className="text-center lg:text-left">
+                    <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
+                    <p className="mt-1 hidden text-muted-foreground lg:block">
+                      Sign up to unlock the Timeline Visualization
+                    </p>
                   </div>
 
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
+                  <form onSubmit={handleSubmit} action="/sign-up" method="post" className="space-y-4">
+                    {/* Honeypot — invisible to real users, bots auto-fill it */}
+                    <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden" tabIndex={-1}>
+                      <label htmlFor="website">Website</label>
+                      <input
+                        id="website"
+                        name="website"
+                        type="text"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                        autoComplete="off"
+                        tabIndex={-1}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      autoCapitalize="none"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      required
-                    />
-                  </div>
+                    {error && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
                       <Input
-                        id="password"
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Create a password"
-                        className="pr-10"
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        autoCapitalize="none"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
                         required
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
                     </div>
-                    {/* Password requirement indicators */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          autoComplete="new-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Create a password"
+                          className="pr-10"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      {/* Password requirement indicators */}
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
                         {passwordChecks.map((check) => (
                           <div key={check.label} className="flex items-center gap-1.5 text-xs">
                             <div
@@ -206,23 +219,33 @@ export default function SignUpPage() {
                             </div>
                             <span className={check.met ? "text-foreground" : "text-muted-foreground"}>
                               {check.label}
+                              {check.example && <span className="hidden lg:inline">{check.example}</span>}
                             </span>
                           </div>
                         ))}
                       </div>
-                  </div>
+                    </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={isLoading || !allChecksMet}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Creating account...
-                      </>
-                    ) : (
-                      "Sign up"
-                    )}
-                  </Button>
-                </form>
+                    <Button type="submit" className="w-full" size="lg" disabled={isLoading || !allChecksMet}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        "Sign up"
+                      )}
+                    </Button>
+                  </form>
+                </div>
+
+                {/* Sign-in link — mobile only, below the form */}
+                <p className="mt-6 text-center text-sm text-muted-foreground lg:hidden">
+                  Already have an account?{" "}
+                  <Link href="/log-in" className="font-medium text-foreground hover:underline">
+                    Log in
+                  </Link>
+                </p>
               </>
             )}
           </div>
@@ -230,14 +253,14 @@ export default function SignUpPage() {
 
         {/* Footer */}
         {!emailSent && (
-          <div className="px-6 py-4 sm:px-10 text-center">
-            <p className="text-xs text-muted-foreground">
+          <div className="px-4 pb-6 pt-2 text-center sm:px-6 lg:px-10 lg:py-4">
+            <p className="text-xs text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] lg:text-muted-foreground lg:drop-shadow-none">
               By signing up, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-foreground">
+              <Link href="/terms" className="underline lg:hover:text-foreground">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline hover:text-foreground">
+              <Link href="/privacy" className="underline lg:hover:text-foreground">
                 Privacy Policy
               </Link>
               .
