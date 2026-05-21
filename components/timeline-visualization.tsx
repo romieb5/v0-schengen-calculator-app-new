@@ -457,10 +457,18 @@ export const TimelineVisualization = forwardRef<TimelineVisualizationHandle, Tim
               <span className="text-xs text-muted-foreground italic">Example data shown</span>
             )}
           </div>
-          <div className={`flex flex-col gap-1 ${mobileStaticExample ? '' : 'transition-opacity duration-500'} ${showProposedTrips ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            <div className="text-xs text-muted-foreground italic">Dashed bars represent proposed trips.</div>
-            <div className="text-xs text-muted-foreground italic">
-              Reference date based on most recent proposed trip.
+          <div
+            className={`grid ${
+              mobileStaticExample ? "" : "transition-[grid-template-rows,opacity] duration-500 ease-in-out"
+            } ${showProposedTrips ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 pointer-events-none"}`}
+          >
+            <div className="overflow-hidden">
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-muted-foreground italic">Dashed bars represent proposed trips.</div>
+                <div className="text-xs text-muted-foreground italic">
+                  Reference date based on most recent proposed trip.
+                </div>
+              </div>
             </div>
           </div>
         </div>
