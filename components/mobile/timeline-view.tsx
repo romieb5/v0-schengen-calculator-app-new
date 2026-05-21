@@ -9,7 +9,7 @@ function DesktopTimelineHint() {
     <div className="flex items-start gap-2 rounded-lg border border-border bg-card px-3 py-2.5 mb-4">
       <Monitor className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
       <p className="text-xs text-muted-foreground leading-relaxed">
-        The timeline is best viewed on a desktop. Larger screens show more detail and make it easier to explore your stays.
+        View this timeline horizontally on a desktop.
       </p>
     </div>
   )
