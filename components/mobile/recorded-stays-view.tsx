@@ -172,9 +172,11 @@ export function RecordedStaysView({
           <div>
             <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Reference Date</div>
             <div className="text-sm font-semibold">{format(referenceDate, "MMM d, yyyy")}</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">
-              180-day window: {format(subDays(referenceDate, 179), "MMM d, yyyy")} to{" "}
-              {format(referenceDate, "MMM d, yyyy")}
+            <div className="mt-1 text-[11px] leading-snug text-muted-foreground">
+              <div>180-day window</div>
+              <div className="whitespace-nowrap">
+                {format(subDays(referenceDate, 179), "MMM d, yyyy")} to {format(referenceDate, "MMM d, yyyy")}
+              </div>
             </div>
           </div>
           <Button variant="outline" size="sm" className="text-xs" onClick={() => setRefSheetOpen(true)}>
