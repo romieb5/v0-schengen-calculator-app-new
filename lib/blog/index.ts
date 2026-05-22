@@ -3,7 +3,8 @@ export interface BlogPost {
   title: string
   excerpt: string
   category: string
-  date: string // ISO date string
+  date: string // ISO date string (first published)
+  updated?: string // ISO date string (last meaningful edit); falls back to date
   readTime: string
   featured?: boolean
   heroImage?: string // path in /public/blog/
@@ -22,6 +23,17 @@ export const authors = {
 
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
+  {
+    slug: "how-to-reset-schengen-days",
+    title: "How to Reset Your Schengen 90/180 Days (And Why There Is No Reset Button)",
+    excerpt:
+      "There is no button that gives you a fresh 90 days. Your Schengen days come back one at a time, exactly 180 days after each one was used. Here is how the reset actually works and how long you need to stay out.",
+    category: "Compliance",
+    date: "2026-05-22",
+    readTime: "7 min read",
+    featured: false,
+    author: authors.romie,
+  },
   {
     slug: "digital-nomad-visas-europe-2026",
     title: "Digital Nomad Visas in Europe: A 2026 Country-by-Country Comparison",

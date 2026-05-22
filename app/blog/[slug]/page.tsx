@@ -11,6 +11,7 @@ import { Content as OverstayContent } from "@/lib/blog/posts/schengen-overstay-c
 import { Content as EesContent } from "@/lib/blog/posts/ees-entry-exit-system"
 import { Content as EtiasEesVisaContent } from "@/lib/blog/posts/etias-ees-schengen-visa-difference"
 import { Content as NomadVisas2026Content } from "@/lib/blog/posts/digital-nomad-visas-europe-2026"
+import { Content as ResetDaysContent } from "@/lib/blog/posts/how-to-reset-schengen-days"
 
 const contentMap: Record<string, React.ComponentType> = {
   "digital-nomad-schengen-compliance": DigitalNomadContent,
@@ -18,10 +19,21 @@ const contentMap: Record<string, React.ComponentType> = {
   "ees-entry-exit-system": EesContent,
   "etias-ees-schengen-visa-difference": EtiasEesVisaContent,
   "digital-nomad-visas-europe-2026": NomadVisas2026Content,
+  "how-to-reset-schengen-days": ResetDaysContent,
 }
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "how-to-reset-schengen-days": [
+    { id: "no-reset-button", label: "No Reset Button" },
+    { id: "how-the-window-works", label: "How the Window Works" },
+    { id: "when-days-roll-off", label: "When Days Come Back" },
+    { id: "a-worked-example", label: "A Worked Example" },
+    { id: "how-long-to-stay-out", label: "How Long to Stay Out" },
+    { id: "where-to-spend-time-out", label: "Where to Go" },
+    { id: "common-mistakes", label: "Common Mistakes" },
+    { id: "plan-your-reset", label: "Plan Your Reset" },
+  ],
   "digital-nomad-schengen-compliance": [
     { id: "the-90-180-rule", label: "The 90/180 Rule" },
     { id: "why-spreadsheets-fail", label: "Why Spreadsheets Fail" },
@@ -151,23 +163,54 @@ export default async function BlogPostPage({
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.date,
-    author: {
-      "@type": "Person",
-      name: post.author.name,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Schengen Monitor",
-      url: "https://www.schengenmonitor.com",
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://www.schengenmonitor.com/blog/${post.slug}`,
-    },
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt,
+        datePublished: post.date,
+        dateModified: post.updated ?? post.date,
+        ...(post.heroImage && {
+          image: `https://www.schengenmonitor.com${post.heroImage}`,
+        }),
+        author: {
+          "@type": "Person",
+          name: post.author.name,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Schengen Monitor",
+          url: "https://www.schengenmonitor.com",
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://www.schengenmonitor.com/blog/${post.slug}`,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.schengenmonitor.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Blog",
+            item: "https://www.schengenmonitor.com/blog",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: post.title,
+            item: `https://www.schengenmonitor.com/blog/${post.slug}`,
+          },
+        ],
+      },
+    ],
   }
 
   return (

@@ -69,22 +69,49 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Schengen 90/180 Calculator",
-    description:
-      "Free Schengen calculator for tracking your 90/180-day short-stay limit. Calculate remaining days, detect overstays, and plan European travel.",
-    url: "https://www.schengenmonitor.com",
-    applicationCategory: "TravelApplication",
-    operatingSystem: "Any",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    author: {
-      "@type": "Person",
-      name: "Romie Bajwa",
-    },
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.schengenmonitor.com/#organization",
+        name: "Schengen Monitor",
+        url: "https://www.schengenmonitor.com",
+        logo: "https://www.schengenmonitor.com/browser-icon.png",
+        founder: {
+          "@type": "Person",
+          name: "Romie Bajwa",
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.schengenmonitor.com/#website",
+        name: "Schengen Monitor",
+        url: "https://www.schengenmonitor.com",
+        publisher: {
+          "@id": "https://www.schengenmonitor.com/#organization",
+        },
+      },
+      {
+        "@type": "WebApplication",
+        name: "Schengen 90/180 Calculator",
+        description:
+          "Free Schengen calculator for tracking your 90/180-day short-stay limit. Calculate remaining days, detect overstays, and plan European travel.",
+        url: "https://www.schengenmonitor.com",
+        applicationCategory: "TravelApplication",
+        operatingSystem: "Any",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        author: {
+          "@type": "Person",
+          name: "Romie Bajwa",
+        },
+        publisher: {
+          "@id": "https://www.schengenmonitor.com/#organization",
+        },
+      },
+    ],
   }
 
   return (
