@@ -84,7 +84,7 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
         <div className="pb-20">
           {/* Segmented control */}
           <div className="px-4 pt-3 pb-2">
-            <div className="flex bg-muted rounded-lg p-1">
+            <div className="flex bg-muted border border-border rounded-lg p-1">
               <button
                 onClick={() => setActiveSegment("recorded")}
                 className={cn(
