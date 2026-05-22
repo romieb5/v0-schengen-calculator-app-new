@@ -13,7 +13,7 @@ import { posts } from "@/lib/blog"
 
 export function HomeHero() {
   return (
-    <section className="bg-background border-b border-border">
+    <section className="bg-background">
       <div className="container mx-auto px-4 py-12 sm:py-16 max-w-3xl text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
           Schengen 90/180 Calculator &amp; Trip Planner
@@ -107,7 +107,7 @@ export function HomeSections() {
       </section>
 
       {/* How it works */}
-      <section className="bg-muted/40 border-y border-border">
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           <SectionEyebrow>How it works</SectionEyebrow>
           <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -130,7 +130,7 @@ export function HomeSections() {
       </section>
 
       {/* Free vs paid */}
-      <section className="bg-background border-b border-border">
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-12 max-w-3xl">
           <SectionEyebrow>Pricing made simple</SectionEyebrow>
           <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -180,7 +180,7 @@ export function HomeSections() {
       </section>
 
       {/* Proposed trips */}
-      <section className="bg-muted/40 border-b border-border">
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-12 max-w-3xl">
           <SectionEyebrow>Plan ahead</SectionEyebrow>
           <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -208,7 +208,7 @@ export function HomeSections() {
       </section>
 
       {/* FAQ teaser */}
-      <section className="bg-background border-b border-border">
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-12 max-w-3xl">
           <SectionEyebrow>Good to know</SectionEyebrow>
           <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -236,7 +236,7 @@ export function HomeSections() {
       </section>
 
       {/* Blog teaser */}
-      <section className="bg-muted/40 border-b border-border">
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           <SectionEyebrow>Learn more</SectionEyebrow>
           <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">

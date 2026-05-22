@@ -1,0 +1,11 @@
+import type { Metadata } from "next"
+import type { ReactNode } from "react"
+
+export const metadata: Metadata = {
+  title: "Sign Up | Schengen Monitor",
+  robots: { index: false },
+}
+
+export default function SignUpLayout({ children }: { children: ReactNode }) {
+  return children
+}

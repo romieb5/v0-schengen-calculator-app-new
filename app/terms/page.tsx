@@ -3,8 +3,10 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions | Schengen Visit Calculator",
-  description: "Terms and Conditions for the Schengen Visit Calculator application.",
+  title: "Terms and Conditions | Schengen Monitor",
+  description:
+    "The terms for using Schengen Monitor, covering acceptable use, the one-time timeline purchase, liability disclaimers, and your responsibilities as a user.",
+  alternates: { canonical: "/terms" },
 }
 
 export default function TermsPage() {

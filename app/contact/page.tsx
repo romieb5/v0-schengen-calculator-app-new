@@ -4,7 +4,8 @@ import { ArrowLeft } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Contact | Schengen Monitor",
-  description: "Get in touch with Schengen Monitor for support, feedback, or questions.",
+  description:
+    "Contact Schengen Monitor with questions, bug reports, or feedback about the 90/180-day calculator. We usually reply within one to two business days.",
   alternates: { canonical: "/contact" },
 }
 

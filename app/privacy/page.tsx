@@ -3,8 +3,10 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Schengen Visit Calculator",
-  description: "Privacy Policy for the Schengen Visit Calculator application.",
+  title: "Privacy Policy | Schengen Monitor",
+  description:
+    "How Schengen Monitor handles your data: what is collected, how your recorded stays and account details are stored, the cookies used, and your privacy rights.",
+  alternates: { canonical: "/privacy" },
 }
 
 export default function PrivacyPage() {
