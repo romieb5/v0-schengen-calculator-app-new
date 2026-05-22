@@ -66,7 +66,7 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
   const { activeTab, activeSegment, setActiveSegment } = useMobileTab()
 
   return (
-    <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-background dark:via-background dark:to-background">
       {/* Page header — only on My Trips tab, hidden when the homepage hero provides the H1 */}
       {activeTab === "my-trips" && !props.hideHeading && (
         <div className="px-4 pt-6 pb-6 text-center">
