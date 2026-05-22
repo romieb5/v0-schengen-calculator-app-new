@@ -23,10 +23,14 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
     <MobileTabProvider barsVisible={barsVisible}>
       <Navigation />
       <div className="h-16" /> {/* Spacer for fixed nav */}
-      {children}
-      {/* Footer: hide on mobile when on calculator page (tab bar replaces it) */}
-      <div className={isCalculatorPage ? "hidden md:block" : undefined}>
-        <Footer />
+      {/* Calculator page carries the soft blue tint across the whole page,
+          including behind the footer. Other pages stay on the default bg. */}
+      <div className={isCalculatorPage ? "bg-blue-50 dark:bg-background" : undefined}>
+        {children}
+        {/* Footer: hide on mobile when on calculator page (tab bar replaces it) */}
+        <div className={isCalculatorPage ? "hidden md:block" : undefined}>
+          <Footer />
+        </div>
       </div>
       {/* Bottom tab bar: only on calculator page, mobile only */}
       {isCalculatorPage && <MobileTabBar isVisible={barsVisible} />}

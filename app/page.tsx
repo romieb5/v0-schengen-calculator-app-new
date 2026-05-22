@@ -39,7 +39,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-background">
+    <div className="min-h-screen">
       <HomeHero />
       <Suspense>
         <SchengenCalculator hideHeading />

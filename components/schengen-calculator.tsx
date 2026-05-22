@@ -478,7 +478,7 @@ export function SchengenCalculator({ hideHeading = false }: { hideHeading?: bool
     />
 
     {/* Desktop layout */}
-    <div className="hidden md:block min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-background dark:via-background dark:to-background">
+    <div className="hidden md:block min-h-screen bg-blue-50 dark:bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {!hideHeading && (
           <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-3 px-4">
