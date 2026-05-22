@@ -58,6 +58,8 @@ interface MobileCalculatorShellProps {
   paymentLoading: boolean
   // Disabled date ranges
   disabledRanges: Array<{ start: Date; end: Date }>
+  // Hide the internal page header (the homepage hero provides the H1)
+  hideHeading?: boolean
 }
 
 export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
@@ -65,8 +67,8 @@ export function MobileCalculatorShell(props: MobileCalculatorShellProps) {
 
   return (
     <div className="md:hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      {/* Page header — only on My Trips tab */}
-      {activeTab === "my-trips" && (
+      {/* Page header — only on My Trips tab, hidden when the homepage hero provides the H1 */}
+      {activeTab === "my-trips" && !props.hideHeading && (
         <div className="px-4 pt-6 pb-6 text-center">
           <h1 className="text-xl font-bold text-foreground tracking-tight">
             Schengen Visit Calculator

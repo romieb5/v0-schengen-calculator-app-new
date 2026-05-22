@@ -44,7 +44,7 @@ const getDisabledDateRanges = (stays: Stay[], proposedTrips: Stay[], excludeId?:
     }))
 }
 
-export function SchengenCalculator() {
+export function SchengenCalculator({ hideHeading = false }: { hideHeading?: boolean } = {}) {
   const {
     stays,
     proposedTrips,
@@ -474,28 +474,31 @@ export function SchengenCalculator() {
       isAuthenticated={isAuthenticated}
       paymentLoading={paymentLoading}
       disabledRanges={disabledRanges}
+      hideHeading={hideHeading}
     />
 
     {/* Desktop layout */}
     <div className="hidden md:block min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-3 px-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
-            Schengen Visit Calculator
-          </h1>
-          <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto min-h-[1.5rem]">
-            Track your stays and ensure compliance with Schengen visa rules
-          </p>
-          {!paymentLoading && !isAuthenticated && (
-            <p className="md:hidden text-[13px] text-muted-foreground">
-              Have an account?{" "}
-              <Link href="/log-in" className="text-foreground font-semibold hover:underline">
-                Log in
-              </Link>{" "}
-              to sync your data
+        {!hideHeading && (
+          <div className="mb-8 sm:mb-12 text-center space-y-2 sm:space-3 px-4">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+              Schengen Visit Calculator
+            </h1>
+            <p className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto min-h-[1.5rem]">
+              Track your stays and ensure compliance with Schengen visa rules
             </p>
-          )}
-        </div>
+            {!paymentLoading && !isAuthenticated && (
+              <p className="md:hidden text-[13px] text-muted-foreground">
+                Have an account?{" "}
+                <Link href="/log-in" className="text-foreground font-semibold hover:underline">
+                  Log in
+                </Link>{" "}
+                to sync your data
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="space-y-6 sm:space-y-8">
           <Card className="border-2 shadow-lg">
