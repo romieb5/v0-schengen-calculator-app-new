@@ -18,6 +18,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.schengenmonitor.com"),
   title: "Schengen 90/180 Calculator | EU Visa Day Counter",
   description:
     "Free Schengen calculator for tracking your 90/180-day short-stay limit. Calculate remaining days, detect overstays, and plan European travel. Based on EU Regulation 2016/399.",
@@ -83,11 +84,6 @@ export default function RootLayout({
     author: {
       "@type": "Person",
       name: "Romie Bajwa",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "250",
     },
   }
 

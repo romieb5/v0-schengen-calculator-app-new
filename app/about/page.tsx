@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "About Schengen Monitor | Why I Built a Visual 90/180 Tracker",
+  description:
+    "The story behind Schengen Monitor, a visual Schengen 90/180-day calculator and trip planner built to show your stays, your rolling 180-day window, and which trip rolls off next.",
+  alternates: { canonical: "/about" },
+}
 
 export default function AboutPage() {
   return (

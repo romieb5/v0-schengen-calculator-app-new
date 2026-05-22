@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react"
 export const metadata: Metadata = {
   title: "Contact | Schengen Monitor",
   description: "Get in touch with Schengen Monitor for support, feedback, or questions.",
+  alternates: { canonical: "/contact" },
 }
 
 export default function ContactPage() {
