@@ -6,7 +6,6 @@ export interface BlogPost {
   date: string // ISO date string (first published)
   updated?: string // ISO date string (last meaningful edit); falls back to date
   readTime: string
-  featured?: boolean
   heroImage?: string // path in /public/blog/
   author: {
     name: string
@@ -31,7 +30,6 @@ export const posts: BlogPost[] = [
     category: "Compliance",
     date: "2026-05-22",
     readTime: "7 min read",
-    featured: false,
     heroImage: "/blog/reset-schengen-days-hero.webp",
     author: authors.romie,
   },
@@ -43,7 +41,6 @@ export const posts: BlogPost[] = [
     category: "Digital Nomads",
     date: "2026-05-11",
     readTime: "8 min read",
-    featured: true,
     heroImage: "/blog/digital-nomad-visas-2026-hero.webp",
     author: authors.romie,
   },
@@ -55,7 +52,6 @@ export const posts: BlogPost[] = [
     category: "Border Control",
     date: "2026-04-22",
     readTime: "7 min read",
-    featured: false,
     heroImage: "/blog/etias-ees-schengen-hero.webp",
     author: authors.romie,
   },
@@ -67,7 +63,6 @@ export const posts: BlogPost[] = [
     category: "Border Control",
     date: "2026-04-12",
     readTime: "5 min read",
-    featured: false,
     heroImage: "/blog/ees-system-hero.webp",
     author: authors.romie,
   },
@@ -79,7 +74,6 @@ export const posts: BlogPost[] = [
     category: "Compliance",
     date: "2026-04-03",
     readTime: "5 min read",
-    featured: false,
     heroImage: "/blog/overstay-consequences-hero.webp",
     author: authors.romie,
   },
@@ -91,7 +85,6 @@ export const posts: BlogPost[] = [
     category: "Digital Nomads",
     date: "2026-04-02",
     readTime: "3 min read",
-    featured: false,
     heroImage: "/blog/digital-nomad-hero.webp",
     author: authors.romie,
   },
