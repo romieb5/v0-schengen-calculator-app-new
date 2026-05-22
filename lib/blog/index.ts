@@ -29,7 +29,7 @@ export const posts: BlogPost[] = [
       "There is no button that gives you a fresh 90 days. Your Schengen days come back one at a time, exactly 180 days after each one was used. Here is how the reset actually works and how long you need to stay out.",
     category: "Compliance",
     date: "2026-05-22",
-    readTime: "7 min read",
+    readTime: "6 min read",
     heroImage: "/blog/reset-schengen-days-hero.webp",
     author: authors.romie,
   },
