@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Check, CheckCircle2 } from "lucide-react"
+import { addDays, addMonths, format } from "date-fns"
+import { AlertTriangle, Check, CheckCircle2 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { posts } from "@/lib/blog"
@@ -81,6 +82,46 @@ const faqs = [
   },
 ]
 
+type ExampleTone = "success" | "warning" | "destructive"
+
+// Static parts of the "Plan ahead" examples. Trip dates are computed at render
+// time in HomeSections so they always sit a couple of months in the future.
+const proposedExampleConfig: {
+  trip: string
+  startMonths: number
+  lengthDays: number
+  verdict: string
+  tone: ExampleTone
+}[] = [
+  {
+    trip: "Proposed trip to Greece",
+    startMonths: 2,
+    lengthDays: 16,
+    verdict: "Compliant, 12 days to spare",
+    tone: "success",
+  },
+  {
+    trip: "Proposed trip to Italy",
+    startMonths: 3,
+    lengthDays: 24,
+    verdict: "Cutting it close, 3 days to spare",
+    tone: "warning",
+  },
+  {
+    trip: "Proposed trip to Spain",
+    startMonths: 4,
+    lengthDays: 40,
+    verdict: "Over by 8 days, adjust the dates",
+    tone: "destructive",
+  },
+]
+
+const toneStyles: Record<ExampleTone, string> = {
+  success: "bg-success/10 text-success",
+  warning: "bg-warning/10 text-warning",
+  destructive: "bg-destructive/10 text-destructive",
+}
+
 function SectionEyebrow({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-center text-sm font-semibold uppercase tracking-wide text-primary">
@@ -91,6 +132,18 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 
 export function HomeSections() {
   const latestPosts = posts.slice(0, 3)
+
+  // Compute the example trip dates relative to today so they always read as
+  // upcoming trips, whenever the page is requested.
+  const today = new Date()
+  const proposedExamples = proposedExampleConfig.map((example) => {
+    const start = addMonths(today, example.startMonths)
+    const end = addDays(start, example.lengthDays - 1)
+    return {
+      ...example,
+      dates: `${format(start, "d MMM yyyy")} to ${format(end, "d MMM yyyy")}, ${example.lengthDays} days`,
+    }
+  })
 
   return (
     <>
@@ -190,20 +243,28 @@ export function HomeSections() {
             Add a planned trip and the calculator tells you straight away whether it stays inside the
             90-day limit, and how much room you have left.
           </p>
-          <Card className="mt-6">
-            <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5">
-              <div>
-                <p className="font-semibold text-foreground">Proposed trip to Greece</p>
-                <p className="text-sm text-muted-foreground">
-                  5 Aug 2026 to 20 Aug 2026, 16 days
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-1.5 self-start rounded-md bg-success/10 px-3 py-1.5 text-sm font-semibold text-success">
-                <CheckCircle2 className="h-4 w-4" />
-                Compliant, 12 days to spare
-              </span>
-            </CardContent>
-          </Card>
+          <div className="mt-8 space-y-3">
+            {proposedExamples.map((example) => (
+              <Card key={example.trip}>
+                <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5">
+                  <div>
+                    <p className="font-semibold text-foreground">{example.trip}</p>
+                    <p className="text-sm text-muted-foreground">{example.dates}</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1.5 self-start rounded-md px-3 py-1.5 text-sm font-semibold ${toneStyles[example.tone]}`}
+                  >
+                    {example.tone === "success" ? (
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                    )}
+                    {example.verdict}
+                  </span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
