@@ -26,8 +26,11 @@ function CategoryTag({ category }: { category: string }) {
 }
 
 export default function BlogPage() {
-  const featuredPost = posts.find((p) => p.featured)
-  const otherPosts = posts.filter((p) => !p.featured)
+  // The newest post becomes the hero; the rest fill the grid below.
+  const sortedPosts = [...posts].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  )
+  const [heroPost, ...otherPosts] = sortedPosts
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,15 +42,15 @@ export default function BlogPage() {
           </p>
         </div>
 
-        {/* Featured / Hero post — magazine layout */}
-        {featuredPost && (
-          <Link href={`/blog/${featuredPost.slug}`} className="block mb-8">
+        {/* Hero post: the newest article, magazine layout */}
+        {heroPost && (
+          <Link href={`/blog/${heroPost.slug}`} className="block mb-8">
             <article className="bg-card border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-md grid md:grid-cols-2">
               <div className="relative aspect-[16/10] md:aspect-auto md:min-h-[280px] bg-muted">
-                {featuredPost.heroImage ? (
+                {heroPost.heroImage ? (
                   <Image
-                    src={featuredPost.heroImage}
-                    alt={featuredPost.title}
+                    src={heroPost.heroImage}
+                    alt={heroPost.title}
                     fill
                     className="object-cover"
                     priority
@@ -57,16 +60,16 @@ export default function BlogPage() {
                 )}
               </div>
               <div className="p-6 md:p-8 flex flex-col justify-center">
-                <CategoryTag category={featuredPost.category} />
+                <CategoryTag category={heroPost.category} />
                 <h2 className="text-xl md:text-2xl font-bold mt-3 mb-2 leading-tight">
-                  {featuredPost.title}
+                  {heroPost.title}
                 </h2>
-                <p className="text-muted-foreground mb-4">{featuredPost.excerpt}</p>
+                <p className="text-muted-foreground mb-4">{heroPost.excerpt}</p>
                 <div className="text-xs text-muted-foreground flex items-center gap-2">
-                  <span>{featuredPost.readTime}</span>
+                  <span>{heroPost.readTime}</span>
                   <span>·</span>
-                  <time dateTime={featuredPost.date}>
-                    {new Date(featuredPost.date).toLocaleDateString("en-US", {
+                  <time dateTime={heroPost.date}>
+                    {new Date(heroPost.date).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
