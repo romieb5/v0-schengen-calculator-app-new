@@ -32,6 +32,7 @@ export const posts: BlogPost[] = [
     date: "2026-05-22",
     readTime: "7 min read",
     featured: false,
+    heroImage: "/blog/reset-schengen-days-hero.webp",
     author: authors.romie,
   },
   {
