@@ -1,11 +1,146 @@
+import type { Metadata } from "next"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
+export const metadata: Metadata = {
+  title: "Schengen 90/180 Rule FAQ | Common Questions Answered",
+  description:
+    "Clear answers to common questions about the Schengen 90/180-day rule: how the rolling 180-day window works, which countries count, whether entry and exit days count, what happens if you overstay, and how to plan future trips.",
+  alternates: { canonical: "/faq" },
+}
+
+// Plain-text mirror of the accordion content below, used for FAQPage structured
+// data. Keep these answers in sync with the AccordionItem content if it changes.
+const faqStructuredData: { question: string; answer: string }[] = [
+  {
+    question: "What is the Schengen 90/180 day rule?",
+    answer:
+      "The 90/180 day rule allows non-EU citizens to stay in the Schengen Area for up to 90 days within any 180-day period, without a visa for visa-exempt nationals or with a short-stay Schengen visa. The 180-day period is a rolling window that moves forward each day. On any given day, you look back 180 days and count the days you have spent in the Schengen Area. If the total is 90 days or less, you are compliant.",
+  },
+  {
+    question: "Which countries are in the Schengen Area?",
+    answer:
+      "The Schengen Area currently includes 29 European countries. EU member states: Austria, Belgium, Croatia, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Slovakia, Slovenia, Spain, and Sweden. Non-EU members: Iceland, Liechtenstein, Norway, and Switzerland, plus Bulgaria and Romania for air and sea borders.",
+  },
+  {
+    question: "Do entry and exit days both count?",
+    answer:
+      "Yes, both the day you enter and the day you exit the Schengen Area count as days used. For example, if you enter on Monday and exit on Friday, that is 5 days total: Monday, Tuesday, Wednesday, Thursday, and Friday.",
+  },
+  {
+    question: "What happens if I overstay?",
+    answer:
+      "Overstaying can result in serious consequences, including fines and penalties, entry bans ranging from months to years, deportation, difficulty obtaining future visas, and criminal charges in serious cases. Always ensure you leave before exceeding 90 days in any 180-day period.",
+  },
+  {
+    question: "Can I reset the 180-day period by leaving for a day?",
+    answer:
+      "No. This is a common misconception. The 180-day window is rolling and continuous, and it does not reset when you leave the Schengen Area. You must wait outside the Schengen Area long enough for old days to roll off the 180-day window before you have more days available.",
+  },
+  {
+    question: "How accurate is this calculator?",
+    answer:
+      "The calculator uses the same methodology as official European Commission tools. It correctly implements the rolling 180-day window and counts both entry and exit days. Accuracy depends on you entering correct dates for all your stays, so always double-check your entries against passport stamps or travel records.",
+  },
+  {
+    question: "Do I need to enter every short trip?",
+    answer:
+      "Yes. You must enter all stays in the Schengen Area regardless of duration, because even a single day counts toward your 90-day limit. This includes layovers if you pass through passport control in a Schengen airport.",
+  },
+  {
+    question: "Why change the reference date?",
+    answer:
+      "The reference date sets the today point for calculations. Changing it lets you see what your status will be on a future date, check when old stays will roll off the window, plan optimal dates for future trips, and verify your status on a past date.",
+  },
+  {
+    question: "How do I plan multiple future trips?",
+    answer:
+      "Use the Check Proposed Trip section to test different trip dates, then save the compliant ones. The calculator considers all saved proposed trips when checking new ones, so you can plan an entire year of travel and ensure all trips remain compliant together.",
+  },
+  {
+    question: "What can I use for free?",
+    answer:
+      "The core calculator is completely free, with or without an account. This includes recording stays, checking proposed trips, compliance status, and the reference date tool. A free account lets you sync your data across devices. The timeline visualization is the only feature that requires a one-time payment to unlock.",
+  },
+  {
+    question: "Do I need an account to use the calculator?",
+    answer:
+      "No. You can use the calculator without an account, and your data is stored locally in your browser. An account is only needed if you want to sync data across devices or unlock the timeline visualization.",
+  },
+  {
+    question: "Is the timeline a subscription?",
+    answer:
+      "No. The timeline visualization is a one-time purchase. Once you unlock it, it stays unlocked on your account permanently, with no recurring charges.",
+  },
+  {
+    question: "Can I get a refund?",
+    answer:
+      "All purchases are final. Because the timeline visualization is a digital feature that is accessible immediately upon purchase, refunds are not available. You can preview the timeline with example data before purchasing.",
+  },
+  {
+    question: "Is my data safe with an account?",
+    answer:
+      "Yes. Your data is stored securely using Supabase. Passwords are hashed using industry-standard algorithms, and all data is transmitted over encrypted HTTPS connections. Payment card details are never stored, because all payment processing is handled securely by Stripe.",
+  },
+  {
+    question: "Can I delete my account?",
+    answer:
+      "Yes. You can delete your account and all associated data at any time through the account settings page. This action is permanent and cannot be undone.",
+  },
+  {
+    question: "What happens to my local data when I create an account?",
+    answer:
+      "When you sign up, any stays you have already recorded locally in your browser are automatically imported into your account. After that, your data syncs across all devices where you are signed in.",
+  },
+  {
+    question: "Do I need a visa to enter the Schengen Area?",
+    answer:
+      "It depends on your nationality. Citizens of certain countries can enter visa-free for up to 90 days, while others need a Schengen visa before traveling. Check with the embassy or consulate of the Schengen country you plan to visit first.",
+  },
+  {
+    question: "I have a residence permit in one Schengen country. What are my limits?",
+    answer:
+      "If you have a valid residence permit or long-stay D visa from a Schengen country, days in your country of residence do not count toward the 90/180 limit. You can still travel to other Schengen countries for up to 90 days in 180 days, and you should track those stays with this calculator. Always carry your residence permit when traveling within Schengen.",
+  },
+  {
+    question: "Does time in non-Schengen EU countries count?",
+    answer:
+      "No. Time spent in EU countries that are not in the Schengen Area does not count. Cyprus and Ireland are EU members but not in Schengen, so days there do not count toward your 90-day limit. You must still have separate entry permission for these countries.",
+  },
+  {
+    question: "What if I need to stay longer than 90 days?",
+    answer:
+      "To stay longer than 90 days in a 180-day period, you need a national long-stay D visa from a specific country, a residence permit for work, study, or family reunion, or special permission for specific circumstances. Apply through the embassy or consulate of the Schengen country where you will spend most of your time.",
+  },
+  {
+    question: "Can I extend my stay if I am already in Schengen?",
+    answer:
+      "Extensions are rarely granted and only in exceptional circumstances such as serious illness, force majeure, or humanitarian reasons. You cannot extend a visa-free stay or regular tourist visa simply because you want to stay longer, so plan your trips carefully.",
+  },
+]
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqStructuredData.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+}
+
 export default function FAQPage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>

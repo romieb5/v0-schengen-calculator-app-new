@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Clock, AlertTriangle, CheckCircle } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "How the Schengen Calculator and Trip Planner Works",
+  description:
+    "A plain-English guide to tracking the Schengen 90/180-day rule: how the rolling 180-day window works, how to record past stays, and how to test proposed future trips for compliance before you book.",
+  alternates: { canonical: "/how-it-works" },
+}
 
 export default function HowItWorksPage() {
   return (

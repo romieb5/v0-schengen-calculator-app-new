@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Blog | Schengen Monitor",
   description:
     "Tips, guides, and insights for Schengen Area travelers. Learn about the 90/180-day rule, plan your European travel, and stay compliant.",
+  alternates: { canonical: "/blog" },
   openGraph: {
     title: "Blog | Schengen Monitor",
     description: "Tips, guides, and insights for Schengen Area travelers.",

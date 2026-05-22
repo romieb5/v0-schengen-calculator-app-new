@@ -92,6 +92,7 @@ export async function generateMetadata({
     title: `${post.title} | Schengen Monitor Blog`,
     description: post.excerpt,
     authors: [{ name: post.author.name }],
+    alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
