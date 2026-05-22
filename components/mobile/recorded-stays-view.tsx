@@ -76,7 +76,7 @@ export function RecordedStaysView({
       {/* Add Stay button */}
       <button
         onClick={() => setAddSheetOpen(true)}
-        className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+        className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/[0.125] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
       >
         <PlusCircle className="h-4.5 w-4.5" />
         Add Stay
@@ -158,7 +158,7 @@ export function RecordedStaysView({
 
       {/* Sticky status + reference date */}
       <div className={cn(
-        "sticky top-16 z-10 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 pb-2 -mx-4 px-4 pt-1",
+        "sticky top-16 z-10 space-y-2 bg-blue-50 dark:bg-background pb-2 -mx-4 px-4 pt-1",
       )}>
         {/* Status bar */}
         <MobileStatusBar
