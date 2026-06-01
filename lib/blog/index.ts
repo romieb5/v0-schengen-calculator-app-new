@@ -23,6 +23,17 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "schengen-90-180-rule-uk-citizens",
+    title: "The 90/180 Rule for British Citizens: How Brexit Changed Everything (And Will France or Spain Ever Scrap It?)",
+    excerpt:
+      "Since Brexit, British travelers get just 90 days in any 180 across the whole Schengen Area. Here's exactly how it works for UK passport holders, what it means for second-home owners in France and Spain, and whether the campaigns to scrap it are going anywhere.",
+    category: "Compliance",
+    date: "2026-06-01",
+    readTime: "7 min read",
+    heroImage: "/blog/uk-90-180-rule-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "how-to-reset-schengen-days",
     title: "How to Reset Your Schengen 90/180 Days (And Why There Is No Reset Button)",
     excerpt:

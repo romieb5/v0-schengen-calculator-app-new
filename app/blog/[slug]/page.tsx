@@ -12,6 +12,7 @@ import { Content as EesContent } from "@/lib/blog/posts/ees-entry-exit-system"
 import { Content as EtiasEesVisaContent } from "@/lib/blog/posts/etias-ees-schengen-visa-difference"
 import { Content as NomadVisas2026Content } from "@/lib/blog/posts/digital-nomad-visas-europe-2026"
 import { Content as ResetDaysContent } from "@/lib/blog/posts/how-to-reset-schengen-days"
+import { Content as UkCitizensContent } from "@/lib/blog/posts/schengen-90-180-rule-uk-citizens"
 
 const contentMap: Record<string, React.ComponentType> = {
   "digital-nomad-schengen-compliance": DigitalNomadContent,
@@ -20,10 +21,20 @@ const contentMap: Record<string, React.ComponentType> = {
   "etias-ees-schengen-visa-difference": EtiasEesVisaContent,
   "digital-nomad-visas-europe-2026": NomadVisas2026Content,
   "how-to-reset-schengen-days": ResetDaysContent,
+  "schengen-90-180-rule-uk-citizens": UkCitizensContent,
 }
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "schengen-90-180-rule-uk-citizens": [
+    { id: "the-short-answer", label: "The Short Answer" },
+    { id: "what-brexit-changed", label: "What Brexit Changed" },
+    { id: "how-the-window-works", label: "How the Window Works" },
+    { id: "the-second-home-problem", label: "The Second-Home Problem" },
+    { id: "will-it-be-scrapped", label: "Will It Be Scrapped?" },
+    { id: "legal-ways-to-stay-longer", label: "Ways to Stay Longer" },
+    { id: "how-to-stay-compliant", label: "How to Stay Compliant" },
+  ],
   "how-to-reset-schengen-days": [
     { id: "no-reset-button", label: "No Reset Button" },
     { id: "how-the-window-works", label: "How the Window Works" },
