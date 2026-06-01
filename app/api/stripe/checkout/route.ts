@@ -13,11 +13,20 @@ const CURRENCY_AMOUNTS: Record<string, number> = {
 
 const VALID_CURRENCIES = new Set(Object.keys(CURRENCY_AMOUNTS))
 
+// Latin America (South + Central America, Mexico, Spanish-speaking Caribbean).
+// USD is far more familiar than EUR across the region and slightly less likely
+// to be declined, so we bill these customers in USD.
+const LATIN_AMERICA = new Set([
+  "MX", "GT", "BZ", "SV", "HN", "NI", "CR", "PA",
+  "CO", "VE", "EC", "PE", "BO", "CL", "AR", "PY", "UY", "BR", "GY", "SR",
+  "DO", "CU",
+])
+
 function currencyFromCountry(countryCode: string | null): string {
   if (!countryCode) return "eur"
   const upper = countryCode.toUpperCase()
   if (upper === "GB") return "gbp"
-  if (upper === "US" || upper === "CA") return "usd"
+  if (upper === "US" || upper === "CA" || LATIN_AMERICA.has(upper)) return "usd"
   return "eur"
 }
 
