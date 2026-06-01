@@ -904,7 +904,8 @@ export function SchengenCalculator({ hideHeading = false }: { hideHeading?: bool
               </CardHeader>
               <CardContent className="px-4 sm:px-6">
                 <div className="space-y-3">
-                  {sortedStays.map((stay, index) => {
+                  {sortedStays.map((stay, chronoIndex) => ({ stay, chronoIndex })).reverse().map(({ stay, chronoIndex }) => {
+                    const index = chronoIndex
                     const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
                     const stayColor = stayColorMap.get(stay.id) || stayColors[0]
 

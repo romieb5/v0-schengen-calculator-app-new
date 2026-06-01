@@ -188,7 +188,8 @@ export function RecordedStaysView({
       {/* Recorded stays list */}
       {sortedStays.length > 0 ? (
         <div className="space-y-2">
-          {sortedStays.map((stay, index) => {
+          {sortedStays.map((stay, chronoIndex) => ({ stay, chronoIndex })).reverse().map(({ stay, chronoIndex }) => {
+            const index = chronoIndex
             const duration = differenceInDays(stay.exitDate, stay.entryDate) + 1
             const stayColor = stayColorMap.get(stay.id) || stayColors[0]
 
