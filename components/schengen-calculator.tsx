@@ -193,10 +193,13 @@ export function SchengenCalculator({ hideHeading = false }: { hideHeading?: bool
   const visibleStays = stays.filter((s) => !s.hidden)
   const visibleProposedTrips = proposedTrips.filter((trip) => !trip.hidden)
 
+  // Headline status reflects recorded stays only. Proposed trips are a "what-if"
+  // overlay shown via the timeline's "Show Proposed Trips" toggle and via each
+  // trip's own "Days remaining after trip" readout, so they're excluded here to
+  // keep this counter consistent with the timeline's default view.
   const daysUsedForCalculations = calculateDaysUsedForDate(
     referenceDate,
     visibleStays,
-    visibleProposedTrips, // Always include visible proposed trips in the calculation for status
   )
 
   const daysUsed = daysUsedForCalculations.daysUsed
