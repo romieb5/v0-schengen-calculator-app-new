@@ -13,8 +13,10 @@ import { Content as EtiasEesVisaContent } from "@/lib/blog/posts/etias-ees-schen
 import { Content as NomadVisas2026Content } from "@/lib/blog/posts/digital-nomad-visas-europe-2026"
 import { Content as ResetDaysContent } from "@/lib/blog/posts/how-to-reset-schengen-days"
 import { Content as UkCitizensContent } from "@/lib/blog/posts/schengen-90-180-rule-uk-citizens"
+import { Content as Etias2026Content } from "@/lib/blog/posts/etias-2026-launch-guide"
 
 const contentMap: Record<string, React.ComponentType> = {
+  "etias-2026-launch-guide": Etias2026Content,
   "digital-nomad-schengen-compliance": DigitalNomadContent,
   "schengen-overstay-consequences": OverstayContent,
   "ees-entry-exit-system": EesContent,
@@ -26,6 +28,16 @@ const contentMap: Record<string, React.ComponentType> = {
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "etias-2026-launch-guide": [
+    { id: "the-short-answer", label: "The Short Answer" },
+    { id: "what-is-etias", label: "What ETIAS Is" },
+    { id: "who-needs-it", label: "Who Needs One" },
+    { id: "the-timeline", label: "The Q4 2026 Timeline" },
+    { id: "transition-grace", label: "Transition & Grace Period" },
+    { id: "cost-and-applying", label: "Cost & How to Apply" },
+    { id: "not-a-visa", label: "It Won't Add Days" },
+    { id: "how-to-prepare", label: "How to Prepare" },
+  ],
   "schengen-90-180-rule-uk-citizens": [
     { id: "the-short-answer", label: "The Short Answer" },
     { id: "what-brexit-changed", label: "What Brexit Changed" },

@@ -23,6 +23,17 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "etias-2026-launch-guide",
+    title: "ETIAS Launches in Late 2026: What It Is, Who Needs It, and How to Prepare",
+    excerpt:
+      "Europe's new travel authorisation goes live in the last quarter of 2026. Here's exactly what ETIAS is, who needs one, what the €20 fee and 3-year validity mean, and why it does not add a single day to your 90/180 allowance.",
+    category: "Border Control",
+    date: "2026-07-13",
+    readTime: "7 min read",
+    heroImage: "/blog/etias-2026-launch-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "schengen-90-180-rule-uk-citizens",
     title: "The 90/180 Rule for British Citizens: How Brexit Changed Everything (And Will France or Spain Ever Scrap It?)",
     excerpt:
