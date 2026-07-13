@@ -61,9 +61,11 @@ export async function POST(request: NextRequest) {
 
       // Send payment receipt email
       if (session.customer_details?.email) {
-        const amount = session.amount_total
-          ? `$${(session.amount_total / 100).toFixed(2)}`
-          : "$4.99"
+        const symbols: Record<string, string> = { usd: "$", eur: "€", gbp: "£" }
+        const symbol = symbols[session.currency ?? ""] ?? ""
+        const amount = session.amount_total != null
+          ? `${symbol}${(session.amount_total / 100).toFixed(2)}`
+          : `${symbol}5.00`
         try {
           await sendPaymentReceiptEmail(session.customer_details.email, amount)
         } catch {
