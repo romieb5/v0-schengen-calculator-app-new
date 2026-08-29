@@ -30,9 +30,9 @@ const contentMap: Record<string, React.ComponentType> = {
 const tocMap: Record<string, { id: string; label: string }[]> = {
   "etias-2026-launch-guide": [
     { id: "the-short-answer", label: "The Short Answer" },
+    { id: "the-timeline", label: "Where the Date Stands" },
     { id: "what-is-etias", label: "What ETIAS Is" },
     { id: "who-needs-it", label: "Who Needs One" },
-    { id: "the-timeline", label: "The Q4 2026 Timeline" },
     { id: "transition-grace", label: "Transition & Grace Period" },
     { id: "cost-and-applying", label: "Cost & How to Apply" },
     { id: "not-a-visa", label: "It Won't Add Days" },
@@ -183,6 +183,13 @@ export default async function BlogPostPage({
     month: "long",
     day: "numeric",
   })
+  const formattedUpdated = post.updated
+    ? new Date(post.updated).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -274,6 +281,14 @@ export default async function BlogPostPage({
             <div className="font-semibold">{post.author.name}</div>
             <div className="text-muted-foreground">
               <time dateTime={post.date}>{formattedDate}</time> · {post.readTime}
+              {formattedUpdated && (
+                <>
+                  {" · "}
+                  <span className="text-foreground/80">
+                    Updated <time dateTime={post.updated}>{formattedUpdated}</time>
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>

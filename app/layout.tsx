@@ -7,6 +7,10 @@ import { LayoutShell } from "@/components/layout-shell"
 import { AuthProvider } from "@/components/auth-provider"
 import "./globals.css"
 
+// GA4 property. Optional: unset locally and in previews, the tag simply no-ops.
+// The AW- tag below is Google Ads conversion tracking, a separate product.
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -125,6 +129,7 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'AW-17780766572');
+              ${GA_MEASUREMENT_ID ? `gtag('config', '${GA_MEASUREMENT_ID}');` : ""}
             `,
           }}
         />

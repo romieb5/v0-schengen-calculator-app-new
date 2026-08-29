@@ -24,12 +24,13 @@ export const authors = {
 export const posts: BlogPost[] = [
   {
     slug: "etias-2026-launch-guide",
-    title: "ETIAS Launches in Late 2026: What It Is, Who Needs It, and How to Prepare",
+    title: "ETIAS: What It Is, Who Needs One, and Why the Launch Keeps Slipping",
     excerpt:
-      "Europe's new travel authorisation goes live in the last quarter of 2026. Here's exactly what ETIAS is, who needs one, what the €20 fee and 3-year validity mean, and why it does not add a single day to your 90/180 allowance.",
+      "The “last quarter of 2026” target was pulled from the official EU page in July, and reporting now points to 2027. Here's where the ETIAS launch date actually stands, what the €20 fee and 3-year validity mean, and why none of it adds a single day to your 90/180 allowance.",
     category: "Border Control",
     date: "2026-07-13",
-    readTime: "7 min read",
+    updated: "2026-08-29",
+    readTime: "8 min read",
     heroImage: "/blog/etias-2026-launch-hero.webp",
     author: authors.romie,
   },
