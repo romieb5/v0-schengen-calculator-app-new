@@ -23,6 +23,17 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "check-remaining-schengen-days-after-ees",
+    title: "Passport Stamps Are Gone. Here's How to Check Your Remaining Schengen Days.",
+    excerpt:
+      "EES took away the stamps you used to count, and the border now knows your exact position while you do not. Here is the EU's free official checker, the blind spot it cannot see until 6 October 2026, and how to fill in the missing months yourself.",
+    category: "Border Control",
+    date: "2026-09-06",
+    readTime: "7 min read",
+    heroImage: "/blog/check-remaining-days-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "etias-2026-launch-guide",
     title: "ETIAS: What It Is, Who Needs One, and Why the Launch Keeps Slipping",
     excerpt:
