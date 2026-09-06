@@ -14,8 +14,10 @@ import { Content as NomadVisas2026Content } from "@/lib/blog/posts/digital-nomad
 import { Content as ResetDaysContent } from "@/lib/blog/posts/how-to-reset-schengen-days"
 import { Content as UkCitizensContent } from "@/lib/blog/posts/schengen-90-180-rule-uk-citizens"
 import { Content as Etias2026Content } from "@/lib/blog/posts/etias-2026-launch-guide"
+import { Content as CheckRemainingDaysContent } from "@/lib/blog/posts/check-remaining-schengen-days-after-ees"
 
 const contentMap: Record<string, React.ComponentType> = {
+  "check-remaining-schengen-days-after-ees": CheckRemainingDaysContent,
   "etias-2026-launch-guide": Etias2026Content,
   "digital-nomad-schengen-compliance": DigitalNomadContent,
   "schengen-overstay-consequences": OverstayContent,
@@ -28,6 +30,15 @@ const contentMap: Record<string, React.ComponentType> = {
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "check-remaining-schengen-days-after-ees": [
+    { id: "why-this-got-harder", label: "Why It Got Harder" },
+    { id: "the-official-checker", label: "The Official Checker" },
+    { id: "the-blind-spot", label: "The Blind Spot" },
+    { id: "filling-the-gap", label: "Filling In the Gap" },
+    { id: "request-your-record", label: "Request Your Record" },
+    { id: "keep-your-own-record", label: "Keep Your Own Count" },
+    { id: "what-to-do", label: "What to Actually Do" },
+  ],
   "etias-2026-launch-guide": [
     { id: "the-short-answer", label: "The Short Answer" },
     { id: "the-timeline", label: "Where the Date Stands" },
