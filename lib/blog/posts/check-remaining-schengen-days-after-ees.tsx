@@ -6,14 +6,15 @@ export function Content() {
     <>
       <div className="my-6 rounded-xl border border-border bg-muted/50 p-5">
         <p className="!mt-0 !mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          The short version
+          Updated, 6 October 2026
         </p>
         <p className="!mb-0 text-sm">
           The EU runs a free checker at travel-europe.europa.eu/ees/check-how-long-you-can-stay. Enter your
-          passport number and it tells you how many days you have left. The catch is that it only knows about
-          crossings the Entry/Exit System actually recorded, and the system did not reach full coverage until
-          10 April 2026. Until 6 October 2026, part of your rolling window sits in a blind spot the tool cannot
-          see, so you still need your own record of what you did before then.
+          passport number and it tells you how many days you have left. As of today its number finally covers
+          your whole rolling 180-day window, because every day in that window now falls inside the period when
+          the Entry/Exit System was fully operational. The reasons to keep your own record are no longer about
+          missing data. They are that the tool is a snapshot rather than a planner, and that it still leaves out
+          specific cases, including a visit that began before 10 April 2026.
         </p>
       </div>
 
@@ -91,10 +92,10 @@ export function Content() {
         days, close the tab. Several of them exist and they are all reselling a free government lookup.
       </p>
 
-      <h2 id="the-blind-spot">The Gap the Official Tool Cannot See</h2>
+      <h2 id="the-blind-spot">The Gap That Just Closed</h2>
       <p>
-        This is the part worth understanding properly, because it is the difference between a number you can
-        trust and a number that quietly understates your usage.
+        Until today this was the part worth understanding properly, because it was the difference between a
+        number you could trust and a number that quietly understated your usage.
       </p>
       <p>
         EES did not switch on everywhere at once. Recording began on 12 October 2025 and rolled out gradually
@@ -102,22 +103,31 @@ export function Content() {
         before that are not reliably in the database. Some are missing entirely.
       </p>
       <p>
-        Those days still count. The 90/180 rule does not care whether a computer noticed. If a day sits inside
-        your current 180-day window, it counts against you, and a border officer working from a fuller picture
-        may reach a different total than the website did.
+        Those days still counted. The 90/180 rule does not care whether a computer noticed. If a day sat inside
+        your current 180-day window it counted against you, and a border officer working from a fuller picture
+        could reach a different total than the website did.
       </p>
       <p>
-        Here is what that means in practice, today. A 180-day window ending on 6 September 2026 reaches back to
-        11 March 2026. That is a month before EES was fully operational. So right now, the first month of your
-        window is exactly the stretch the tool is least sure about.
+        The arithmetic is what settles it, so here is the working. The window runs 180 days counted inclusively,
+        both endpoints included. A window that begins on 10 April 2026 therefore ends on{" "}
+        <strong>6 October 2026</strong>. Run it the other way and you get the same date from the other side: the
+        last window able to reach back to 9 April 2026, the final day before full operation, ended on 5 October
+        2026. That window has now rolled off.
       </p>
       <p>
-        The arithmetic gives you a date to look forward to. A window that begins on or after 10 April 2026 ends
-        on or after <strong>6 October 2026</strong>. From that day onward, your entire rolling window sits inside
-        the fully operational period, and the official checker finally has everything it needs. This is not a
-        coincidence, and it is why the EU has flagged that answers before that date may be unreliable for some
-        travelers, particularly holders of single-entry and double-entry visas whose visa use during the rollout
-        may not have been recorded.
+        So as of today, your entire rolling window sits inside the fully operational period, and the official
+        checker finally has everything it needs. This is not a coincidence, and it is why the EU flagged that
+        its answers up to this point might be unreliable for some travelers, particularly holders of
+        single-entry and double-entry visas whose visa use during the rollout may not have been recorded. Read
+        that warning closely if it applies to you: the EU&apos;s own wording runs through 6 October inclusive,
+        so if you hold one of those visas and used an entry during the rollout, give it another day before you
+        treat the verdict as firm.
+      </p>
+      <p>
+        One narrow gap outlives the rest. The checker does not count time from a visit that began before
+        10 April 2026, even where that visit carried on past it. If you were mid-stay on the day EES became
+        fully operational, those overlapping days are real, they count against you, and the tool leaves them out
+        until the whole visit drops out of your window.
       </p>
       <p>
         A few other limits are worth knowing. The tool covers non-EU nationals making short stays. It does not
@@ -128,19 +138,15 @@ export function Content() {
 
       <h2 id="filling-the-gap">Filling In the Missing Months</h2>
       <p>
-        For any travel before 10 April 2026 that still falls inside your window, you are back to counting by
-        hand. The European Commission publishes a short-stay calculator for exactly this, where you enter each
-        stay yourself and it applies the rolling window. It has been around for years and it is accurate, but it
-        does not remember anything. Close the tab and your entries are gone.
+        Travel from before 10 April 2026 no longer falls inside anyone&apos;s current window, so reconstructing
+        it is no longer part of working out where you stand. It is still worth the effort in one situation:
+        you are rebuilding your history for some other reason, such as checking a record you think is wrong.
       </p>
       <p>
-        So the honest current answer is that you combine two sources: whatever the EES checker knows, plus your
-        own record of the earlier days it does not. Add them together and you have your real position.
-      </p>
-      <p>
-        If you no longer have the stamps to work from, reconstruct the dates from boarding passes, card
-        statements, photo timestamps, and calendar entries. It is tedious, and it is worth doing once, properly,
-        rather than guessing at a border.
+        The European Commission publishes a short-stay calculator for exactly this, where you enter each stay
+        yourself and it applies the rolling window. It is accurate, but it does not remember anything. Close the
+        tab and your entries are gone. Reconstruct the dates from boarding passes, card statements, photo
+        timestamps, and calendar entries, and write them down somewhere that keeps them.
       </p>
 
       <h2 id="request-your-record">You Can Also Ask for Your Own EES Record</h2>
@@ -166,8 +172,8 @@ export function Content() {
 
       <h2 id="keep-your-own-record">Why You Still Need Your Own Count</h2>
       <p>
-        Even after 6 October 2026, when the official checker covers your whole window, it answers exactly one
-        question: where do I stand right now. That is useful, and it is not planning.
+        Even now that the official checker covers your whole window, it answers exactly one question: where do
+        I stand right now. That is useful, and it is not planning.
       </p>
       <p>
         Planning means asking different questions. If I fly out on the 14th, how many days will I have left? When
@@ -210,12 +216,14 @@ export function Content() {
           thing to the number a border officer will see.
         </li>
         <li>
-          <strong>Treat it as a floor, not a total, until 6 October 2026.</strong> Anything before 10 April 2026
-          may be missing from it, and those days still count.
+          <strong>Read it as today&apos;s position, not a plan.</strong> The number now covers your whole
+          window, but it answers only where you stand right now, and it does not apply to people travelling
+          under EU free movement rules.
         </li>
         <li>
-          <strong>Reconstruct your pre-EES trips once.</strong> Boarding passes, statements, photos. Write the
-          dates down somewhere permanent.
+          <strong>Reconstruct older trips only if you need to.</strong> Days before 10 April 2026 have rolled
+          out of your window, so dig out the boarding passes, statements, and photos to check a record you think
+          is wrong, not to work out your current total.
         </li>
         <li>
           <strong>Keep your own running record from here on.</strong> Log each entry and exit as it happens
