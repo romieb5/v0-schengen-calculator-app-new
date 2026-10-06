@@ -26,9 +26,10 @@ export const posts: BlogPost[] = [
     slug: "check-remaining-schengen-days-after-ees",
     title: "Passport Stamps Are Gone. Here's How to Check Your Remaining Schengen Days.",
     excerpt:
-      "EES took away the stamps you used to count, and the border now knows your exact position while you do not. Here is the EU's free official checker, the blind spot it cannot see until 6 October 2026, and how to fill in the missing months yourself.",
+      "EES took away the stamps you used to count, and the border now knows your exact position while you do not. As of 6 October 2026 the EU's free official checker finally covers your whole rolling window. Here is how to use it, the narrow cases it still leaves out, and why it is a snapshot rather than a plan.",
     category: "Border Control",
     date: "2026-09-06",
+    updated: "2026-10-06",
     readTime: "7 min read",
     heroImage: "/blog/check-remaining-days-hero.webp",
     author: authors.romie,

@@ -33,7 +33,7 @@ const tocMap: Record<string, { id: string; label: string }[]> = {
   "check-remaining-schengen-days-after-ees": [
     { id: "why-this-got-harder", label: "Why It Got Harder" },
     { id: "the-official-checker", label: "The Official Checker" },
-    { id: "the-blind-spot", label: "The Blind Spot" },
+    { id: "the-blind-spot", label: "The Blind Spot, Now Closed" },
     { id: "filling-the-gap", label: "Filling In the Gap" },
     { id: "request-your-record", label: "Request Your Record" },
     { id: "keep-your-own-record", label: "Keep Your Own Count" },
