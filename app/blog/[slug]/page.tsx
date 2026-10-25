@@ -89,6 +89,7 @@ const tocMap: Record<string, { id: string; label: string }[]> = {
     { id: "what-counts-as-overstaying", label: "What Counts as Overstaying?" },
     { id: "the-real-consequences", label: "The Real Consequences" },
     { id: "how-overstays-get-detected", label: "How They Get Detected" },
+    { id: "what-ees-has-caught-so-far", label: "What EES Has Caught" },
     { id: "common-mistakes", label: "Common Mistakes" },
     { id: "how-to-stay-compliant", label: "How to Stay Compliant" },
     { id: "what-to-do-if-youve-overstayed", label: "If You've Already Overstayed" },

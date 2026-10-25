@@ -10,6 +10,11 @@ export function Content() {
         can follow you for years, and in some cases, they can end your ability to travel freely in Europe altogether.
       </p>
       <p>
+        It&apos;s also no longer a gamble on whether anyone notices. Since the EU&apos;s Entry/Exit System (EES)
+        went fully live in April 2026, every non-EU traveler&apos;s entries and exits are logged digitally, and the
+        system has already flagged thousands of overstayers.
+      </p>
+      <p>
         Here&apos;s what actually happens if you overstay, what the penalties look like in practice, and most
         importantly, how to make sure it never happens to you.
       </p>
@@ -66,21 +71,33 @@ export function Content() {
         Portugal will show up when you apply for a visa to France. Many travelers have had subsequent applications
         rejected entirely because of a past overstay.
       </p>
+      <p>
+        If you travel visa-free, the EES record does the same job. It&apos;s shared across all 29 Schengen
+        countries, so the next border officer you meet, anywhere in the zone, sees the overstay on screen. EES keeps
+        your records for three years after your last exit, and if no exit is ever recorded, for five years from the
+        end of your authorized stay.
+      </p>
 
       <h2 id="how-overstays-get-detected">How Overstays Get Detected</h2>
       <p>
-        Some travelers assume overstays go unnoticed. That used to be more true, but enforcement has tightened
-        considerably. Here&apos;s how they catch you:
+        Some travelers assume overstays go unnoticed. That used to be partly true, when it came down to a tired
+        border officer counting smudged passport stamps. It isn&apos;t anymore. Here&apos;s how they catch you:
       </p>
       <ul>
         <li>
-          <strong>Exit passport control</strong>: Border officers check your entry stamps and calculate your days.
-          This is the most common point of detection, usually right as you&apos;re trying to fly home.
+          <strong>Entry/Exit System (EES)</strong>: Since 10 April 2026, EES has replaced passport stamps at every
+          Schengen external border. Your fingerprints, face scan, and every entry and exit date are stored
+          digitally, and the system calculates your remaining days automatically. There&apos;s no stamp to argue
+          about and no counting error to hope for.
         </li>
         <li>
-          <strong>Entry/Exit System (EES)</strong>: The EU&apos;s new digital border system is replacing passport
-          stamps with biometric records. Once fully rolled out, it will automatically flag overstays in real time,
-          making it nearly impossible to slip through.
+          <strong>Exit passport control</strong>: When you leave, the officer (or kiosk) closes your stay in EES.
+          If you&apos;re past 90 days, the overstay is recorded at that moment, even if nobody says a word to you
+          at the desk.
+        </li>
+        <li>
+          <strong>Your next entry</strong>: This is where many travelers now get caught. EES shows the officer your
+          full history, so an overstay from a previous trip can get you refused entry on the next one.
         </li>
         <li>
           <strong>Random checks</strong>: Police in some countries can ask to see your passport and check your
@@ -91,6 +108,34 @@ export function Content() {
           surface when you apply for your next Schengen visa. Consulates can see your travel history.
         </li>
       </ul>
+
+      <h2 id="what-ees-has-caught-so-far">What EES Has Caught So Far</h2>
+      <p>
+        The numbers show the system is working exactly as designed. In a February 2026 briefing to the European
+        Parliament, the European Commission said EES had flagged more than 4,000 overstayers in its first four
+        months, while it was still being phased in.
+      </p>
+      <p>
+        By the Commission&apos;s 2026 State of Schengen report, published in May and covering the rollout from
+        October 2025 to 20 April 2026, those figures had grown to:
+      </p>
+      <ul>
+        <li>
+          <strong>Over 60 million</strong> entries and exits recorded
+        </li>
+        <li>
+          <strong>Over 30,000</strong> refusals of entry for failing to meet entry conditions
+        </li>
+        <li>
+          <strong>Almost 7,000</strong> travelers denied entry because they had overstayed on a previous visit
+        </li>
+      </ul>
+      <p>
+        That last figure is the one to pay attention to. Those weren&apos;t people caught on the way out. They were
+        people who had overstayed, left, and then flown back expecting to be waved through, only to be turned away
+        at the border. And those numbers cover a period when EES was only partly rolled out. Now that it runs at
+        every external border, detection is close to certain.
+      </p>
 
       <h2 id="common-mistakes">Common Mistakes That Lead to Overstays</h2>
       <p>
@@ -174,8 +219,9 @@ export function Content() {
         better than being discovered. The longer you stay past your limit, the worse the consequences.
       </p>
       <p>
-        Be honest at passport control. Trying to avoid exit checks or using alternative routes to dodge detection
-        will only make things worse if you&apos;re caught. Some border officers are more lenient with travelers who
+        Be honest at passport control. EES will record the overstay when you exit either way, so there&apos;s
+        nothing to gain from hoping it goes unnoticed. Trying to avoid exit checks or using alternative routes to
+        dodge detection will only make things worse, since a stay with no recorded exit stays on file even longer. Some border officers are more lenient with travelers who
         are upfront about a short, accidental overstay.
       </p>
       <p>
