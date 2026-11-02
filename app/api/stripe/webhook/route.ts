@@ -39,7 +39,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
   }
 
-  if (event.type === "checkout.session.completed") {
+  // Card payments arrive as "paid" on completed; delayed methods (bank debits)
+  // complete as "unpaid" and settle later via async_payment_succeeded.
+  if (
+    event.type === "checkout.session.completed" ||
+    event.type === "checkout.session.async_payment_succeeded"
+  ) {
     const session = event.data.object as Stripe.Checkout.Session
     const userId = session.metadata?.userId
 
