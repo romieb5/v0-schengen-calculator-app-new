@@ -23,6 +23,17 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "dual-citizens-schengen-which-passport",
+    title: "Dual Citizens at the Schengen Border: Which Passport to Use Now That EES Is Watching",
+    excerpt:
+      "Two passports used to mean a choice of queues. Under EES, the one you hand over decides whether you are counted at all, and entering on one and leaving on the other can put a false overstay on your record. Here is how to choose, and why two non-EU passports still only get you 90 days.",
+    category: "Border Control",
+    date: "2026-11-16",
+    readTime: "8 min read",
+    heroImage: "/blog/dual-citizens-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "check-remaining-schengen-days-after-ees",
     title: "Passport Stamps Are Gone. Here's How to Check Your Remaining Schengen Days.",
     excerpt:
