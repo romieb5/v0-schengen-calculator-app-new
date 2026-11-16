@@ -15,8 +15,10 @@ import { Content as ResetDaysContent } from "@/lib/blog/posts/how-to-reset-schen
 import { Content as UkCitizensContent } from "@/lib/blog/posts/schengen-90-180-rule-uk-citizens"
 import { Content as Etias2026Content } from "@/lib/blog/posts/etias-2026-launch-guide"
 import { Content as CheckRemainingDaysContent } from "@/lib/blog/posts/check-remaining-schengen-days-after-ees"
+import { Content as DualCitizensContent } from "@/lib/blog/posts/dual-citizens-schengen-which-passport"
 
 const contentMap: Record<string, React.ComponentType> = {
+  "dual-citizens-schengen-which-passport": DualCitizensContent,
   "check-remaining-schengen-days-after-ees": CheckRemainingDaysContent,
   "etias-2026-launch-guide": Etias2026Content,
   "digital-nomad-schengen-compliance": DigitalNomadContent,
@@ -30,6 +32,17 @@ const contentMap: Record<string, React.ComponentType> = {
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "dual-citizens-schengen-which-passport": [
+    { id: "the-short-answer", label: "The Short Answer" },
+    { id: "eu-plus-non-eu", label: "EU + Non-EU Passport" },
+    { id: "the-mismatch-trap", label: "The Mismatch Trap" },
+    { id: "two-non-eu-passports", label: "Two Non-EU Passports" },
+    { id: "ireland-and-cyprus", label: "Ireland & Cyprus" },
+    { id: "at-check-in", label: "At Check-In and at Home" },
+    { id: "family-members", label: "Non-EU Family Members" },
+    { id: "if-it-already-happened", label: "If You Mixed Them Up" },
+    { id: "checklist", label: "Checklist" },
+  ],
   "check-remaining-schengen-days-after-ees": [
     { id: "why-this-got-harder", label: "Why It Got Harder" },
     { id: "the-official-checker", label: "The Official Checker" },
