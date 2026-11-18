@@ -23,6 +23,17 @@ export const authors = {
 // Add new posts to the top of this array
 export const posts: BlogPost[] = [
   {
+    slug: "ees-wrongly-flagged-overstayer",
+    title: "Wrongly Flagged as an Overstayer by EES? How to Check and Correct Your Record",
+    excerpt:
+      "It is uncommon, but when the Entry/Exit System misses your exit, it assumes you never left, and you usually find out at the border. Here is a two-minute check to make sure your record is right, and if it is not, exactly who to write to, with a request you can copy.",
+    category: "Border Control",
+    date: "2026-11-18",
+    readTime: "9 min read",
+    heroImage: "/blog/ees-wrongly-flagged-hero.webp",
+    author: authors.romie,
+  },
+  {
     slug: "dual-citizens-schengen-which-passport",
     title: "Dual Citizens at the Schengen Border: Which Passport to Use Now That EES Is Watching",
     excerpt:
