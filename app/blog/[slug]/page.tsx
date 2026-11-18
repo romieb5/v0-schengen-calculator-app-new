@@ -16,8 +16,10 @@ import { Content as UkCitizensContent } from "@/lib/blog/posts/schengen-90-180-r
 import { Content as Etias2026Content } from "@/lib/blog/posts/etias-2026-launch-guide"
 import { Content as CheckRemainingDaysContent } from "@/lib/blog/posts/check-remaining-schengen-days-after-ees"
 import { Content as DualCitizensContent } from "@/lib/blog/posts/dual-citizens-schengen-which-passport"
+import { Content as WronglyFlaggedContent } from "@/lib/blog/posts/ees-wrongly-flagged-overstayer"
 
 const contentMap: Record<string, React.ComponentType> = {
+  "ees-wrongly-flagged-overstayer": WronglyFlaggedContent,
   "dual-citizens-schengen-which-passport": DualCitizensContent,
   "check-remaining-schengen-days-after-ees": CheckRemainingDaysContent,
   "etias-2026-launch-guide": Etias2026Content,
@@ -32,6 +34,14 @@ const contentMap: Record<string, React.ComponentType> = {
 
 // Table of contents per post
 const tocMap: Record<string, { id: string; label: string }[]> = {
+  "ees-wrongly-flagged-overstayer": [
+    { id: "how-it-happens", label: "How It Happens" },
+    { id: "check-your-record", label: "Check Your Record" },
+    { id: "evidence", label: "Gather Proof of Exit" },
+    { id: "request-correction", label: "Request a Correction" },
+    { id: "at-the-border", label: "If You Are Stopped" },
+    { id: "prevention", label: "Next Time" },
+  ],
   "dual-citizens-schengen-which-passport": [
     { id: "the-short-answer", label: "The Short Answer" },
     { id: "eu-plus-non-eu", label: "EU + Non-EU Passport" },

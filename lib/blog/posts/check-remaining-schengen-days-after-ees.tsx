@@ -167,7 +167,14 @@ export function Content() {
         record is wrong. A missing exit is the classic case, where the system thinks you never left and your
         next arrival looks like a long overstay. If that happens, gather the evidence that you departed, a
         boarding pass, a hotel booking elsewhere, an onward entry stamp, and ask for the record to be rectified
-        rather than arguing it at the desk on your next trip.
+        rather than arguing it at the desk on your next trip. Our guide to{" "}
+        <Link
+          href="/blog/ees-wrongly-flagged-overstayer"
+          className="text-primary underline underline-offset-4 hover:opacity-80"
+        >
+          fixing a false overstay on your EES record
+        </Link>{" "}
+        walks through who to contact and what to send.
       </p>
 
       <h2 id="keep-your-own-record">Why You Still Need Your Own Count</h2>
